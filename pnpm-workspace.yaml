@@ -1,0 +1,22 @@
+packages:
+  - apps/*
+  - packages/*
+
+catalog:
+  "@types/node": ^22.13.0
+  typescript: ^5.8.2
+  eslint: ^9.23.0
+  jest: ^29.7.0
+  ts-jest: ^29.3.0
+
+injectWorkspacePackages: true
+
+onlyBuiltDependencies:
+  - "@prisma/client"
+  - "@prisma/engines"
+  - "@swc/core"
+  - esbuild
+  - prisma
+  - sharp
+ignoredBuiltDependencies:
+  - "@tailwindcss/oxide"

@@ -1,0 +1,10 @@
+{
+  "$schema": "https://turborepo.com/schema.json",
+  "extends": ["//"],
+  "tasks": {
+    "db:generate": {
+      "inputs": ["$TURBO_DEFAULT$", ".env", "prisma/**"],
+      "outputs": ["generated/**"]
+    }
+  }
+}

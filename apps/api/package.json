@@ -1,0 +1,41 @@
+{
+  "name": "api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsup",
+    "check-types": "tsc --noEmit",
+    "dev": "tsup --watch --onSuccess \"node dist/index.cjs\"",
+    "lint": "eslint src/ --max-warnings 0",
+    "start": "node dist/index.js",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "test:watch": "jest --watch"
+  },
+  "dependencies": {
+    "body-parser": "^2.1.0",
+    "cors": "^2.8.5",
+    "express": "^5.0.1",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "@jest/globals": "^29.7.0",
+    "@repo/database": "workspace:*",
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@types/body-parser": "^1.19.5",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.1",
+    "@types/morgan": "^1.9.9",
+    "@types/node": "catalog:",
+    "@types/supertest": "^6.0.2",
+    "dotenv": "^16.5.0",
+    "eslint": "catalog:",
+    "jest": "catalog:",
+    "ts-jest": "catalog:",
+    "supertest": "^7.1.0",
+    "tsup": "^8.4.0",
+    "typescript": "catalog:"
+  }
+}

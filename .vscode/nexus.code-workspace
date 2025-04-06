@@ -1,0 +1,22 @@
+{
+  "folders": [
+    {
+      "path": "..",
+    },
+    {
+      "path": "../apps/api",
+    },
+    {
+      "path": "../apps/web",
+    },
+    {
+      "path": "../packages/database",
+    },
+  ],
+  "settings": {
+    "files.associations": {
+      "*.css": "tailwindcss",
+    },
+    "jest.disabledWorkspaceFolders": ["nexus", "database"],
+  },
+}

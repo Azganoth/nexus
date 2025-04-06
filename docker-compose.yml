@@ -1,0 +1,15 @@
+services:
+  dev-db:
+    container_name: nexus-dev-db
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_PASSWORD: dev
+      POSTGRES_USER: dev
+      POSTGRES_DB: nexus-dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
