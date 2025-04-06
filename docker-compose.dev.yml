@@ -1,7 +1,7 @@
 services:
   dev-db:
-    container_name: nexus-dev-db
     image: postgres:15-alpine
+    container_name: nexus-dev-db
     environment:
       POSTGRES_PASSWORD: dev
       POSTGRES_USER: dev
@@ -10,6 +10,11 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dev -d nexus-dev"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
 volumes:
   postgres_data:
