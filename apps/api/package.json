@@ -33,8 +33,8 @@
     "dotenv": "^16.5.0",
     "eslint": "catalog:",
     "jest": "catalog:",
-    "ts-jest": "catalog:",
     "supertest": "^7.1.0",
+    "ts-jest": "catalog:",
     "tsup": "^8.4.0",
     "typescript": "catalog:"
   }
