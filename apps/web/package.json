@@ -3,6 +3,10 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "files": [
+    ".next",
+    "public"
+  ],
   "scripts": {
     "build": "next build",
     "check-types": "tsc --noEmit",
