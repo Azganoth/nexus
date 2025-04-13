@@ -1,12 +1,13 @@
 "use client";
 
+import { API_URL } from "@lib/constants";
 import { useEffect, useState } from "react";
 
 export function Visitors() {
   const [visits, setVisits] = useState(0);
 
   useEffect(() => {
-    fetch("/api/visit", { method: "POST" })
+    fetch(`${API_URL}/visit`, { method: "POST" })
       .then((res) => res.json())
       .then((data) => setVisits(data.visits));
   }, []);

@@ -1,5 +1,6 @@
 "use client";
 
+import { API_URL } from "@lib/constants";
 import { useEffect, useState } from "react";
 
 const STATUSES = {
@@ -12,7 +13,7 @@ export function ApiStatus() {
   const [status, setStatus] = useState<keyof typeof STATUSES>("loading");
 
   useEffect(() => {
-    fetch("/api/status")
+    fetch(`${API_URL}/status`)
       .then((res) => (res.ok ? setStatus("ok") : setStatus("error")))
       .catch(() => setStatus("error"));
   }, []);

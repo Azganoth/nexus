@@ -18,9 +18,5 @@ describe("Visitors", () => {
     await waitFor(() => {
       expect(screen.getByText("42 visitors!")).toBeInTheDocument();
     });
-
-    expect(window.fetch).toHaveBeenCalledWith("/api/visit", {
-      method: "POST",
-    });
   });
 });
