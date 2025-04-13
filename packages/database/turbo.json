@@ -3,10 +3,10 @@
   "extends": ["//"],
   "tasks": {
     "build": {
-      "dependsOn": ["db:generate"],
+      "dependsOn": ["generate"],
       "outputs": ["dist/**"]
     },
-    "db:generate": {
+    "generate": {
       "inputs": ["$TURBO_DEFAULT$", ".env", "prisma/"],
       "outputs": ["generated/**"]
     }

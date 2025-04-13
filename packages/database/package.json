@@ -14,17 +14,17 @@
     "generated"
   ],
   "scripts": {
-    "db:generate": "prisma generate",
-    "db:migrate:deploy": "prisma migrate deploy",
-    "db:migrate:dev": "prisma migrate dev",
-    "db:push": "prisma db push",
-    "db:seed": "tsx src/seed.ts",
     "build": "bunchee --external=../generated/client",
     "dev": "bunchee --external=../generated/client --watch",
     "format": "prisma format",
+    "generate": "prisma generate",
     "preinstall": "prisma generate --no-hints",
     "lint": "eslint src/ --max-warnings 0",
-    "studio": "prisma studio"
+    "migrate:deploy": "prisma migrate deploy",
+    "migrate:dev": "prisma migrate dev",
+    "push": "prisma db push",
+    "seed": "tsx src/seed.ts",
+    "studio": "prisma studio --browser none"
   },
   "dependencies": {
     "@prisma/client": "^6.5.0"
