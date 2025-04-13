@@ -1,4 +1,4 @@
-import { prisma, VisitorCount } from "./client";
+import { prisma, VisitorCount } from ".";
 
 const DEFAULT_VISITOR_COUNT = {
   id: "singleton",

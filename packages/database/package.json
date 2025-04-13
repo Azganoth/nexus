@@ -4,14 +4,23 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/client.ts"
+    ".": {
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    }
   },
+  "files": [
+    "dist",
+    "generated"
+  ],
   "scripts": {
     "db:generate": "prisma generate",
     "db:migrate:deploy": "prisma migrate deploy",
     "db:migrate:dev": "prisma migrate dev",
     "db:push": "prisma db push",
     "db:seed": "tsx src/seed.ts",
+    "build": "bunchee --external=../generated/client",
+    "dev": "bunchee --external=../generated/client --watch",
     "format": "prisma format",
     "preinstall": "prisma generate --no-hints",
     "lint": "eslint src/ --max-warnings 0",
@@ -24,6 +33,7 @@
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@types/node": "catalog:",
+    "bunchee": "catalog:",
     "eslint": "catalog:",
     "prisma": "^6.5.0",
     "tsx": "^4.19.1",

@@ -2,8 +2,12 @@
   "$schema": "https://turborepo.com/schema.json",
   "extends": ["//"],
   "tasks": {
+    "build": {
+      "dependsOn": ["db:generate"],
+      "outputs": ["dist/**"]
+    },
     "db:generate": {
-      "inputs": ["$TURBO_DEFAULT$", ".env", "prisma/**"],
+      "inputs": ["$TURBO_DEFAULT$", ".env", "prisma/"],
       "outputs": ["generated/**"]
     }
   }

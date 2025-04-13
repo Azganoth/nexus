@@ -17,6 +17,7 @@
     "test:watch": "jest --watch"
   },
   "dependencies": {
+    "@repo/database": "workspace:*",
     "body-parser": "^2.1.0",
     "cors": "^2.8.5",
     "express": "^5.0.1",
@@ -24,7 +25,6 @@
   },
   "devDependencies": {
     "@jest/globals": "^29.7.0",
-    "@repo/database": "workspace:*",
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@types/body-parser": "^1.19.5",
