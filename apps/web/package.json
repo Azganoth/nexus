@@ -42,5 +42,6 @@
     "ts-jest": "catalog:",
     "typescript": "catalog:",
     "whatwg-fetch": "^3.6.20"
-  }
+  },
+  "packageManager": "pnpm@10.7.1"
 }
