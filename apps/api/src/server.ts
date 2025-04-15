@@ -1,14 +1,15 @@
 import { prisma } from "@repo/database";
+import { IS_DEV } from "@src/constants";
 import { json, urlencoded } from "body-parser";
 import cors from "cors";
 import express, { type Express } from "express";
 import morgan from "morgan";
 
 export const createServer = (): Express => {
-  const app = express();
-  app
+  const server = express();
+  server
     .disable("x-powered-by")
-    .use(morgan("dev"))
+    .use(morgan(IS_DEV ? "dev" : "combined"))
     .use(urlencoded({ extended: true }))
     .use(json())
     .use(cors())
@@ -28,5 +29,5 @@ export const createServer = (): Express => {
       res.json({ visits: data.count });
     });
 
-  return app;
+  return server;
 };

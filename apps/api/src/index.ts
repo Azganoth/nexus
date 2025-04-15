@@ -1,13 +1,12 @@
 import "dotenv/config";
 
 import { prisma } from "@repo/database";
+import { PORT } from "@src/constants";
 import { createServer } from "@src/server";
 
-const port = process.env.PORT || 3001;
 const server = createServer();
-
-server.listen(port, () => {
-  console.log(`api running on ${port}`);
+server.listen(PORT, () => {
+  console.log(`API is running on http://localhost:${PORT}`);
 });
 
 const shutdown = async () => {
