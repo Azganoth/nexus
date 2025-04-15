@@ -1,0 +1,12 @@
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+**/node_modules
+.git
+**/.turbo
+**/.dist
+**/.generated
+**/.coverage
+**/.env
+*.md
+fly.*.toml
