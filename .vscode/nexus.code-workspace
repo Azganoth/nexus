@@ -12,11 +12,14 @@
     {
       "path": "../packages/database",
     },
+    {
+      "path": "../packages/shared",
+    },
   ],
   "settings": {
     "files.associations": {
       "*.css": "tailwindcss",
     },
-    "jest.disabledWorkspaceFolders": ["nexus", "database"],
+    "jest.disabledWorkspaceFolders": ["nexus", "database", "shared"],
   },
 }

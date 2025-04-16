@@ -3,7 +3,6 @@ primary_region = 'iad'
 
 [build.args]
 PROJECT = 'web'
-NEXT_PUBLIC_API_URL = 'https://nexusapp-api.fly.dev'
 
 [env]
 PORT = '3000'

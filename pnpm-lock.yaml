@@ -48,6 +48,9 @@ importers:
       '@repo/database':
         specifier: workspace:*
         version: link:../../packages/database
+      '@repo/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
       body-parser:
         specifier: ^2.1.0
         version: 2.2.0
@@ -112,6 +115,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@repo/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
       next:
         specifier: ^15.2.1
         version: 15.3.2(@babel/core@7.27.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -245,6 +251,27 @@ importers:
       tsx:
         specifier: ^4.19.1
         version: 4.19.1
+      typescript:
+        specifier: 'catalog:'
+        version: 5.8.2
+
+  packages/shared:
+    devDependencies:
+      '@repo/eslint-config':
+        specifier: workspace:*
+        version: link:../config-eslint
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../config-typescript
+      '@types/node':
+        specifier: 'catalog:'
+        version: 22.15.18
+      bunchee:
+        specifier: 'catalog:'
+        version: 6.5.2(typescript@5.8.2)
+      eslint:
+        specifier: 'catalog:'
+        version: 9.27.0(jiti@2.4.2)
       typescript:
         specifier: 'catalog:'
         version: 5.8.2

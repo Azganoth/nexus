@@ -1,0 +1,30 @@
+{
+  "name": "@repo/shared",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./constants": {
+      "require": "./dist/constants.cjs",
+      "import": "./dist/constants.mjs",
+      "types": "./dist/constants.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "bunchee",
+    "dev": "bunchee --watch",
+    "lint": "eslint src/ --max-warnings 0"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "catalog:",
+    "bunchee": "catalog:",
+    "eslint": "catalog:",
+    "typescript": "catalog:"
+  }
+}
