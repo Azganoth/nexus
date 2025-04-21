@@ -1,3 +1,39 @@
 /* https://tailwindcss.com/docs/theme#default-theme-variable-reference */
 @theme {
+  --font-*: initial;
+  --font-inter: Inter, sans-serif;
+
+  --breakpoint-*: initial;
+  --breakpoint-tablet: 768px;
+  --breakpoint-desktop: 1280px;
+
+  --color-*: initial;
+  --color-black: #000;
+  --color-white: #fff;
+  --color-light-grey: #dbdbdb;
+  --color-medium-grey: #5b5b5b;
+  --color-dark-grey: #8b8b8b;
+  --color-purple: #8c60f2;
+  --color-teal: #17a2b8;
+  --color-green: #28a745;
+  --color-yellow: #ffc107;
+  --color-red: #dc3545;
+
+  --text-*: initial;
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1rem;
+  --text-sm: 0.875rem;
+  --text-sm--line-height: 1.25rem;
+  --text-md: 1rem;
+  --text-md--line-height: 1.5rem;
+  --text-lg: 1.25rem;
+  --text-lg--line-height: 1.75rem;
+  --text-xl: 1.5rem;
+  --text-xl--line-height: 2rem;
+  --text-2xl: 2rem;
+  --text-2xl--line-height: 2.5rem;
+  --text-3xl: 2.5rem;
+  --text-3xl--line-height: 3rem;
+  --text-4xl: 3rem;
+  --text-4xl--line-height: 3.5rem;
 }
