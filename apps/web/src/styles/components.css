@@ -1,0 +1,5 @@
+@layer components {
+  .btn {
+    @apply rounded-full px-6 py-4 font-bold tracking-wide;
+  }
+}

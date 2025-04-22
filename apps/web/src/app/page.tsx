@@ -17,14 +17,14 @@ export default function Page() {
           </h1>
           <div className="tablet:order-last flex gap-4 self-center">
             <CustomLink
-              className="bg-purple rounded-full px-6 py-4 font-bold text-white"
+              className="btn bg-purple text-white"
               variant="unstyled"
               href="/"
             >
               Cadastrar
             </CustomLink>
             <CustomLink
-              className="rounded-full bg-black px-6 py-4 font-bold text-white"
+              className="btn bg-black text-white"
               variant="unstyled"
               href="/"
             >
