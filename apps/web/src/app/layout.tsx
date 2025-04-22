@@ -1,6 +1,7 @@
 import "@styles/globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "Nexus - Agregador de Links",
@@ -20,7 +21,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={inter.className}>
-      <body className="bg-white text-black text-md font-inter">{children}</body>
+      <body className="bg-white text-black text-md font-inter">
+        {children}
+        <Toaster
+          position="bottom-right"
+          gap={16}
+          offset="1.5rem"
+          mobileOffset="1.5rem"
+          visibleToasts={6}
+        />
+      </body>
     </html>
   );
 }
