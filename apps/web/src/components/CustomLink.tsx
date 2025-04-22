@@ -25,7 +25,7 @@ export function CustomLink({
       rel={newTab ? "noreferrer" : undefined}
       target={newTab ? "_blank" : undefined}
       className={clsx(
-        variant === "default" && "underline text-medium-grey hover:text-purple",
+        variant === "default" && "text-medium-grey hover:text-purple underline",
         className,
       )}
       {...other}

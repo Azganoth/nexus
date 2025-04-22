@@ -21,7 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={inter.className}>
-      <body className="bg-white text-black text-md font-inter">
+      <body className="text-md font-inter bg-white text-black">
         {children}
         <Toaster
           position="bottom-right"

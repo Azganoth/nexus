@@ -26,11 +26,11 @@ function Toast({ id, message, variant }: ToastProps) {
   };
 
   return (
-    <div className="flex rounded-lg gap-3 bg-white shadow-2xl ring-1 ring-light-grey items-center p-4">
+    <div className="ring-light-grey flex items-center gap-3 rounded-lg bg-white p-4 shadow-2xl ring-1">
       {variant && (
         <span
           className={clsx(
-            "text-xl block",
+            "block text-xl",
             variant === "success" &&
               "icon-[fa6-solid--circle-chevron-down] text-green",
             variant === "warning" &&
@@ -42,7 +42,7 @@ function Toast({ id, message, variant }: ToastProps) {
       <div role="status" className="font-semibold">
         {message}
       </div>
-      <button className="text-light-grey text-lg ml-auto" onClick={dismiss}>
+      <button className="text-light-grey ml-auto text-lg" onClick={dismiss}>
         <span className="icon-[fa6-solid--xmark] block"></span>
       </button>
     </div>
