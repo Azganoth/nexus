@@ -19,14 +19,14 @@ export default function Page() {
             <CustomLink
               className="btn bg-purple text-white"
               variant="unstyled"
-              href="/"
+              href="/signup"
             >
               Cadastrar
             </CustomLink>
             <CustomLink
               className="btn bg-black text-white"
               variant="unstyled"
-              href="/"
+              href="/login"
             >
               Logar
             </CustomLink>

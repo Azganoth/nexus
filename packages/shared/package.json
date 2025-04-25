@@ -8,6 +8,11 @@
       "require": "./dist/constants.cjs",
       "import": "./dist/constants.mjs",
       "types": "./dist/constants.d.ts"
+    },
+    "./schemas": {
+      "require": "./dist/schemas.cjs",
+      "import": "./dist/schemas.mjs",
+      "types": "./dist/schemas.d.ts"
     }
   },
   "files": [
@@ -18,7 +23,9 @@
     "dev": "bunchee --watch",
     "lint": "eslint src/ --max-warnings 0"
   },
-  "dependencies": {},
+  "dependencies": {
+    "zod": "^3.24.2"
+  },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
