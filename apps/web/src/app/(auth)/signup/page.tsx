@@ -1,5 +1,5 @@
-import { CustomLink } from "@components/CustomLink";
-import { SignupForm } from "@components/SignupForm";
+import { CustomLink } from "$/components/CustomLink";
+import { SignupForm } from "$/components/SignupForm";
 
 export default function Page() {
   return (

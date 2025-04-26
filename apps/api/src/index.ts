@@ -1,8 +1,8 @@
 import "dotenv/config";
 
+import { PORT } from "$/constants";
+import { createServer } from "$/server";
 import { prisma } from "@repo/database";
-import { PORT } from "@src/constants";
-import { createServer } from "@src/server";
 
 const server = createServer();
 server.listen(PORT, () => {

@@ -1,10 +1,10 @@
 "use client";
 
-import { Input } from "@components/Input";
-import { PromiseButton } from "@components/PromiseButton";
+import { Input } from "$/components/Input";
+import { PromiseButton } from "$/components/PromiseButton";
+import { login } from "$/lib/api";
+import { unknownError } from "$/lib/helpers";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { login } from "@lib/api";
-import { unknownError } from "@lib/helpers";
 import { loginSchema, type LoginData } from "@repo/shared/schemas";
 import { useForm, type SubmitHandler } from "react-hook-form";
 

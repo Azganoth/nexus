@@ -1,6 +1,5 @@
-import { CustomLink } from "@components/CustomLink";
-import { Logo } from "@components/Logo";
-import "@styles/globals.css";
+import { CustomLink } from "$/components/CustomLink";
+import { Logo } from "$/components/Logo";
 
 export default function Page() {
   return (

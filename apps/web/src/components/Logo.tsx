@@ -1,6 +1,6 @@
-import { CustomLink } from "@components/CustomLink";
-import logo from "@images/Logo.png";
-import logoWithName from "@images/LogoWithName.png";
+import { CustomLink } from "$/components/CustomLink";
+import logo from "$/images/Logo.png";
+import logoWithName from "$/images/LogoWithName.png";
 import Image from "next/image";
 
 export interface LogoProps {

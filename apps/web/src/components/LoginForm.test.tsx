@@ -1,15 +1,15 @@
-import { LoginForm } from "@components/LoginForm";
+import { LoginForm } from "$/components/LoginForm";
+import { login } from "$/lib/api";
+import { toast } from "$/lib/toast";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
-import { login } from "@lib/api";
-import { toast } from "@lib/toast";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-jest.mock("@lib/api", () => ({
+jest.mock("$/lib/api", () => ({
   login: jest.fn(),
 }));
 
-jest.mock("@lib/toast", () => ({
+jest.mock("$/lib/toast", () => ({
   toast: jest.fn(),
 }));
 

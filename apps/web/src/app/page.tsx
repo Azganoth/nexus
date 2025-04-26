@@ -1,6 +1,6 @@
-import { CustomLink } from "@components/CustomLink";
-import { Logo } from "@components/Logo";
-import profile1 from "@images/Profile1.png";
+import { CustomLink } from "$/components/CustomLink";
+import { Logo } from "$/components/Logo";
+import profile1 from "$/images/Profile1.png";
 import Image from "next/image";
 
 export default function Page() {

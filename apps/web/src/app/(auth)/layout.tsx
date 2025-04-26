@@ -1,5 +1,5 @@
-import { Logo } from "@components/Logo";
-import "@styles/globals.css";
+import { Logo } from "$/components/Logo";
+import "$/styles/globals.css";
 
 export default function Layout({
   children,

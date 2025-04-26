@@ -1,5 +1,5 @@
+import { ALLOWED_ORIGINS, IS_DEV } from "$/constants";
 import { prisma } from "@repo/database";
-import { ALLOWED_ORIGINS, IS_DEV } from "@src/constants";
 import { json, urlencoded } from "body-parser";
 import compression from "compression";
 import cors from "cors";
