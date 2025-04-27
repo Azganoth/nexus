@@ -9,6 +9,11 @@
       "import": "./dist/constants.mjs",
       "types": "./dist/constants.d.ts"
     },
+    "./errors": {
+      "require": "./dist/errors.cjs",
+      "import": "./dist/errors.mjs",
+      "types": "./dist/errors.d.ts"
+    },
     "./schemas": {
       "require": "./dist/schemas.cjs",
       "import": "./dist/schemas.mjs",
