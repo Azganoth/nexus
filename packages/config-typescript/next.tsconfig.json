@@ -1,15 +1,13 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "extends": "./base.json",
+  "extends": "./base.tsconfig.json",
   "compilerOptions": {
     "plugins": [{ "name": "next" }],
-    "allowJs": true,
     "declaration": false,
     "declarationMap": false,
     "incremental": true,
-    "jsx": "preserve",
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "module": "esnext",
-    "target": "es5"
+    "target": "esnext",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "jsx": "preserve"
   }
 }

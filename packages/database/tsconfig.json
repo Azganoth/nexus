@@ -1,7 +1,4 @@
 {
-  "extends": "@repo/typescript-config/base.json",
-  "compilerOptions": {
-    "lib": ["ES2015"]
-  },
-  "include": ["."]
+  "extends": "@repo/typescript-config/node.tsconfig.json",
+  "include": ["src"]
 }

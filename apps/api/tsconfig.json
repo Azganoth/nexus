@@ -1,12 +1,10 @@
 {
-  "extends": "@repo/typescript-config/base.json",
+  "extends": "@repo/typescript-config/node.tsconfig.json",
   "compilerOptions": {
-    "lib": ["ES2015"],
     "outDir": "./dist",
     "paths": {
       "$/*": ["./src/*"]
     }
   },
-  "exclude": ["node_modules"],
-  "include": ["."]
+  "include": ["src"]
 }

@@ -7,18 +7,17 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": true,
-    "allowImportingTsExtensions": true,
     "inlineSources": false,
     "isolatedModules": true,
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "allowJs": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "preserveWatchOutput": true,
     "skipLibCheck": true,
     "strict": true,
-    "noEmit": true,
-    "strictNullChecks": true
+    "noEmit": true
   },
   "exclude": ["node_modules"]
 }

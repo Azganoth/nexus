@@ -8,4 +8,5 @@ coverage
 generated
 *.local
 .env
+.env.*
 .cache
