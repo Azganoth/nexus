@@ -9,10 +9,10 @@
       "import": "./dist/constants.mjs",
       "types": "./dist/constants.d.ts"
     },
-    "./errors": {
-      "require": "./dist/errors.cjs",
-      "import": "./dist/errors.mjs",
-      "types": "./dist/errors.d.ts"
+    "./contracts": {
+      "require": "./dist/contracts.cjs",
+      "import": "./dist/contracts.mjs",
+      "types": "./dist/contracts.d.ts"
     },
     "./schemas": {
       "require": "./dist/schemas.cjs",
@@ -29,7 +29,7 @@
     "lint": "eslint src/ --max-warnings 0"
   },
   "dependencies": {
-    "zod": "^3.24.2"
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",

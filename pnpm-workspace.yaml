@@ -6,6 +6,7 @@ catalog:
   "@types/node": ^22.13.0
   typescript: ^5.8.2
   eslint: ^9.23.0
+  zod: ^3.24.2
 
 injectWorkspacePackages: true
 
@@ -13,8 +14,10 @@ onlyBuiltDependencies:
   - "@prisma/client"
   - "@prisma/engines"
   - "@swc/core"
+  - bcrypt
   - esbuild
   - prisma
   - sharp
+
 ignoredBuiltDependencies:
   - "@tailwindcss/oxide"

@@ -5,8 +5,18 @@ import { PromiseButton } from "$/components/PromiseButton";
 import { signup } from "$/lib/api";
 import { unknownError } from "$/lib/helpers";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { SignupData, signupSchema } from "@repo/shared/schemas";
+import { SIGNUP_SCHEMA } from "@repo/shared/schemas";
 import { useForm, type SubmitHandler } from "react-hook-form";
+import { z } from "zod";
+
+const signupSchema = SIGNUP_SCHEMA.extend({
+  confirmPassword: z.string(),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "As senhas não coincidem",
+  path: ["confirmPassword"],
+});
+
+type SignupData = z.infer<typeof signupSchema>;
 
 export function SignupForm() {
   const {

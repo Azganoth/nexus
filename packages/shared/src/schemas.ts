@@ -1,30 +1,27 @@
 import { z } from "zod";
 
-const emailSchema = z.string().email("Por favor, insira um email válido");
-const basePassword = z
-  .string()
-  .min(8, "A senha deve ter pelo menos 8 caracteres")
-  .max(32, "A senha deve ter no máximo 32 caracteres");
-
-export const signupSchema = z
-  .object({
-    email: emailSchema,
-    password: basePassword
-      .regex(/[A-Z]/, "A senha deve conter pelo menos uma letra maiúscula")
-      .regex(/[a-z]/, "A senha deve conter pelo menos uma letra minúscula")
-      .regex(/[0-9]/, "A senha deve conter pelo menos um número"),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "As senhas não coincidem",
-    path: ["confirmPassword"],
-  });
-
-export type SignupData = z.infer<typeof signupSchema>;
-
-export const loginSchema = z.object({
-  email: emailSchema,
-  password: basePassword,
+export const LOGIN_SCHEMA = z.object({
+  email: z
+    .string({ required_error: "O email é obrigatório." })
+    .nonempty("O email é obrigatório."),
+  password: z
+    .string({ required_error: "A senha é obrigatória." })
+    .nonempty("A senha é obrigatória."),
 });
 
-export type LoginData = z.infer<typeof loginSchema>;
+export const SIGNUP_SCHEMA = z.object({
+  email: z
+    .string({ required_error: "O email é obrigatório." })
+    .email("O email deve ser um endereço válido."),
+  password: z
+    .string({ required_error: "A senha é obrigatória." })
+    .min(8, "A senha deve ter pelo menos 8 caracteres.")
+    .max(32, "A senha não pode exceder 32 caracteres.")
+    .regex(/[A-Z]/, "A senha deve conter pelo menos uma letra maiúscula.")
+    .regex(/[a-z]/, "A senha deve conter pelo menos uma letra minúscula.")
+    .regex(/[0-9]/, "A senha deve conter pelo menos um número."),
+  name: z
+    .string({ required_error: "O nome é obrigatório." })
+    .nonempty("O nome é obrigatório.")
+    .max(60, "O nome não pode exceder 60 caracteres."),
+});

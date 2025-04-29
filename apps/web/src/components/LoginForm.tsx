@@ -5,8 +5,13 @@ import { PromiseButton } from "$/components/PromiseButton";
 import { login } from "$/lib/api";
 import { unknownError } from "$/lib/helpers";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { loginSchema, type LoginData } from "@repo/shared/schemas";
+import { LOGIN_SCHEMA } from "@repo/shared/schemas";
 import { useForm, type SubmitHandler } from "react-hook-form";
+import { z } from "zod";
+
+const loginSchema = LOGIN_SCHEMA;
+
+type LoginData = z.infer<typeof loginSchema>;
 
 export function LoginForm() {
   const {

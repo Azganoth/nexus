@@ -1,8 +1,21 @@
-export const PROD_API_URL = "https://nexusapp-api.fly.dev";
-export const PROD_WEB_URL = "https://nexusapp.fly.dev";
+export const ERRORS = {
+  // Authentication & Authorization Errors
+  NOT_LOGGED_IN: "Usuário não está logado.",
+  INCORRECT_CREDENTIALS: "Email e/ou senha incorretos.",
+  ACCESS_TOKEN_INVALID: "Token de acesso inválido ou revogado.",
+  REFRESH_TOKEN_MISSING: "Token de atualização não fornecido.",
+  REFRESH_TOKEN_INVALID: "Token de atualização inválido ou expirado.",
+  USER_FOR_TOKEN_NOT_FOUND: "O usuário associado a este token não existe mais.",
 
-export const DEV_API_PORT = 3001;
-export const DEV_WEB_PORT = 3002;
+  // Validation & Data Errors
+  VALIDATION_INVALID_INPUT: "Dados de entrada inválidos.",
 
-export const DEV_API_URL = `http://localhost:${DEV_API_PORT}`;
-export const DEV_WEB_URL = `http://localhost:${DEV_WEB_PORT}`;
+  // Routing Errors
+  NOT_FOUND: "O recurso solicitado não foi encontrado.",
+
+  // Server Errors
+  SERVER_UNKNOWN_ERROR: "Ocorreu um erro inesperado.",
+  SERVER_DB_UNHEALTHY: "Conexão com a base de dados falhou.",
+} satisfies Record<string, string>;
+
+export type ErrorCode = keyof typeof ERRORS;

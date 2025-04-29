@@ -1,12 +1,11 @@
-import "dotenv/config";
+import { env } from "$/config/env"; // NOTE: keep on top to load .env first
 
-import { PORT } from "$/constants";
 import { createServer } from "$/server";
 import { prisma } from "@repo/database";
 
 const server = createServer();
-server.listen(PORT, () => {
-  console.log(`API is running on http://localhost:${PORT}`);
+server.listen(env.PORT, () => {
+  console.log(`API is running on http://localhost:${env.PORT}`);
 });
 
 const shutdown = async () => {

@@ -5,6 +5,8 @@ import tsconfig from "./tsconfig.json" with { type: "json" };
 const config = {
   roots: ["<rootDir>"],
   preset: "ts-jest",
+  setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
+  testMatch: ["**/?(*.)+(spec|test).[jt]s?(x)"],
   transform: {
     "^.+\\.ts$": "ts-jest",
   },

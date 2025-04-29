@@ -15,6 +15,7 @@ jest.mock("$/lib/toast", () => ({
 
 describe("LoginForm", () => {
   const user = userEvent.setup();
+  jest.spyOn(console, "error").mockImplementation(() => {});
 
   beforeEach(() => {
     jest.clearAllMocks();

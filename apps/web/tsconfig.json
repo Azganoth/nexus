@@ -11,6 +11,7 @@
     "next.config.ts",
     "next-env.d.ts",
     ".next/types/**/*.ts",
-    "jest.setup.ts"
+    "jest.setup.ts",
+    "types.d.ts"
   ]
 }

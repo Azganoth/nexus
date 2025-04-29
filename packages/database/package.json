@@ -32,7 +32,9 @@
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
+    "@types/bcrypt": "^5.0.2",
     "@types/node": "catalog:",
+    "bcrypt": "^6.0.0",
     "bunchee": "^6.5.0",
     "eslint": "catalog:",
     "prisma": "^6.5.0",

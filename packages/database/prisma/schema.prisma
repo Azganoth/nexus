@@ -8,7 +8,57 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model VisitorCount {
-  id    String @id @default("singleton")
-  count Int    @default(0)
+model User {
+  id            String         @id @default(uuid())
+  email         String         @unique
+  password      String
+  name          String         @db.VarChar(60)
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
+  profile       Profile?
+  refreshTokens RefreshToken[]
+
+  @@map("users")
+}
+
+model Profile {
+  id             Int      @id @default(autoincrement())
+  userId         String   @unique @map("user_id")
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  username       String   @db.VarChar(40)
+  displayName    String   @map("display_name") @db.VarChar(60)
+  avatarUrl      String   @map("avatar_url")
+  bio            String?  @db.VarChar(255)
+  seoTitle       String?  @map("seo_title") @db.VarChar(60)
+  seoDescription String?  @map("seo_description") @db.VarChar(255)
+  links          Link[]
+  isPublic       Boolean  @default(true) @map("is_public")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  @@map("profiles")
+}
+
+model Link {
+  id           Int      @id @default(autoincrement())
+  profileId    Int      @map("profile_id")
+  profile      Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  title        String   @db.VarChar(60)
+  url          String
+  displayOrder Int      @map("display_order")
+  isPublic     Boolean  @default(true) @map("is_public")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@unique([profileId, displayOrder])
+  @@map("links")
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
 }

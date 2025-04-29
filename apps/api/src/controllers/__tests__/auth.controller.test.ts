@@ -1,0 +1,165 @@
+import { createRandomUser } from "$/__tests__/factories";
+import { createServer } from "$/server";
+import {
+  createUser,
+  loginUser,
+  logoutUser,
+  refreshAccessToken,
+} from "$/services/auth.service";
+import { ApiError } from "$/utils/errors";
+import { beforeEach, describe, expect, it, jest } from "@jest/globals";
+import type { ErrorCode } from "@repo/shared/constants";
+import type { Express } from "express";
+import supertest from "supertest";
+
+jest.mock("$/services/auth.service");
+
+const mockLoginUser = jest.mocked(loginUser);
+const mockCreateUser = jest.mocked(createUser);
+const mockRefreshAccessToken = jest.mocked(refreshAccessToken);
+const mockLogoutUser = jest.mocked(logoutUser);
+
+describe("Auth Controller", () => {
+  let app: Express;
+  const mockUser = createRandomUser();
+  const mockAccessToken = "this-is-a-valid-access-token";
+  const mockRefreshToken = "this-is-a-valid-refresh-token";
+  const mockPublicUser = {
+    id: mockUser.id,
+    email: mockUser.email,
+    name: mockUser.name,
+  };
+  const outputData = {
+    accessToken: mockAccessToken,
+    user: mockPublicUser,
+  };
+  const inputData = {
+    ...outputData,
+    refreshToken: mockRefreshToken,
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    app = createServer();
+  });
+
+  describe("POST /auth/signup", () => {
+    it("should successfully create a user and return 201", async () => {
+      mockCreateUser.mockResolvedValue(inputData);
+
+      const response = await supertest(app).post("/auth/signup").send({
+        email: mockUser.email,
+        password: mockUser.password,
+        name: mockUser.name,
+      });
+
+      expect(response.status).toBe(201);
+      expect(response.body.data).toEqual(outputData);
+      expect(response.body.message).toMatch(/conta criada/i);
+      expect(mockCreateUser).toHaveBeenCalledWith(
+        mockUser.email,
+        mockUser.password,
+        mockUser.name,
+      );
+    });
+
+    it("should return 422 for invalid input data", async () => {
+      const response = await supertest(app)
+        .post("/auth/signup")
+        .send({ email: "not-an-email", password: "short", name: "" });
+
+      expect(response.status).toBe(422);
+      expect(response.body.status).toBe("fail");
+      expect(response.body.code).toMatch(
+        "VALIDATION_INVALID_INPUT" satisfies ErrorCode,
+      );
+      expect(response.body.fieldErrors).toHaveProperty("email");
+      expect(response.body.fieldErrors).toHaveProperty("password");
+      expect(response.body.fieldErrors).toHaveProperty("name");
+    });
+  });
+
+  describe("POST /auth/login", () => {
+    it("should successfully log in, return accessToken and set refreshToken cookie", async () => {
+      mockLoginUser.mockResolvedValue(inputData);
+
+      const response = await supertest(app)
+        .post("/auth/login")
+        .send({ email: mockUser.email, password: mockUser.password });
+
+      expect(response.status).toBe(200);
+      expect(response.body.data).toEqual(outputData);
+      expect(response.headers["set-cookie"][0]).toMatch(
+        new RegExp(`^refreshToken=${mockRefreshToken}`),
+      );
+      expect(mockLoginUser).toHaveBeenCalledWith(
+        mockUser.email,
+        mockUser.password,
+      );
+    });
+
+    it("should return 401 if login service throws an error", async () => {
+      mockLoginUser.mockRejectedValue(
+        new ApiError(401, "INCORRECT_CREDENTIALS"),
+      );
+
+      const response = await supertest(app)
+        .post("/auth/login")
+        .send({ email: mockUser.email, password: mockUser.password });
+
+      expect(response.status).toBe(401);
+      expect(response.body.code).toBe(
+        "INCORRECT_CREDENTIALS" satisfies ErrorCode,
+      );
+    });
+  });
+
+  describe("POST /auth/logout", () => {
+    it("should call the logout service and clear the cookie", async () => {
+      mockLogoutUser.mockResolvedValue(undefined);
+
+      const response = await supertest(app)
+        .post("/auth/logout")
+        .set("Cookie", `refreshToken=${mockRefreshToken}`);
+
+      expect(response.status).toBe(204);
+      expect(response.headers["set-cookie"][0]).toMatch(
+        /^refreshToken=;.*(Max-Age=0|Expires=Thu, 01 Jan 1970)/,
+      );
+      expect(mockLogoutUser).toHaveBeenCalledWith(mockRefreshToken);
+    });
+  });
+
+  describe("POST /auth/refresh", () => {
+    it("should successfully refresh the access token", async () => {
+      mockRefreshAccessToken.mockResolvedValue({
+        accessToken: mockAccessToken,
+      });
+
+      const response = await supertest(app)
+        .post("/auth/refresh")
+        .set("Cookie", `refreshToken=${mockRefreshToken}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body.data).toEqual({
+        accessToken: mockAccessToken,
+      });
+      expect(mockRefreshAccessToken).toHaveBeenCalledWith(mockRefreshToken);
+    });
+
+    it("should return 401 if the refresh token is invalid", async () => {
+      mockRefreshAccessToken.mockRejectedValue(
+        new ApiError(401, "REFRESH_TOKEN_INVALID"),
+      );
+
+      const response = await supertest(app)
+        .post("/auth/refresh")
+        .set("Cookie", `refreshToken=invalid-token`);
+
+      expect(response.status).toBe(401);
+      expect(response.body.code).toMatch(
+        "REFRESH_TOKEN_INVALID" satisfies ErrorCode,
+      );
+    });
+  });
+});

@@ -1,4 +1,4 @@
-import { PROD_WEB_URL } from "@repo/shared/constants";
+import { WEB_URL } from "$/lib/constants";
 import type { MetadataRoute } from "next";
 
 export default function robots(): MetadataRoute.Robots {
@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: "*",
       disallow: "/api/",
     },
-    sitemap: `${PROD_WEB_URL}/sitemap.xml`,
+    sitemap: `${WEB_URL}/sitemap.xml`,
   };
 }

@@ -1,5 +1,3 @@
-import { NotFoundError, PrivateProfileError } from "@repo/shared/errors";
-
 // Auth
 export const signup = async (
   email: string,
@@ -53,10 +51,10 @@ export const getProfile = async (username: string): Promise<Profile> => {
           });
           break;
         case "private":
-          reject(new PrivateProfileError());
+          reject(new Error("Private"));
           break;
         default:
-          reject(new NotFoundError("Profile"));
+          reject(new Error("Missing"));
           break;
       }
     }, 2500);
