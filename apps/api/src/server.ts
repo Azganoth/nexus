@@ -1,4 +1,4 @@
-import { ALLOWED_ORIGINS, IS_DEV } from "$/constants";
+import { ALLOWED_ORIGINS, IS_DEV, IS_TEST } from "$/constants";
 import { error, notFound } from "$/middlewares/error.middleware";
 import { securityHeaders } from "$/middlewares/security.middleware";
 import router from "$/router";
@@ -13,7 +13,11 @@ import morgan from "morgan";
 export const createServer = (): Express => {
   const server = express();
   server
-    .use(morgan(IS_DEV ? "dev" : "combined"))
+    .use(
+      morgan(IS_DEV ? "dev" : "combined", {
+        skip: () => IS_TEST,
+      }),
+    )
     .use(securityHeaders())
     .use(cors({ origin: ALLOWED_ORIGINS, credentials: true }))
     .use(

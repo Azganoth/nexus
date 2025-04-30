@@ -3,7 +3,9 @@ import { z } from "zod";
 
 // NOTE: Keep turbo 'env' updated.
 const envSchema = z.object({
-  NODE_ENV: z.enum(["development", "production"]).default("development"),
+  NODE_ENV: z
+    .enum(["development", "production", "test"])
+    .default("development"),
   PORT: z.coerce.number().optional().default(3001),
   DATABASE_URL: z.string().url(),
 

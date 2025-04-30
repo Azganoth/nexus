@@ -5,7 +5,7 @@ import type bcrypt from "bcrypt";
 
 // Env
 const mockDefaultEnv: Env = {
-  NODE_ENV: "development",
+  NODE_ENV: "test",
   PORT: 3001,
   DATABASE_URL: "postgresql://user:password@localhost:5432/testdb",
   JWT_ACCESS_SECRET: "mock-access-secret",
