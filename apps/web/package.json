@@ -15,8 +15,7 @@
     "lint": "next lint --max-warnings 0",
     "start": "next start",
     "test": "jest",
-    "test:coverage": "jest --coverage",
-    "test:watch": "jest --watch"
+    "test:coverage": "jest --coverage"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",
