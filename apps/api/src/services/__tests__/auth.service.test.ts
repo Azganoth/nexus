@@ -148,10 +148,8 @@ describe("Auth Service", () => {
 
       await expect(
         createUser(mockUser.email, mockUser.password, mockUser.name),
-      ).rejects.toThrowApiError(422, "VALIDATION_INVALID_INPUT", {
-        fieldErrors: {
-          email: ["O email já está em uso."],
-        },
+      ).rejects.toThrowValidationError({
+        email: ["O email já está em uso."],
       });
     });
   });

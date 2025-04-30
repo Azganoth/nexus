@@ -6,7 +6,7 @@ import {
   refreshAccessToken,
 } from "$/services/auth.service";
 import { composeResponse, validateSchema } from "$/utils/helpers";
-import type { AccessTokenOutput, AuthOutput } from "@repo/shared/contracts";
+import type { AccessTokenPayload, AuthPayload } from "@repo/shared/contracts";
 import { LOGIN_SCHEMA, SIGNUP_SCHEMA } from "@repo/shared/schemas";
 import type { Request, Response } from "express";
 
@@ -25,11 +25,7 @@ export const login = async (req: Request, res: Response) => {
   const { accessToken, refreshToken, user } = await loginUser(email, password);
   setRefreshToken(res, refreshToken);
 
-  res
-    .status(200)
-    .json(
-      composeResponse<AuthOutput>({ accessToken, user }, "Login efetuado."),
-    );
+  res.status(200).json(composeResponse<AuthPayload>({ accessToken, user }));
 };
 
 export const signup = async (req: Request, res: Response) => {
@@ -45,9 +41,7 @@ export const signup = async (req: Request, res: Response) => {
   );
   setRefreshToken(res, refreshToken);
 
-  res
-    .status(201)
-    .json(composeResponse<AuthOutput>({ accessToken, user }, "Conta criada."));
+  res.status(201).json(composeResponse<AuthPayload>({ accessToken, user }));
 };
 
 export const logout = async (req: Request, res: Response) => {
@@ -66,12 +60,5 @@ export const logout = async (req: Request, res: Response) => {
 export const refreshAccess = async (req: Request, res: Response) => {
   const refreshToken = req.cookies.refreshToken;
   const { accessToken } = await refreshAccessToken(refreshToken);
-  res
-    .status(200)
-    .json(
-      composeResponse<AccessTokenOutput>(
-        { accessToken },
-        "Token de acesso atualizado.",
-      ),
-    );
+  res.status(200).json(composeResponse<AccessTokenPayload>({ accessToken }));
 };

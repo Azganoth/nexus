@@ -6,13 +6,11 @@ describe("Helper Utils", () => {
   describe("composeResponse", () => {
     it("should create a standard success response object", () => {
       const data = { id: 1, name: "Test" };
-      const message = "Sucesso!";
-      const response = composeResponse(data, message);
+      const response = composeResponse(data);
 
       expect(response).toEqual({
         status: "success",
         data: data,
-        message: message,
       });
     });
   });
@@ -35,11 +33,9 @@ describe("Helper Utils", () => {
 
       await expect(
         validateSchema(testSchema, invalidInput),
-      ).rejects.toThrowApiError(422, "VALIDATION_INVALID_INPUT", {
-        fieldErrors: {
-          name: ["Nome é obrigatório."],
-          email: ["Email inválido."],
-        },
+      ).rejects.toThrowValidationError({
+        name: ["Nome é obrigatório."],
+        email: ["Email inválido."],
       });
     });
   });

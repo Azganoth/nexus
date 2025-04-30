@@ -3,7 +3,7 @@ import {
   JWT_REFRESH_EXPIRES_IN,
   PUBLIC_USER_SELECT,
 } from "$/constants";
-import { ApiError } from "$/utils/errors";
+import { ApiError, ValidationError } from "$/utils/errors";
 import {
   signAccessToken,
   signRefreshToken,
@@ -73,10 +73,8 @@ export const createUser = async (
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === "P2002") {
-        throw new ApiError(422, "VALIDATION_INVALID_INPUT", {
-          fieldErrors: {
-            email: ["O email já está em uso."],
-          },
+        throw new ValidationError({
+          email: ["O email já está em uso."],
         });
       }
     }

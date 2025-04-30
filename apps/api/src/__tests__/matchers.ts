@@ -1,20 +1,18 @@
-import { ApiError } from "$/utils/errors";
+import { ApiError, ValidationError } from "$/utils/errors";
 import type { ErrorCode } from "@repo/shared/constants";
 import type { MatcherFunction } from "expect";
 
-type ExpectedErrorOptions = {
-  message?: string | RegExp;
-  rootErrors?: ApiError["rootErrors"];
-  fieldErrors?: ApiError["fieldErrors"];
-};
-
 export const toThrowApiError: MatcherFunction<
-  [statusCode: number, code: ErrorCode, options?: ExpectedErrorOptions]
+  [
+    expectedStatusCode: number,
+    expectedCode?: ErrorCode,
+    expectedMessage?: string | RegExp,
+  ]
 > = async function (
   received,
   expectedStatusCode,
   expectedCode,
-  expectedOptions,
+  expectedMessage,
 ) {
   const { printReceived, printExpected, matcherHint } = this.utils;
 
@@ -29,78 +27,42 @@ Expected the function to throw an instance of ApiError, but it threw:
     };
   }
 
-  const { statusCode, code, message, rootErrors, fieldErrors } = received;
-  const {
-    message: expectedMessage,
-    rootErrors: expectedRootErrors,
-    fieldErrors: expectedFieldErrors,
-  } = expectedOptions ?? {};
-
-  if (statusCode !== expectedStatusCode) {
+  if (received.statusCode !== expectedStatusCode) {
     return {
       pass: false,
       message: () =>
         `${matcherHint(".toThrowApiError")}
 
 Expected status code: ${printExpected(expectedStatusCode)}
-Received status code: ${printReceived(statusCode)}`,
+Received status code: ${printReceived(received.statusCode)}`,
     };
   }
 
-  if (code !== expectedCode) {
+  if (expectedCode && received.code !== expectedCode) {
     return {
       pass: false,
-      message: () =>
-        `${matcherHint(".toThrowApiError")}
+      message: () => `${matcherHint(".toThrowApiError")}
 
 Expected error code: ${printExpected(expectedCode)}
-Received error code: ${printReceived(code)}`,
+Received error code: ${printReceived(received.code)}`,
     };
   }
 
   if (expectedMessage) {
     const messageMatches =
       expectedMessage instanceof RegExp
-        ? expectedMessage.test(message)
-        : expectedMessage === message;
-
+        ? expectedMessage.test(received.message)
+        : expectedMessage === received.message;
     if (!messageMatches) {
       return {
         pass: false,
         message: () =>
-          `${matcherHint(".toThrowApiError")}
+          `matcherHint(".toThrowApiError")}
 
-Expected message: ${printExpected(expectedMessage)}
-Received message: ${printReceived(message)}`,
-      };
-    }
-  }
-
-  if (expectedRootErrors) {
-    if (!this.equals(rootErrors, expectedRootErrors)) {
-      return {
-        pass: false,
-        message: () =>
-          `${matcherHint(".toThrowApiError")}
-
-Expected errors:
-  ${printExpected(expectedRootErrors)}
-Received errors:
-  ${printReceived(rootErrors)}`,
-      };
-    }
-  }
-
-  if (expectedFieldErrors) {
-    if (!this.equals(fieldErrors, expectedFieldErrors)) {
-      return {
-        pass: false,
-        message: () =>
-          `${matcherHint(".toThrowApiError")}
-Expected field errors:
-  ${printExpected(expectedFieldErrors)}
-Received field errors:
-  ${printReceived(fieldErrors)}`,
+Expected error message:
+  ${printExpected(expectedMessage)}
+Received error message:
+  ${printReceived(received.message)}`,
       };
     }
   }
@@ -110,7 +72,45 @@ Received field errors:
     message: () =>
       `${matcherHint(".not.toThrowApiError")}
 
-Function threw an ApiError with status code ${printReceived(statusCode)} and a matching message, which was not expected.`,
+Function threw the expected ApiError, which was not intended.`,
+  };
+};
+
+export const toThrowValidationError: MatcherFunction<
+  [expectedData?: Record<string, string[]>]
+> = async function (received, expectedData) {
+  const { printReceived, printExpected, matcherHint } = this.utils;
+
+  if (!(received instanceof ValidationError)) {
+    return {
+      pass: false,
+      message: () =>
+        `${matcherHint(".toThrowValidationError")}
+
+Expected the function to throw an instance of ValidationError, but it threw:
+  ${printReceived(received)}`,
+    };
+  }
+
+  if (expectedData) {
+    if (!this.equals(received.data, expectedData)) {
+      return {
+        pass: false,
+        message: () =>
+          `${matcherHint(".toThrowHttpError")}
+
+Expected error data:\n  ${printExpected(expectedData)}
+Received error data:\n  ${printReceived(received.data)}`,
+      };
+    }
+  }
+
+  return {
+    pass: true,
+    message: () =>
+      `${matcherHint(".not.toThrowValidationError")}
+
+Function threw the expected ValidationError, which was not intended.`,
   };
 };
 
@@ -118,15 +118,17 @@ declare module "expect" {
   interface AsymmetricMatchers {
     toThrowApiError(
       statusCode: number,
-      code: ErrorCode,
-      options?: ExpectedErrorOptions,
+      expectedCode: ErrorCode,
+      expectedMessage?: string | RegExp,
     ): void;
+    toThrowValidationError(data?: Record<string, string[]>): void;
   }
   interface Matchers<R> {
     toThrowApiError(
       statusCode: number,
-      code: ErrorCode,
-      options?: ExpectedErrorOptions,
+      expectedCode: ErrorCode,
+      expectedMessage?: string | RegExp,
     ): R;
+    toThrowValidationError(data?: Record<string, string[]>): R;
   }
 }

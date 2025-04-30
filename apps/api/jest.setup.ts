@@ -1,5 +1,5 @@
 import { resetAllDeepMocks } from "$/__tests__/helpers";
-import { toThrowApiError } from "$/__tests__/matchers";
+import { toThrowApiError, toThrowValidationError } from "$/__tests__/matchers";
 import {
   mockBcrypt,
   mockEnv,
@@ -28,4 +28,5 @@ beforeEach(() => {
 
 expect.extend({
   toThrowApiError,
+  toThrowValidationError,
 });

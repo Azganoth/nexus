@@ -1,4 +1,4 @@
-import { ApiError } from "$/utils/errors";
+import { ApiError, HttpError } from "$/utils/errors";
 import type { NextFunction, Request, Response } from "express";
 
 const unkownError = new ApiError(500, "SERVER_UNKNOWN_ERROR");
@@ -10,7 +10,7 @@ export const error =
     }
 
     let e;
-    if (err instanceof ApiError) {
+    if (err instanceof HttpError) {
       e = err;
     } else {
       console.error(err);

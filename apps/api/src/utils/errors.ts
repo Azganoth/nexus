@@ -1,40 +1,49 @@
 import { ERRORS, type ErrorCode } from "@repo/shared/constants";
-import type { ErrorApiResponse, FailApiResponse } from "@repo/shared/contracts";
+import type { ErrorResponse, FailResponse } from "@repo/shared/contracts";
 
-type ApiErrorOptions = {
-  message?: string;
-  rootErrors?: FailApiResponse["rootErrors"];
-  fieldErrors?: FailApiResponse["fieldErrors"];
-};
+export abstract class HttpError extends Error {
+  protected constructor(
+    public readonly statusCode: number,
+    message?: string,
+  ) {
+    super(message);
+    this.name = this.constructor.name;
+  }
 
-export class ApiError extends Error {
-  public readonly statusCode: number;
-  public readonly status: (FailApiResponse | ErrorApiResponse)["status"];
-  public readonly code: ErrorCode;
-  public readonly rootErrors: FailApiResponse["rootErrors"];
-  public readonly fieldErrors: FailApiResponse["fieldErrors"];
+  abstract toJSON(): FailResponse | ErrorResponse;
+}
+
+export class ApiError extends HttpError {
+  public readonly status = "error";
 
   constructor(
     statusCode: number,
-    code: ErrorCode,
-    { message, rootErrors, fieldErrors }: ApiErrorOptions = {},
+    public readonly code: ErrorCode,
+    message?: string,
   ) {
-    super(message ?? ERRORS[code]);
-    this.name = "ApiError";
-    this.statusCode = statusCode;
-    this.status = statusCode < 500 ? "fail" : "error";
-    this.code = code;
-    this.rootErrors = rootErrors;
-    this.fieldErrors = fieldErrors;
+    super(statusCode, message ?? ERRORS[code]);
   }
 
-  toJSON(): FailApiResponse | ErrorApiResponse {
+  toJSON(): ErrorResponse {
     return {
       status: this.status,
-      message: this.message,
       code: this.code,
-      rootErrors: this.rootErrors,
-      fieldErrors: this.fieldErrors,
+      message: this.message,
+    };
+  }
+}
+
+export class ValidationError extends HttpError {
+  public readonly status = "fail";
+
+  constructor(public readonly data: FailResponse["data"]) {
+    super(422, "Validação Falhou");
+  }
+
+  toJSON(): FailResponse {
+    return {
+      status: this.status,
+      data: this.data,
     };
   }
 }

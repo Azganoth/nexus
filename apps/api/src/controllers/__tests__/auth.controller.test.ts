@@ -8,7 +8,6 @@ import {
 } from "$/services/auth.service";
 import { ApiError } from "$/utils/errors";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
-import type { ErrorCode } from "@repo/shared/constants";
 import type { Express } from "express";
 import supertest from "supertest";
 
@@ -55,7 +54,6 @@ describe("Auth Controller", () => {
 
       expect(response.status).toBe(201);
       expect(response.body.data).toEqual(outputData);
-      expect(response.body.message).toMatch(/conta criada/i);
       expect(mockCreateUser).toHaveBeenCalledWith(
         mockUser.email,
         mockUser.password,
@@ -70,12 +68,9 @@ describe("Auth Controller", () => {
 
       expect(response.status).toBe(422);
       expect(response.body.status).toBe("fail");
-      expect(response.body.code).toMatch(
-        "VALIDATION_INVALID_INPUT" satisfies ErrorCode,
-      );
-      expect(response.body.fieldErrors).toHaveProperty("email");
-      expect(response.body.fieldErrors).toHaveProperty("password");
-      expect(response.body.fieldErrors).toHaveProperty("name");
+      expect(response.body.data).toHaveProperty("email");
+      expect(response.body.data).toHaveProperty("password");
+      expect(response.body.data).toHaveProperty("name");
     });
   });
 
@@ -108,9 +103,7 @@ describe("Auth Controller", () => {
         .send({ email: mockUser.email, password: mockUser.password });
 
       expect(response.status).toBe(401);
-      expect(response.body.code).toBe(
-        "INCORRECT_CREDENTIALS" satisfies ErrorCode,
-      );
+      expect(response.body.code).toBe("INCORRECT_CREDENTIALS");
     });
   });
 
@@ -157,9 +150,7 @@ describe("Auth Controller", () => {
         .set("Cookie", `refreshToken=invalid-token`);
 
       expect(response.status).toBe(401);
-      expect(response.body.code).toMatch(
-        "REFRESH_TOKEN_INVALID" satisfies ErrorCode,
-      );
+      expect(response.body.code).toMatch("REFRESH_TOKEN_INVALID");
     });
   });
 });

@@ -1,37 +1,34 @@
 import type { ErrorCode } from "./constants";
 
-type BaseApiResponse<T extends string> = {
+// Responses
+type StatusResponse<T extends string> = {
   status: T;
 };
 
-export interface SuccessApiResponse<T> extends BaseApiResponse<"success"> {
+export interface SuccessResponse<T> extends StatusResponse<"success"> {
   data: T;
-  message?: string;
 }
 
-export interface FailApiResponse extends BaseApiResponse<"fail"> {
-  code: ErrorCode;
-  message: string;
-  rootErrors?: string[];
-  fieldErrors?: Record<string, string[]>;
+export interface FailResponse extends StatusResponse<"fail"> {
+  data: Record<string, string[] | undefined>;
 }
 
-export interface ErrorApiResponse extends BaseApiResponse<"error"> {
+export interface ErrorResponse extends StatusResponse<"error"> {
   code: ErrorCode;
   message: string;
 }
 
 export type ApiResponse<T = unknown> =
-  | SuccessApiResponse<T>
-  | FailApiResponse
-  | ErrorApiResponse;
+  | SuccessResponse<T>
+  | FailResponse
+  | ErrorResponse;
 
-// Responses
-export interface AccessTokenOutput {
+// Payloads
+export interface AccessTokenPayload {
   accessToken: string;
 }
 
-export interface AuthOutput extends AccessTokenOutput {
+export interface AuthPayload extends AccessTokenPayload {
   user: PublicUser;
 }
 

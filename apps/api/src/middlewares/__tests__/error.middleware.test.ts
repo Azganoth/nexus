@@ -22,7 +22,7 @@ describe("Error Middleware", () => {
 
     expect(res.status).toHaveBeenCalledWith(404);
     expect(res.json).toHaveBeenCalledWith({
-      status: "fail",
+      status: "error",
       code: "NOT_FOUND",
       message: ERRORS.NOT_FOUND,
     });
