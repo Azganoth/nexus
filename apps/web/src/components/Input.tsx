@@ -1,5 +1,6 @@
 "use client";
 
+import { ErrorHint } from "$/components/ErrorHint";
 import clsx from "clsx";
 import {
   forwardRef,
@@ -11,12 +12,13 @@ import {
 } from "react";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+  id: string;
   label?: string;
   error?: string;
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ label, error, className, onChange, ...props }, ref) => {
+  ({ id, className, label, error, onChange, ...props }, ref) => {
     const internalRef = useRef<HTMLInputElement | null>(null);
 
     const focus = useCallback(() => {
@@ -40,7 +42,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       <div className={className} role="group">
         <div
           className={clsx(
-            "border-light-grey hover:border-medium-grey relative grid rounded-lg border bg-white px-4 py-2 -outline-offset-2",
+            "border-light-grey hover:border-medium-grey relative grid cursor-text rounded-lg border bg-white px-4 py-2 -outline-offset-2",
             error
               ? "outline-red outline-2"
               : "outline-black focus-within:outline-2",
@@ -57,38 +59,27 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               }
               internalRef.current = node;
             }}
+            id={id}
             className="text-md placeholder:text-medium-grey peer mt-[var(--text-xxs--line-height)] w-full outline-none"
             aria-invalid={!!error}
-            aria-describedby={
-              error && props.id ? `${props.id}-error` : undefined
-            }
+            aria-describedby={`${id}-error`}
             onChange={handleChange}
             {...props}
           />
           {label && (
             <label
               className={clsx(
-                "text-medium-grey text-xxs absolute left-4 top-0 origin-top translate-y-2 font-bold transition-[translate,font-size]",
+                "text-medium-grey text-xxs absolute left-4 top-0 origin-top translate-y-2 cursor-text font-bold transition-[translate,font-size]",
                 isEmpty &&
                   "peer-not-focus:peer-not-placeholder-shown:text-md peer-not-focus:peer-not-placeholder-shown:translate-y-4",
               )}
-              htmlFor={props.id}
+              htmlFor={id}
             >
               {label}
             </label>
           )}
         </div>
-        <div className="mt-1 min-h-[var(--text-xs--line-height)] px-4">
-          {error && (
-            <span
-              className="text-red block text-xs font-bold"
-              id={props.id ? `${props.id}-error` : undefined}
-              role="alert"
-            >
-              {error}
-            </span>
-          )}
-        </div>
+        <ErrorHint className="mt-1 px-2" id={id} message={error} />
       </div>
     );
   },

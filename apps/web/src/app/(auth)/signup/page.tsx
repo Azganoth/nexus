@@ -1,5 +1,12 @@
 import { CustomLink } from "$/components/CustomLink";
 import { SignupForm } from "$/components/SignupForm";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Nexus - Cadastre-se",
+  description:
+    "Crie sua conta gratuitamente no Nexus e comece a organizar todos os seus links em um só lugar.",
+};
 
 export default function Page() {
   return (

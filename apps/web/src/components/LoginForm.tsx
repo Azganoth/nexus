@@ -1,37 +1,41 @@
 "use client";
 
+import { ErrorHint } from "$/components/ErrorHint";
 import { Input } from "$/components/Input";
 import { PromiseButton } from "$/components/PromiseButton";
-import { login } from "$/lib/api";
+import { useAuth } from "$/contexts/AuthContext";
+import { useApiForm } from "$/hooks/useApiForm";
+import { fetchApi } from "$/lib/api";
 import { unknownError } from "$/lib/helpers";
-import { zodResolver } from "@hookform/resolvers/zod";
+import type { AuthPayload } from "@repo/shared/contracts";
 import { LOGIN_SCHEMA } from "@repo/shared/schemas";
-import { useForm, type SubmitHandler } from "react-hook-form";
-import { z } from "zod";
 
-const loginSchema = LOGIN_SCHEMA;
-
-type LoginData = z.infer<typeof loginSchema>;
+const schema = LOGIN_SCHEMA;
 
 export function LoginForm() {
+  const { login } = useAuth();
+
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<LoginData>({
-    resolver: zodResolver(loginSchema),
+  } = useApiForm({
+    schema,
+    mutationFn: (data) =>
+      fetchApi<AuthPayload>("/auth/login", {
+        method: "POST",
+        body: JSON.stringify(data),
+      }),
+    onSuccess: (data) => {
+      login(data);
+      // router.push("/dashboard");
+    },
+    expectedErrors: ["INCORRECT_CREDENTIALS"],
+    onUnexpectedError: unknownError,
   });
 
-  const onSubmit: SubmitHandler<LoginData> = async (data) => {
-    try {
-      await login(data.email, data.password);
-    } catch (error) {
-      unknownError(error);
-    }
-  };
-
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit}>
       <div className="grid gap-4">
         <Input
           id="login-email"
@@ -46,13 +50,14 @@ export function LoginForm() {
           id="login-password"
           label="Senha"
           type="password"
-          autoComplete="new-password"
+          autoComplete="current-password"
           error={errors.password?.message}
           {...register("password")}
         />
       </div>
+      <ErrorHint className="mt-6 text-center" message={errors.root?.message} />
       <PromiseButton
-        className="bg-purple mt-8 w-full min-w-56 text-white"
+        className="bg-purple mt-2 w-full min-w-56 text-white"
         type="submit"
         isPending={isSubmitting}
       >

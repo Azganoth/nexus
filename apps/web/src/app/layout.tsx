@@ -1,3 +1,4 @@
+import { AuthProvider } from "$/contexts/AuthContext";
 import "$/styles/globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
@@ -22,14 +23,16 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.className}>
       <body className="text-md font-inter bg-white text-black">
-        {children}
-        <Toaster
-          position="bottom-right"
-          gap={16}
-          offset="1.5rem"
-          mobileOffset="1.5rem"
-          visibleToasts={6}
-        />
+        <AuthProvider>
+          {children}
+          <Toaster
+            position="bottom-right"
+            gap={16}
+            offset="1.5rem"
+            mobileOffset="1.5rem"
+            visibleToasts={6}
+          />
+        </AuthProvider>
       </body>
     </html>
   );

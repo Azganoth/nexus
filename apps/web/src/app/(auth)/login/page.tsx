@@ -1,5 +1,12 @@
 import { CustomLink } from "$/components/CustomLink";
 import { LoginForm } from "$/components/LoginForm";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Nexus - Login",
+  description:
+    "Acesse sua conta no Nexus para gerenciar e compartilhar seus links.",
+};
 
 export default function Page() {
   return (

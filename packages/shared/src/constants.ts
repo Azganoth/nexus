@@ -1,4 +1,7 @@
 export const ERRORS = {
+  // Generic
+  UNEXPECTED_ERROR: "Ocorreu um erro inesperado.",
+
   // Authentication & Authorization Errors
   NOT_AUTHORIZED: "Acesso negado.",
   NOT_LOGGED_IN: "Usuário não está logado.",
