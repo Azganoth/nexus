@@ -1,5 +1,5 @@
 import { createTestPublicUser } from "$/__tests__/factories";
-import { spyConsoleError } from "$/__tests__/helpers";
+import { spyConsole } from "$/__tests__/helpers";
 import { AuthProvider, useAuth } from "$/contexts/AuthContext";
 import { fetchApi } from "$/lib/api";
 import { getAccessToken, storeAccessToken } from "$/lib/token";
@@ -39,7 +39,8 @@ describe("AuthContext", () => {
   });
 
   it("should initially be in an authenticating state with no user", () => {
-    spyConsoleError(); // Ignore 'act' warning
+    // Ignore 'act' warning
+    spyConsole("error", "any");
 
     const { result } = renderAuthHook();
 
@@ -116,8 +117,8 @@ describe("AuthContext", () => {
   });
 
   it("should clear the auth state even if the logout API call fails", async () => {
-    const consoleErrorSpy = spyConsoleError();
     const networkError = new Error("Network failed");
+    const consoleErrorSpy = spyConsole("error", [networkError]);
     mockFetchApi.mockRejectedValue(networkError);
     const { result } = renderAuthHook();
 
@@ -135,10 +136,11 @@ describe("AuthContext", () => {
   });
 
   it("should throw an error if useAuth is used outside of AuthProvider", () => {
-    spyConsoleError();
+    const consoleErrorSpy = spyConsole("error", "any");
 
     expect(() => {
       renderHook(() => useAuth());
     }).toThrow(/useAuth must be used within an AuthProvider/);
+    expect(consoleErrorSpy).toHaveBeenCalled();
   });
 });

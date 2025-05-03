@@ -46,9 +46,10 @@ describe("Auth Controller", () => {
     it("should successfully create a user and return 201", async () => {
       mockCreateUser.mockResolvedValue(inputData);
 
+      const password = "Password123";
       const response = await supertest(app).post("/auth/signup").send({
         email: mockUser.email,
-        password: mockUser.password,
+        password,
         name: mockUser.name,
       });
 
@@ -56,7 +57,7 @@ describe("Auth Controller", () => {
       expect(response.body.data).toEqual(outputData);
       expect(mockCreateUser).toHaveBeenCalledWith(
         mockUser.email,
-        mockUser.password,
+        password,
         mockUser.name,
       );
     });

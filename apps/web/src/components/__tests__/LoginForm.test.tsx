@@ -1,4 +1,4 @@
-import { spyConsoleError } from "$/__tests__/helpers";
+import { spyConsole } from "$/__tests__/helpers";
 import { LoginForm } from "$/components/LoginForm";
 import { useAuth, type AuthContextType } from "$/contexts/AuthContext";
 import { fetchApi } from "$/lib/api";
@@ -138,16 +138,15 @@ describe("LoginForm", () => {
 
     it("should display a generic unexpected error message if the API fails with an unhandled error", async () => {
       const user = userEvent.setup();
-      spyConsoleError();
 
       const expectedMessage = `${ERRORS.UNEXPECTED_ERROR} Tente novamente.`;
-      mockFetchApi.mockRejectedValue(
-        new HttpError({
-          status: "error",
-          code: "SERVER_UNKNOWN_ERROR",
-          message: ERRORS.SERVER_UNKNOWN_ERROR,
-        }),
-      );
+      const unknownError = new HttpError({
+        status: "error",
+        code: "SERVER_UNKNOWN_ERROR",
+        message: ERRORS.SERVER_UNKNOWN_ERROR,
+      });
+      mockFetchApi.mockRejectedValue(unknownError);
+      spyConsole("error", [unknownError]);
       render(<LoginForm />);
 
       await user.type(screen.getByLabelText("Email"), "test@example.com");

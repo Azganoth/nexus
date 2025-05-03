@@ -1,14 +1,10 @@
-import { createMockHttp } from "$/__tests__/helpers";
+import { createMockHttp, spyConsole } from "$/__tests__/helpers";
 import { error as errorMiddleware } from "$/middlewares/error.middleware";
 import { ApiError } from "$/utils/errors";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { ERRORS } from "@repo/shared/constants";
 
 describe("Error Middleware", () => {
-  const consoleErrorSpy = jest
-    .spyOn(console, "error")
-    .mockImplementation(() => {});
-
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -16,6 +12,7 @@ describe("Error Middleware", () => {
   it("should handle an ApiError correctly", () => {
     const { req, res, next } = createMockHttp();
     const apiError = new ApiError(404, "NOT_FOUND");
+    const consoleErrorSpy = spyConsole("error", [apiError]);
     const handler = errorMiddleware();
 
     handler(apiError, req, res, next);
@@ -33,6 +30,7 @@ describe("Error Middleware", () => {
   it("should handle a generic Error correctly", () => {
     const { req, res, next } = createMockHttp();
     const genericError = new Error("Something broke!");
+    const consoleErrorSpy = spyConsole("error", [genericError]);
     const handler = errorMiddleware();
 
     handler(genericError, req, res, next);
