@@ -20,12 +20,12 @@ describe("Auth Middleware", () => {
   });
 
   it("should authenticate a user and attach them to the request", async () => {
-    const { req, res, next, nextStatic } = createMockHttp({
+    const { req, res, next } = createMockHttp({
       req: { headers: { authorization: `Bearer ${mockAccessToken}` } },
     });
     mockPrisma.user.findUnique.mockResolvedValue(mockPublicUser as User);
 
-    await authenticate(req, res, nextStatic);
+    await authenticate(req, res, next);
 
     expect(mockPrisma.user.findUnique).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -37,14 +37,14 @@ describe("Auth Middleware", () => {
   });
 
   it("should throw 401 ApiError if token is for a non-existent user", async () => {
-    const { req, res, next, nextStatic } = createMockHttp({
+    const { req, res, next } = createMockHttp({
       req: {
         headers: { authorization: `Bearer ${mockAccessToken}` },
       },
     });
     mockPrisma.user.findUnique.mockResolvedValue(null);
 
-    await expect(authenticate(req, res, nextStatic)).rejects.toThrowApiError(
+    await expect(authenticate(req, res, next)).rejects.toThrowApiError(
       401,
       "USER_FOR_TOKEN_NOT_FOUND",
     );
@@ -52,11 +52,11 @@ describe("Auth Middleware", () => {
   });
 
   it("should throw 401 ApiError if token verification fails", async () => {
-    const { req, res, nextStatic } = createMockHttp({
+    const { req, res, next } = createMockHttp({
       req: { headers: { authorization: "Bearer this-is-not-a-valid-token" } },
     });
 
-    await expect(authenticate(req, res, nextStatic)).rejects.toThrowApiError(
+    await expect(authenticate(req, res, next)).rejects.toThrowApiError(
       401,
       "ACCESS_TOKEN_INVALID",
     );
@@ -73,9 +73,8 @@ describe("Auth Middleware", () => {
     },
   ])("when authorization header $description", ({ headers }) => {
     it("should throw 401 ApiError", async () => {
-      const { req, res, nextStatic } = createMockHttp({ req: { headers } });
-
-      await expect(authenticate(req, res, nextStatic)).rejects.toThrowApiError(
+      const { req, res, next } = createMockHttp({ req: { headers } });
+      await expect(authenticate(req, res, next)).rejects.toThrowApiError(
         401,
         "NOT_LOGGED_IN",
       );

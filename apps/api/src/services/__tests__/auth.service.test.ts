@@ -2,7 +2,7 @@ import {
   createRandomRefreshToken,
   createRandomUser,
 } from "$/__tests__/factories";
-import { mockBcrypt, mockEnv, mockPrisma } from "$/__tests__/mocks";
+import { mockEnv, mockPrisma } from "$/__tests__/mocks";
 import {
   createUser,
   loginUser,
@@ -16,7 +16,12 @@ import {
 } from "$/utils/jwt";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { Prisma, type User } from "@repo/database";
+import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+
+jest.mock("bcrypt");
+
+const mockBcrypt = jest.mocked(bcrypt);
 
 describe("Auth Service", () => {
   const mockUser = createRandomUser();

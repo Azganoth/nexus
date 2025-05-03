@@ -1,7 +1,6 @@
-import { mockDeep, type DeepMocked } from "$/__tests__/helpers";
+import { mockDeep } from "$/__tests__/helpers";
 import type { Env } from "$/config/env";
 import type { PrismaClient } from "@repo/database";
-import type bcrypt from "bcrypt";
 
 // Env
 const mockDefaultEnv: Env = {
@@ -20,5 +19,4 @@ export const resetMockEnv = () => {
 };
 
 // Dependencies
-export const mockPrisma: DeepMocked<PrismaClient> = mockDeep();
-export const mockBcrypt = mockDeep<typeof bcrypt>();
+export const mockPrisma = mockDeep<PrismaClient>();

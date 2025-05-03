@@ -1,17 +1,12 @@
 import { jest } from "@jest/globals";
-import type { NextFunction, Request, Response } from "express";
+import type { Request, Response } from "express";
 
 export const createMockHttp = (
   overrides: {
     req?: Partial<Request>;
     res?: Partial<Response>;
   } = {},
-): {
-  req: DeepMocked<Request>;
-  res: DeepMocked<Response>;
-  next: jest.Mock<NextFunction>;
-  nextStatic: NextFunction;
-} => {
+) => {
   const req = mockDeep<Request>();
   const res = mockDeep<Response>();
   const next = jest.fn();
@@ -25,7 +20,7 @@ export const createMockHttp = (
   Object.assign(req, { ...overrides.req });
   Object.assign(res, { headersSent: false, ...overrides.res });
 
-  return { req, res, next, nextStatic: next };
+  return { req, res, next };
 };
 
 // Custom deep mock
@@ -82,7 +77,7 @@ const createDeepMockProxy = <T extends object>(initialTarget: T) => {
   return proxy;
 };
 
-export const mockDeep = <T extends object>(): DeepMocked<T> => {
+export const mockDeep = <T extends object>() => {
   return createDeepMockProxy<T>({} as T);
 };
 

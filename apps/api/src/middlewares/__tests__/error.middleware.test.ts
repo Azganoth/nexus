@@ -14,11 +14,11 @@ describe("Error Middleware", () => {
   });
 
   it("should handle an ApiError correctly", () => {
-    const { req, res, next, nextStatic } = createMockHttp();
+    const { req, res, next } = createMockHttp();
     const apiError = new ApiError(404, "NOT_FOUND");
     const handler = errorMiddleware();
 
-    handler(apiError, req, res, nextStatic);
+    handler(apiError, req, res, next);
 
     expect(res.status).toHaveBeenCalledWith(404);
     expect(res.json).toHaveBeenCalledWith({
@@ -31,11 +31,11 @@ describe("Error Middleware", () => {
   });
 
   it("should handle a generic Error correctly", () => {
-    const { req, res, next, nextStatic } = createMockHttp();
+    const { req, res, next } = createMockHttp();
     const genericError = new Error("Something broke!");
     const handler = errorMiddleware();
 
-    handler(genericError, req, res, nextStatic);
+    handler(genericError, req, res, next);
 
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith(
@@ -48,13 +48,13 @@ describe("Error Middleware", () => {
   });
 
   it("should call next(err) if headers have already been sent", () => {
-    const { req, res, next, nextStatic } = createMockHttp({
+    const { req, res, next } = createMockHttp({
       res: { headersSent: true },
     });
     const error = new ApiError(500, "SERVER_UNKNOWN_ERROR");
     const handler = errorMiddleware();
 
-    handler(error, req, res, nextStatic);
+    handler(error, req, res, next);
 
     expect(next).toHaveBeenCalledWith(error);
     expect(res.status).not.toHaveBeenCalled();

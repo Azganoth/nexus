@@ -1,4 +1,5 @@
 import { ApiError, ValidationError } from "$/utils/errors";
+import { expect } from "@jest/globals";
 import type { ErrorCode } from "@repo/shared/constants";
 import type { MatcherFunction } from "expect";
 
@@ -132,3 +133,8 @@ declare module "expect" {
     toThrowValidationError(data?: Record<string, string[]>): R;
   }
 }
+
+expect.extend({
+  toThrowApiError,
+  toThrowValidationError,
+});
