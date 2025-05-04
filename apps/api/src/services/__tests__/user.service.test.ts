@@ -1,16 +1,14 @@
 import { createRandomUser } from "$/__tests__/factories";
+import { selectData } from "$/__tests__/helpers";
 import { mockPrisma } from "$/__tests__/mocks";
+import { PUBLIC_USER_SELECT } from "$/constants";
 import { getUserById } from "$/services/user.service";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import type { User } from "@repo/database";
 
 describe("User Service", () => {
   const mockUser = createRandomUser();
-  const mockPublicUser = {
-    id: mockUser.id,
-    email: mockUser.email,
-    name: mockUser.name,
-  };
+  const mockPublicUser = selectData(mockUser, PUBLIC_USER_SELECT);
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -22,14 +20,14 @@ describe("User Service", () => {
         mockPublicUser as User,
       );
 
-      const result = await getUserById(mockUser.id);
+      const user = await getUserById(mockUser.id);
 
       expect(mockPrisma.user.findUniqueOrThrow).toHaveBeenCalledWith(
         expect.objectContaining({
           where: { id: mockUser.id },
         }),
       );
-      expect(result).toEqual(mockPublicUser);
+      expect(user).toEqual(mockPublicUser);
     });
 
     it("should throw if Prisma's findUniqueOrThrow throws", async () => {

@@ -1,4 +1,6 @@
 import { createRandomUser } from "$/__tests__/factories";
+import { selectData } from "$/__tests__/helpers";
+import { PUBLIC_USER_SELECT } from "$/constants";
 import { createServer } from "$/server";
 import {
   createUser,
@@ -23,17 +25,13 @@ describe("Auth Controller", () => {
   const mockUser = createRandomUser();
   const mockAccessToken = "this-is-a-valid-access-token";
   const mockRefreshToken = "this-is-a-valid-refresh-token";
-  const mockPublicUser = {
-    id: mockUser.id,
-    email: mockUser.email,
-    name: mockUser.name,
-  };
-  const outputData = {
+  const mockPublicUser = selectData(mockUser, PUBLIC_USER_SELECT);
+  const mockOutput = {
     accessToken: mockAccessToken,
     user: mockPublicUser,
   };
-  const inputData = {
-    ...outputData,
+  const mockInput = {
+    ...mockOutput,
     refreshToken: mockRefreshToken,
   };
 
@@ -44,7 +42,7 @@ describe("Auth Controller", () => {
 
   describe("POST /auth/signup", () => {
     it("should successfully create a user and return 201", async () => {
-      mockCreateUser.mockResolvedValue(inputData);
+      mockCreateUser.mockResolvedValue(mockInput);
 
       const password = "Password123";
       const response = await supertest(app).post("/auth/signup").send({
@@ -54,7 +52,7 @@ describe("Auth Controller", () => {
       });
 
       expect(response.status).toBe(201);
-      expect(response.body.data).toEqual(outputData);
+      expect(response.body.data).toEqual(mockOutput);
       expect(mockCreateUser).toHaveBeenCalledWith(
         mockUser.email,
         password,
@@ -77,14 +75,14 @@ describe("Auth Controller", () => {
 
   describe("POST /auth/login", () => {
     it("should successfully log in, return accessToken and set refreshToken cookie", async () => {
-      mockLoginUser.mockResolvedValue(inputData);
+      mockLoginUser.mockResolvedValue(mockInput);
 
       const response = await supertest(app)
         .post("/auth/login")
         .send({ email: mockUser.email, password: mockUser.password });
 
       expect(response.status).toBe(200);
-      expect(response.body.data).toEqual(outputData);
+      expect(response.body.data).toEqual(mockOutput);
       expect(response.headers["set-cookie"][0]).toMatch(
         new RegExp(`^refreshToken=${mockRefreshToken}`),
       );

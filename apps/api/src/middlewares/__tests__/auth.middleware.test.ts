@@ -1,6 +1,7 @@
 import { createRandomUser } from "$/__tests__/factories";
-import { createMockHttp } from "$/__tests__/helpers";
+import { createMockHttp, selectData } from "$/__tests__/helpers";
 import { mockPrisma } from "$/__tests__/mocks";
+import { PUBLIC_USER_SELECT } from "$/constants";
 import { authenticate } from "$/middlewares/auth.middleware";
 import { signAccessToken } from "$/utils/jwt";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
@@ -8,11 +9,7 @@ import type { User } from "@repo/database";
 
 describe("Auth Middleware", () => {
   const mockUser = createRandomUser();
-  const mockPublicUser = {
-    id: mockUser.id,
-    email: mockUser.email,
-    name: mockUser.name,
-  };
+  const mockPublicUser = selectData(mockUser, PUBLIC_USER_SELECT);
   const mockAccessToken = signAccessToken(mockUser.id);
 
   beforeEach(() => {

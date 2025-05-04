@@ -1,5 +1,7 @@
 import { createRandomUser } from "$/__tests__/factories";
+import { selectData } from "$/__tests__/helpers";
 import { mockPrisma } from "$/__tests__/mocks";
+import { PUBLIC_USER_SELECT } from "$/constants";
 import { createServer } from "$/server";
 import { signAccessToken } from "$/utils/jwt";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
@@ -10,11 +12,7 @@ import supertest from "supertest";
 describe("User Controller", () => {
   let app: Express;
   const mockUser = createRandomUser();
-  const mockPublicUser = {
-    id: mockUser.id,
-    email: mockUser.email,
-    name: mockUser.name,
-  };
+  const mockPublicUser = selectData(mockUser, PUBLIC_USER_SELECT);
 
   beforeEach(() => {
     jest.clearAllMocks();

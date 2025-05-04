@@ -1,3 +1,4 @@
+import type { QuerySelect, QuerySelection } from "$/utils/types";
 import { jest } from "@jest/globals";
 import type { Request, Response } from "express";
 
@@ -38,6 +39,32 @@ export const createMockHttp = (
   Object.assign(res, { headersSent: false, ...overrides.res });
 
   return { req, res, next };
+};
+
+export const selectData = <
+  T extends Record<string, unknown>,
+  S extends QuerySelect<T>,
+>(
+  source: T,
+  select: S,
+) => {
+  return Object.keys(select).reduce((result, key) => {
+    const selectValue = select[key];
+    const sourceValue = source[key];
+    if (selectValue === true) {
+      // @ts-expect-error Too generic
+      result[key] = sourceValue;
+    } else if (typeof selectValue === "object" && selectValue !== null) {
+      if (Array.isArray(sourceValue)) {
+        // @ts-expect-error Too generic
+        result[key] = sourceValue.map((item) => selectData(item, selectValue));
+      } else if (sourceValue !== null && typeof sourceValue === "object") {
+        // @ts-expect-error Too generic
+        result[key] = selectData(sourceValue, selectValue);
+      }
+    }
+    return result;
+  }, {} as Partial<T>) as QuerySelection<T, S>;
 };
 
 // Custom deep mock

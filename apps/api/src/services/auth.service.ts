@@ -112,7 +112,7 @@ export const refreshAccessToken = async (refreshToken: string) => {
 
   const user = await prisma.user.findUnique({
     where: { id: decoded.userId },
-    select: { id: true },
+    select: ID_SELECT,
   });
   if (!user) {
     throw new ApiError(401, "USER_FOR_TOKEN_NOT_FOUND");
