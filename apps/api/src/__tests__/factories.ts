@@ -48,7 +48,7 @@ export const createRandomRefreshToken = (
   userId: string,
   overrides?: Partial<RefreshToken>,
 ): RefreshToken => ({
-  id: faker.string.uuid(),
+  id: faker.number.int(),
   token: faker.string.uuid(),
   userId: userId,
   expiresAt: faker.date.future(),

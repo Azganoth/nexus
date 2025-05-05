@@ -53,6 +53,9 @@ describe("Auth Controller", () => {
 
       expect(response.status).toBe(201);
       expect(response.body.data).toEqual(mockOutput);
+      expect(response.headers["set-cookie"][0]).toMatch(
+        new RegExp(`^refreshToken=${mockRefreshToken}`),
+      );
       expect(mockCreateUser).toHaveBeenCalledWith(
         mockUser.email,
         password,
@@ -123,9 +126,11 @@ describe("Auth Controller", () => {
   });
 
   describe("POST /auth/refresh", () => {
-    it("should successfully refresh the access token", async () => {
+    it("should successfully refresh tokens and set a new refresh token cookie", async () => {
+      const newRefreshToken = "this-is-a-new-valid-refresh-token";
       mockRefreshAccessToken.mockResolvedValue({
         accessToken: mockAccessToken,
+        newRefreshToken,
       });
 
       const response = await supertest(app)
@@ -136,6 +141,9 @@ describe("Auth Controller", () => {
       expect(response.body.data).toEqual({
         accessToken: mockAccessToken,
       });
+      expect(response.headers["set-cookie"][0]).toMatch(
+        new RegExp(`^refreshToken=${newRefreshToken}`),
+      );
       expect(mockRefreshAccessToken).toHaveBeenCalledWith(mockRefreshToken);
     });
 

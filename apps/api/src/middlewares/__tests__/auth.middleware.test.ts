@@ -33,7 +33,7 @@ describe("Auth Middleware", () => {
     expect(next).toHaveBeenCalledWith();
   });
 
-  it("should throw 401 ApiError if token is for a non-existent user", async () => {
+  it("should throw ApiError if token is for a non-existent user", async () => {
     const { req, res, next } = createMockHttp({
       req: {
         headers: { authorization: `Bearer ${mockAccessToken}` },
@@ -43,12 +43,12 @@ describe("Auth Middleware", () => {
 
     await expect(authenticate(req, res, next)).rejects.toThrowApiError(
       401,
-      "USER_FOR_TOKEN_NOT_FOUND",
+      "ACCESS_TOKEN_INVALID",
     );
     expect(next).not.toHaveBeenCalled();
   });
 
-  it("should throw 401 ApiError if token verification fails", async () => {
+  it("should throw ApiError if token verification fails", async () => {
     const { req, res, next } = createMockHttp({
       req: { headers: { authorization: "Bearer this-is-not-a-valid-token" } },
     });

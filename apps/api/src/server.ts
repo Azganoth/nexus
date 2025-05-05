@@ -1,13 +1,15 @@
 import { ALLOWED_ORIGINS, IS_DEV, IS_TEST } from "$/constants";
 import { error, notFound } from "$/middlewares/error.middleware";
-import { securityHeaders } from "$/middlewares/security.middleware";
+import {
+  defaultLimiter,
+  securityHeaders,
+} from "$/middlewares/security.middleware";
 import router from "$/router";
 import { json, urlencoded } from "body-parser";
 import compression from "compression";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express, { type Express } from "express";
-import rateLimit from "express-rate-limit";
 import morgan from "morgan";
 
 export const createServer = (): Express => {
@@ -18,17 +20,9 @@ export const createServer = (): Express => {
         skip: () => IS_TEST,
       }),
     )
-    .use(securityHeaders())
+    .use(securityHeaders)
     .use(cors({ origin: ALLOWED_ORIGINS, credentials: true }))
-    .use(
-      rateLimit({
-        windowMs: 5 * 60 * 1000,
-        limit: 200,
-        standardHeaders: true,
-        legacyHeaders: false,
-        skip: (req) => IS_DEV && req.ip === "::1",
-      }),
-    )
+    .use(defaultLimiter)
     .use(compression())
     .use(urlencoded({ extended: true }))
     .use(json())

@@ -83,7 +83,7 @@ describe("fetchApi", () => {
     );
   });
 
-  it("should throw an ApiError for non-successful responses", async () => {
+  it("should throw ApiError for non-successful responses", async () => {
     const failResponse = createTestFailResponse({});
     spyFetch().mockResolvedValue(failResponse);
 

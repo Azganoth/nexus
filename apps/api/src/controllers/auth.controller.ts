@@ -59,6 +59,9 @@ export const logout = async (req: Request, res: Response) => {
 
 export const refreshAccess = async (req: Request, res: Response) => {
   const refreshToken = req.cookies.refreshToken;
-  const { accessToken } = await refreshAccessToken(refreshToken);
+  const { accessToken, newRefreshToken } =
+    await refreshAccessToken(refreshToken);
+  setRefreshToken(res, newRefreshToken);
+
   res.status(200).json(composeResponse<AccessTokenPayload>({ accessToken }));
 };

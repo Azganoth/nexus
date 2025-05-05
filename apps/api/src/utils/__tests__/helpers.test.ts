@@ -28,7 +28,7 @@ describe("Helper Utils", () => {
       expect(result).toEqual(validInput);
     });
 
-    it("should throw a 422 ApiError for invalid input", async () => {
+    it("should throw ValidationError for invalid input", async () => {
       const invalidInput = { name: "", email: "not-an-email" };
 
       await expect(

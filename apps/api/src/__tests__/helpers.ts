@@ -1,5 +1,6 @@
-import type { QuerySelect, QuerySelection } from "$/utils/types";
+import type { PrismaTx, QuerySelect, QuerySelection } from "$/utils/types";
 import { jest } from "@jest/globals";
+import type { PrismaClient } from "@repo/database";
 import type { Request, Response } from "express";
 
 export const spyConsole = (
@@ -131,4 +132,15 @@ export const resetAllDeepMocks = () => {
     mockFn.mockReset();
   }
   deepMocks.length = 0;
+};
+
+export const mockTransaction = (mockPrisma: DeepMocked<PrismaClient>) => {
+  const mockPrismaTx = mockDeep<PrismaTx>();
+  mockPrisma.$transaction.mockImplementation(async (callback: unknown) => {
+    if (typeof callback === "function") {
+      return await callback(mockPrismaTx);
+    }
+  });
+
+  return mockPrismaTx;
 };

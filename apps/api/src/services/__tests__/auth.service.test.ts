@@ -2,7 +2,7 @@ import {
   createRandomRefreshToken,
   createRandomUser,
 } from "$/__tests__/factories";
-import { selectData } from "$/__tests__/helpers";
+import { mockTransaction, selectData } from "$/__tests__/helpers";
 import { mockEnv, mockPrisma } from "$/__tests__/mocks";
 import { ID_SELECT, PUBLIC_USER_SELECT } from "$/constants";
 import {
@@ -39,7 +39,7 @@ describe("Auth Service", () => {
   });
 
   describe("loginUser", () => {
-    it("should successfully log in a user and return tokens", async () => {
+    it("should successfully log in a user and issue tokens", async () => {
       mockPrisma.user.findUnique.mockResolvedValue(
         mockPublicUserWithPassword as User,
       );
@@ -102,7 +102,7 @@ describe("Auth Service", () => {
   });
 
   describe("createUser", () => {
-    it("should successfully create a new user", async () => {
+    it("should successfully create a new user and issue tokens", async () => {
       mockBcrypt.hash.mockImplementation(() =>
         Promise.resolve(mockUser.password),
       );
@@ -149,7 +149,7 @@ describe("Auth Service", () => {
       expect(refreshTokenPayload.userId).toBe(mockUser.id);
     });
 
-    it("should throw ApiError 422 if the email is already in use", async () => {
+    it("should throw ValidationError if the email is already in use", async () => {
       const mockError = new Prisma.PrismaClientKnownRequestError(
         "Restrição de unicidade no email foi violada.",
         {
@@ -174,18 +174,19 @@ describe("Auth Service", () => {
     const mockRefreshToken = signRefreshToken(mockUser.id);
 
     it("should successfully refresh an access token", async () => {
-      const storedRefreshToken = createRandomRefreshToken(mockUser.id);
-      const refreshToken = selectData(storedRefreshToken, {
-        id: true,
-        expiresAt: true,
-      });
+      const storedRefreshToken = selectData(
+        createRandomRefreshToken(mockUser.id),
+        { id: true, expiresAt: true },
+      );
 
       mockPrisma.refreshToken.findUnique.mockResolvedValue(
-        refreshToken as RefreshToken,
+        storedRefreshToken as RefreshToken,
       );
       mockPrisma.user.findUnique.mockResolvedValue(mockUserId as User);
+      const mockPrismaTx = mockTransaction(mockPrisma);
 
-      const { accessToken } = await refreshAccessToken(mockRefreshToken);
+      const { accessToken, newRefreshToken } =
+        await refreshAccessToken(mockRefreshToken);
 
       expect(mockPrisma.refreshToken.findUnique).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -197,11 +198,27 @@ describe("Auth Service", () => {
           where: { id: mockUser.id },
         }),
       );
+      expect(mockPrismaTx.refreshToken.delete).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: storedRefreshToken.id },
+        }),
+      );
+      expect(mockPrismaTx.refreshToken.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: {
+            userId: mockUser.id,
+            token: expect.any(String),
+            expiresAt: expect.any(Date),
+          },
+        }),
+      );
 
       expect(accessToken).toBeDefined();
 
       const accessTokenPayload = verifyAccessToken(accessToken);
+      const refreshTokenPayload = verifyRefreshToken(newRefreshToken);
       expect(accessTokenPayload.userId).toBe(mockUser.id);
+      expect(refreshTokenPayload.userId).toBe(mockUser.id);
     });
 
     it("should throw ApiError if no refresh token is provided", async () => {
@@ -209,6 +226,59 @@ describe("Auth Service", () => {
         401,
         "REFRESH_TOKEN_MISSING",
       );
+    });
+
+    it("should throw ApiError if the refresh token is invalid", async () => {
+      const invalidRefreshToken = "this-is-not-a-valid-token";
+      mockPrisma.refreshToken.findUnique.mockResolvedValue(null);
+
+      await expect(
+        refreshAccessToken(invalidRefreshToken),
+      ).rejects.toThrowApiError(401, "REFRESH_TOKEN_INVALID");
+    });
+
+    it("should throw ApiError if the refresh token is expired", async () => {
+      const expiredRefreshToken = jwt.sign(
+        { userId: mockUser.id },
+        mockEnv.JWT_REFRESH_SECRET,
+        {
+          expiresIn: "-1s",
+        },
+      );
+      mockPrisma.refreshToken.findUnique.mockResolvedValue(null);
+
+      await expect(
+        refreshAccessToken(expiredRefreshToken),
+      ).rejects.toThrowApiError(401, "REFRESH_TOKEN_INVALID");
+    });
+
+    it("should throw ApiError if the refresh token is not found in the database", async () => {
+      mockPrisma.refreshToken.findUnique.mockResolvedValue(null);
+      await expect(
+        refreshAccessToken(mockRefreshToken),
+      ).rejects.toThrowApiError(401, "REFRESH_TOKEN_INVALID");
+      expect(mockPrisma.refreshToken.deleteMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { userId: mockUser.id },
+        }),
+      );
+    });
+
+    it("should throw ApiError if the refresh token is expired in the database", async () => {
+      const storedRefreshToken = createRandomRefreshToken(mockUser.id, {
+        expiresAt: new Date(Date.now() - 1000),
+      });
+      const refreshToken = selectData(storedRefreshToken, {
+        id: true,
+        expiresAt: true,
+      });
+      mockPrisma.refreshToken.findUnique.mockResolvedValue(
+        refreshToken as RefreshToken,
+      );
+
+      await expect(
+        refreshAccessToken(mockRefreshToken),
+      ).rejects.toThrowApiError(401, "REFRESH_TOKEN_EXPIRED");
     });
 
     it("should throw ApiError if user associated with token no longer exists", async () => {
@@ -225,60 +295,8 @@ describe("Auth Service", () => {
 
       await expect(
         refreshAccessToken(mockRefreshToken),
-      ).rejects.toThrowApiError(401, "USER_FOR_TOKEN_NOT_FOUND");
+      ).rejects.toThrowApiError(401, "REFRESH_TOKEN_INVALID");
     });
-
-    const invalidTokenScenarios = [
-      {
-        scenario: "token is invalid",
-        setup: () => "this-is-not-a-valid-token",
-      },
-      {
-        scenario: "token is expired",
-        setup: () =>
-          jwt.sign({ userId: mockUser.id }, mockEnv.JWT_REFRESH_SECRET, {
-            expiresIn: "-1s",
-          }),
-      },
-      {
-        scenario: "token is not found in the database",
-        setup: () => {
-          mockPrisma.refreshToken.findUnique.mockResolvedValue(null);
-          return "this-is-a-valid-token";
-        },
-      },
-      {
-        scenario: "token is expired in the database",
-        setup: () => {
-          const storedRefreshToken = createRandomRefreshToken(mockUser.id, {
-            expiresAt: new Date(Date.now() - 1000),
-          });
-          const refreshToken = selectData(storedRefreshToken, {
-            id: true,
-            expiresAt: true,
-          });
-          mockPrisma.refreshToken.findUnique.mockResolvedValue(
-            refreshToken as RefreshToken,
-          );
-
-          return "this-is-a-valid-token";
-        },
-      },
-    ];
-
-    describe.each(invalidTokenScenarios)(
-      "when refresh token is invalid or expired",
-      ({ scenario, setup }) => {
-        it(`should throw ApiError if ${scenario}`, async () => {
-          const token = setup();
-
-          await expect(refreshAccessToken(token)).rejects.toThrowApiError(
-            401,
-            "REFRESH_TOKEN_INVALID",
-          );
-        });
-      },
-    );
   });
 
   describe("logoutUser", () => {

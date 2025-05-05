@@ -9,14 +9,15 @@ import {
   signRefreshToken,
   verifyRefreshToken,
 } from "$/utils/jwt";
+import type { PrismaTx } from "$/utils/types";
 import { Prisma, prisma } from "@repo/database";
 import bcrypt from "bcrypt";
 
-const createTokens = async (userId: string) => {
+const createTokens = async (userId: string, client: PrismaTx = prisma) => {
   const accessToken = signAccessToken(userId);
   const refreshToken = signRefreshToken(userId);
 
-  await prisma.refreshToken.create({
+  await client.refreshToken.create({
     data: {
       token: refreshToken,
       userId: userId,
@@ -91,36 +92,50 @@ export const refreshAccessToken = async (refreshToken: string) => {
   let decoded;
   try {
     decoded = verifyRefreshToken(refreshToken);
-  } catch {
+  } catch (err) {
+    console.log(err);
     throw new ApiError(401, "REFRESH_TOKEN_INVALID");
   }
+  const { userId } = decoded;
 
   const storedToken = await prisma.refreshToken.findUnique({
     where: { token: refreshToken },
     select: { id: true, expiresAt: true },
   });
 
-  if (!storedToken || storedToken.expiresAt < new Date()) {
-    if (storedToken) {
-      await prisma.refreshToken.delete({
-        where: { id: storedToken.id },
-        select: ID_SELECT,
-      });
-    }
+  if (!storedToken) {
+    // It might have been stolen or used, as a precaution all refresh tokens
+    // from the user will be deleted. Effectively logging out from all devices.
+    await prisma.refreshToken.deleteMany({
+      where: { userId },
+    });
     throw new ApiError(401, "REFRESH_TOKEN_INVALID");
   }
 
+  if (storedToken.expiresAt < new Date()) {
+    await prisma.refreshToken.delete({
+      where: { id: storedToken.id },
+      select: ID_SELECT,
+    });
+    throw new ApiError(401, "REFRESH_TOKEN_EXPIRED");
+  }
+
   const user = await prisma.user.findUnique({
-    where: { id: decoded.userId },
+    where: { id: userId },
     select: ID_SELECT,
   });
   if (!user) {
-    throw new ApiError(401, "USER_FOR_TOKEN_NOT_FOUND");
+    throw new ApiError(401, "REFRESH_TOKEN_INVALID");
   }
 
-  const accessToken = signAccessToken(user.id);
+  // Enforce single use refresh token
+  const { accessToken, refreshToken: newRefreshToken } =
+    await prisma.$transaction(async (tx) => {
+      tx.refreshToken.delete({ where: { id: storedToken.id } });
+      return createTokens(userId, tx);
+    });
 
-  return { accessToken };
+  return { accessToken, newRefreshToken };
 };
 
 export const logoutUser = async (refreshToken: string) => {

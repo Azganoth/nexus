@@ -7,12 +7,13 @@ export const ERRORS = {
   NOT_LOGGED_IN: "Usuário não está logado.",
   INCORRECT_CREDENTIALS: "Email e/ou senha incorretos.",
   ACCESS_TOKEN_INVALID: "Token de acesso inválido ou revogado.",
-  REFRESH_TOKEN_MISSING: "Token de atualização não fornecido.",
-  REFRESH_TOKEN_INVALID: "Token de atualização inválido ou expirado.",
-  USER_FOR_TOKEN_NOT_FOUND: "O usuário associado a este token não existe mais.",
+  REFRESH_TOKEN_MISSING: "Token de atualização ausente.",
+  REFRESH_TOKEN_INVALID: "Token de atualização inválido.",
+  REFRESH_TOKEN_EXPIRED: "Token de atualização expirado.",
 
   // Routing Errors
   NOT_FOUND: "O recurso solicitado não foi encontrado.",
+  TOO_MANY_REQUESTS: "Limite de solicitações excedido.",
 
   // Server Errors
   SERVER_UNKNOWN_ERROR: "Ocorreu um erro inesperado.",

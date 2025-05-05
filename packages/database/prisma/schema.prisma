@@ -55,10 +55,12 @@ model Link {
 }
 
 model RefreshToken {
-  id        String   @id @default(uuid())
+  id        Int      @id @default(autoincrement())
   token     String   @unique
   userId    String   @map("user_id")
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   expiresAt DateTime @map("expires_at")
   createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("refresh_tokens")
 }

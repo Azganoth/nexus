@@ -1,3 +1,5 @@
+import type { PrismaClient } from "@repo/database";
+
 export type QuerySelect<T> = {
   [P in keyof T]?: T[P] extends (infer U)[] // Is the property an array?
     ? QuerySelect<U> | true
@@ -26,3 +28,8 @@ export type QuerySelection<T, S extends QuerySelect<T>> = {
           : never
         : never;
 };
+
+export type PrismaTx = Omit<
+  PrismaClient,
+  "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends"
+>;

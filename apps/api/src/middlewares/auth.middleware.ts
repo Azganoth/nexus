@@ -27,7 +27,7 @@ export const authenticate = async (
     select: PUBLIC_USER_SELECT,
   });
   if (!user) {
-    throw new ApiError(401, "USER_FOR_TOKEN_NOT_FOUND");
+    throw new ApiError(401, "ACCESS_TOKEN_INVALID");
   }
 
   req.user = user;
