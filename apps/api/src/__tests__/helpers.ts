@@ -138,7 +138,11 @@ export const mockTransaction = (mockPrisma: DeepMocked<PrismaClient>) => {
   const mockPrismaTx = mockDeep<PrismaTx>();
   mockPrisma.$transaction.mockImplementation(async (callback: unknown) => {
     if (typeof callback === "function") {
-      return await callback(mockPrismaTx);
+      return callback(mockPrismaTx);
+    }
+
+    if (Array.isArray(callback)) {
+      return Promise.all(callback);
     }
   });
 
