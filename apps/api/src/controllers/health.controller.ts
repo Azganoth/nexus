@@ -11,6 +11,6 @@ export const dbHealth = async (_: Request, res: Response) => {
     await prisma.$queryRaw(Prisma.sql`SELECT 1`);
     res.status(204).end();
   } catch {
-    throw new ApiError(503, "SERVER_DB_UNHEALTHY");
+    throw new ApiError(503, "SERVER_UNAVAILABLE");
   }
 };

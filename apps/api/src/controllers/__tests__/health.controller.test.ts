@@ -39,8 +39,8 @@ describe("Health Check Controller", () => {
 
       expect(response.status).toBe(503);
       expect(response.body.status).toBe("error");
-      expect(response.body.code).toBe("SERVER_DB_UNHEALTHY");
-      expect(response.body.message).toBe(ERRORS.SERVER_DB_UNHEALTHY);
+      expect(response.body.code).toBe("SERVER_UNAVAILABLE");
+      expect(response.body.message).toBe(ERRORS.SERVER_UNAVAILABLE);
     });
   });
 });
