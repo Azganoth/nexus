@@ -3,6 +3,18 @@ import { expect } from "@jest/globals";
 import type { ErrorCode } from "@repo/shared/constants";
 import type { MatcherFunction } from "expect";
 
+const execute = (received: unknown) => {
+  try {
+    if (typeof received === "function") {
+      received();
+    } else {
+      return received;
+    }
+  } catch (e) {
+    return e;
+  }
+};
+
 export const toThrowApiError: MatcherFunction<
   [
     expectedStatusCode: number,
@@ -16,6 +28,17 @@ export const toThrowApiError: MatcherFunction<
   expectedMessage,
 ) {
   const { printReceived, printExpected, matcherHint } = this.utils;
+
+  received = execute(received);
+  if (!received) {
+    return {
+      pass: false,
+      message: () =>
+        `${matcherHint(".toThrowApiError")}
+
+Expected the function to throw an instance of ApiError, but it did not throw.`,
+    };
+  }
 
   if (!(received instanceof ApiError)) {
     return {
@@ -60,10 +83,8 @@ Received error code: ${printReceived(received.code)}`,
         message: () =>
           `matcherHint(".toThrowApiError")}
 
-Expected error message:
-  ${printExpected(expectedMessage)}
-Received error message:
-  ${printReceived(received.message)}`,
+Expected error message:  ${printExpected(expectedMessage)}
+Received error message:  ${printReceived(received.message)}`,
       };
     }
   }
@@ -82,6 +103,17 @@ export const toThrowValidationError: MatcherFunction<
 > = async function (received, expectedData) {
   const { printReceived, printExpected, matcherHint } = this.utils;
 
+  received = execute(received);
+  if (!received) {
+    return {
+      pass: false,
+      message: () =>
+        `${matcherHint(".toThrowValidationError")}
+
+Expected the function to throw an instance of ValidationError, but it did not throw.`,
+    };
+  }
+
   if (!(received instanceof ValidationError)) {
     return {
       pass: false,
@@ -98,10 +130,12 @@ Expected the function to throw an instance of ValidationError, but it threw:
       return {
         pass: false,
         message: () =>
-          `${matcherHint(".toThrowHttpError")}
+          `${matcherHint(".toThrowValidationError")}
 
-Expected error data:\n  ${printExpected(expectedData)}
-Received error data:\n  ${printReceived(received.data)}`,
+Expected error data:
+  ${printExpected(expectedData)}
+Received error data:
+  ${printReceived(received.data)}`,
       };
     }
   }
