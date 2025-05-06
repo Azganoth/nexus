@@ -33,8 +33,11 @@ export interface AuthPayload extends AccessTokenPayload {
 }
 
 // Models
+export type UserRole = "USER" | "ADMIN";
+
 export interface PublicUser {
   id: string;
   email: string;
   name: string;
+  role: UserRole;
 }

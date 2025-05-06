@@ -19,4 +19,5 @@ export const PUBLIC_USER_SELECT = {
   id: true,
   email: true,
   name: true,
+  role: true,
 } satisfies StrictQuerySelect<PublicUser>;

@@ -7,6 +7,7 @@ export const createTestPublicUser = (
   id: "dc8d7c75-b500-4500-bb21-b0cc2a4ead41",
   email: "test@example.com",
   name: "Test Example",
+  role: "USER",
   ...overrides,
 });
 

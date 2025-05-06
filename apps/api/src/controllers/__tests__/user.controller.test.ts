@@ -28,7 +28,7 @@ describe("User Controller", () => {
     });
 
     it("should return the current user's data if the token is valid", async () => {
-      const token = signAccessToken(mockUser.id);
+      const token = signAccessToken(mockUser.id, mockUser.role);
       mockPrisma.user.findUnique.mockResolvedValue(mockPublicUser as User);
 
       const response = await supertest(app)

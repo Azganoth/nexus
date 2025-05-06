@@ -6,6 +6,7 @@ export const createRandomUser = (overrides?: Partial<User>): User => ({
   email: faker.internet.email(),
   password: faker.internet.password(),
   name: faker.person.fullName(),
+  role: "USER",
   createdAt: faker.date.past(),
   updatedAt: faker.date.recent(),
   ...overrides,

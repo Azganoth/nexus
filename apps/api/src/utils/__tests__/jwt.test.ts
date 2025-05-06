@@ -1,3 +1,4 @@
+import { createRandomUser } from "$/__tests__/factories";
 import {
   signAccessToken,
   signRefreshToken,
@@ -7,18 +8,18 @@ import {
 import { describe, expect, it } from "@jest/globals";
 
 describe("JWT Utils", () => {
-  const MOCK_USER_ID = "test-user-id";
+  const mockUser = createRandomUser();
 
   describe("Access Token", () => {
     it("should perform a successful sign and verify roundtrip", () => {
-      const token = signAccessToken(MOCK_USER_ID);
+      const token = signAccessToken(mockUser.id, mockUser.role);
       const decoded = verifyAccessToken(token);
 
-      expect(decoded.userId).toBe(MOCK_USER_ID);
+      expect(decoded.userId).toBe(mockUser.id);
     });
 
     it("should throw an error for an invalid signature", () => {
-      const token = signAccessToken(MOCK_USER_ID);
+      const token = signAccessToken(mockUser.id, mockUser.role);
       const tamperedToken = token.slice(0, -1) + "X";
 
       expect(() => verifyAccessToken(tamperedToken)).toThrow(
@@ -29,14 +30,14 @@ describe("JWT Utils", () => {
 
   describe("Refresh Token", () => {
     it("should perform a successful sign and verify roundtrip", () => {
-      const token = signRefreshToken(MOCK_USER_ID);
+      const token = signRefreshToken(mockUser.id);
       const decoded = verifyRefreshToken(token);
 
-      expect(decoded.userId).toBe(MOCK_USER_ID);
+      expect(decoded.userId).toBe(mockUser.id);
     });
 
     it("should throw an error for an invalid signature", () => {
-      const token = signRefreshToken(MOCK_USER_ID);
+      const token = signRefreshToken(mockUser.id);
       const tamperedToken = token.slice(0, -1) + "Y";
 
       expect(() => verifyRefreshToken(tamperedToken)).toThrow(

@@ -11,10 +11,15 @@ import {
 } from "$/utils/jwt";
 import type { PrismaTx } from "$/utils/types";
 import { Prisma, prisma } from "@repo/database";
+import type { UserRole } from "@repo/shared/contracts";
 import bcrypt from "bcrypt";
 
-const createTokens = async (userId: string, client: PrismaTx = prisma) => {
-  const accessToken = signAccessToken(userId);
+const createTokens = async (
+  userId: string,
+  userRole: UserRole,
+  client: PrismaTx = prisma,
+) => {
+  const accessToken = signAccessToken(userId, userRole);
   const refreshToken = signRefreshToken(userId);
 
   await client.refreshToken.create({
@@ -39,9 +44,11 @@ export const loginUser = async (email: string, password: string) => {
     throw new ApiError(401, "INCORRECT_CREDENTIALS");
   }
 
+  const { accessToken, refreshToken } = await createTokens(user.id, user.role);
   return {
-    ...(await createTokens(user.id)),
-    user: { id: user.id, email: user.email, name: user.name },
+    accessToken,
+    refreshToken,
+    user: { id: user.id, email: user.email, name: user.name, role: user.role },
   };
 };
 
@@ -70,7 +77,11 @@ export const createUser = async (
       select: PUBLIC_USER_SELECT,
     });
 
-    return { ...(await createTokens(user.id)), user };
+    const { accessToken, refreshToken } = await createTokens(
+      user.id,
+      user.role,
+    );
+    return { accessToken, refreshToken, user };
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === "P2002") {
@@ -122,7 +133,7 @@ export const refreshAccessToken = async (refreshToken: string) => {
 
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: ID_SELECT,
+    select: { id: true, role: true },
   });
   if (!user) {
     throw new ApiError(401, "REFRESH_TOKEN_INVALID");
@@ -132,7 +143,7 @@ export const refreshAccessToken = async (refreshToken: string) => {
   const { accessToken, refreshToken: newRefreshToken } =
     await prisma.$transaction(async (tx) => {
       tx.refreshToken.delete({ where: { id: storedToken.id } });
-      return createTokens(userId, tx);
+      return createTokens(user.id, user.role, tx);
     });
 
   return { accessToken, newRefreshToken };
