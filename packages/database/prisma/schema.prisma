@@ -29,10 +29,10 @@ model User {
 }
 
 model Profile {
-  id             Int      @id @default(autoincrement())
+  id             String   @id @default(uuid())
   userId         String   @unique @map("user_id")
   user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  username       String   @db.VarChar(40)
+  username       String   @unique @db.VarChar(40)
   displayName    String   @map("display_name") @db.VarChar(60)
   avatarUrl      String   @map("avatar_url")
   bio            String?  @db.VarChar(255)
@@ -48,7 +48,7 @@ model Profile {
 
 model Link {
   id           Int      @id @default(autoincrement())
-  profileId    Int      @map("profile_id")
+  profileId    String   @map("profile_id")
   profile      Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
   title        String   @db.VarChar(60)
   url          String
@@ -73,7 +73,7 @@ model RefreshToken {
 }
 
 model PasswordResetToken {
-  id        String   @id @default(uuid())
+  id        Int      @id @default(autoincrement())
   token     String   @unique
   userId    String   @unique @map("user_id")
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)

@@ -22,7 +22,7 @@ export const createRandomProfile = (
   userId: string,
   overrides?: Partial<Profile>,
 ): Profile => ({
-  id: faker.number.int(),
+  id: faker.string.uuid(),
   userId: userId,
   username: faker.internet.username(),
   displayName: faker.person.fullName(),
@@ -37,7 +37,7 @@ export const createRandomProfile = (
 });
 
 export const createRandomLink = (
-  profileId: number,
+  profileId: string,
   overrides?: Partial<Link>,
 ): Link => ({
   id: faker.number.int(),
@@ -67,7 +67,7 @@ export const createRandomPasswordResetToken = (
   userId: string,
   overrides?: Partial<PasswordResetToken>,
 ): PasswordResetToken => ({
-  id: faker.string.uuid(),
+  id: faker.number.int(),
   token: faker.string.hexadecimal({ length: 64, prefix: "" }),
   userId: userId,
   expiresAt: faker.date.future({ years: 0.01 }),
