@@ -1,4 +1,4 @@
-import { HttpError } from "$/lib/errors";
+import { ApiError, ValidationError } from "$/lib/errors";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ERRORS, type ErrorCode } from "@repo/shared/constants";
 import {
@@ -40,27 +40,24 @@ export function useApiForm<Data extends FieldValues, Output>({
       const response = await mutationFn(data);
       onSuccess?.(response);
     } catch (error) {
-      if (error instanceof HttpError) {
-        const { payload } = error;
-        if (payload.status === "fail") {
-          Object.entries(payload.data).forEach(([field, messages]) => {
-            if (messages && messages.length > 0) {
-              setError(field as Path<Data>, {
-                type: "server",
-                message: messages[0], // Show only one error at a time for now
-              });
-            }
-          });
-          return;
-        }
+      if (error instanceof ValidationError) {
+        Object.entries(error.data).forEach(([field, messages]) => {
+          if (messages && messages.length > 0) {
+            setError(field as Path<Data>, {
+              type: "server",
+              message: messages[0], // Show only one error at a time for now
+            });
+          }
+        });
+        return;
+      }
 
-        if (expectedErrors?.includes(payload.code)) {
-          setError("root", {
-            type: "server",
-            message: payload.message,
-          });
-          return;
-        }
+      if (error instanceof ApiError && expectedErrors?.includes(error.code)) {
+        setError("root", {
+          type: "server",
+          message: error.message,
+        });
+        return;
       }
 
       setError("root", {

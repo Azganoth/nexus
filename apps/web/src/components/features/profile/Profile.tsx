@@ -1,13 +1,13 @@
-import { CustomLink } from "$/components/CustomLink";
+import { Link } from "$/components/ui/Link";
 import profileAvatar from "$/images/Profile.webp";
 import type { Profile } from "$/lib/api";
 import Image from "next/image";
 
-export interface ProfileProps {
+interface Props {
   profile: Profile;
 }
 
-export function Profile({ profile }: ProfileProps) {
+export function Profile({ profile }: Props) {
   return (
     <section className="flex max-w-[400px] flex-col items-center">
       <Image
@@ -26,14 +26,14 @@ export function Profile({ profile }: ProfileProps) {
       <ul className="mt-12 flex w-full flex-col gap-5">
         {profile.links.map((link) => (
           <li key={link.url}>
-            <CustomLink
+            <Link
               className="rounded-4xl focus:outline-purple block bg-black px-16 py-4 text-center font-bold tracking-wide text-white hover:bg-black/90 focus:outline-2"
               href={link.url}
               variant="unstyled"
               newTab
             >
               {link.title}
-            </CustomLink>
+            </Link>
           </li>
         ))}
       </ul>

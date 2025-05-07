@@ -1,4 +1,4 @@
-import { ErrorHint } from "$/components/ErrorHint";
+import { ErrorHint } from "$/components/ui/ErrorHint";
 import { describe, expect, it } from "@jest/globals";
 import { render, screen } from "@testing-library/react";
 

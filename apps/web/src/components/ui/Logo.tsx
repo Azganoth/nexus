@@ -1,16 +1,16 @@
-import { CustomLink } from "$/components/CustomLink";
+import { Link } from "$/components/ui/Link";
 import logo from "$/images/Logo.png";
 import logoWithName from "$/images/LogoWithName.png";
 import Image from "next/image";
 
-export interface LogoProps {
+interface Props {
   className?: string;
   variant: "icon-only" | "icon-and-name";
 }
 
-export function Logo({ className, variant }: LogoProps) {
+export function Logo({ className, variant }: Props) {
   return (
-    <CustomLink className={className} href="/" variant="unstyled">
+    <Link className={className} href="/" variant="unstyled">
       {variant === "icon-only" ? (
         <Image
           src={logo}
@@ -22,6 +22,6 @@ export function Logo({ className, variant }: LogoProps) {
           alt="Nexus logo: a purple hexagon with black lines converging into its center"
         />
       )}
-    </CustomLink>
+    </Link>
   );
 }

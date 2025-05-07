@@ -5,8 +5,8 @@ import type { ReactNode } from "react";
 import { toast as sonnerToast } from "sonner";
 
 export const toast = (
-  message: ToastProps["message"],
-  options: { duration?: number } & Omit<ToastProps, "id" | "message"> = {},
+  message: Props["message"],
+  options: { duration?: number } & Omit<Props, "id" | "message"> = {},
 ) => {
   const { duration, ...props } = options;
   sonnerToast.custom((id) => <Toast id={id} message={message} {...props} />, {
@@ -14,13 +14,13 @@ export const toast = (
   });
 };
 
-interface ToastProps {
+interface Props {
   id: string | number;
   message: ReactNode;
   variant?: "success" | "warning" | "error";
 }
 
-function Toast({ id, message, variant }: ToastProps) {
+function Toast({ id, message, variant }: Props) {
   const dismiss = () => {
     sonnerToast.dismiss(id);
   };

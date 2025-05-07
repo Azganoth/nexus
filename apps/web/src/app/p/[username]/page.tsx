@@ -1,6 +1,6 @@
-import { CustomLink } from "$/components/CustomLink";
-import { Logo } from "$/components/Logo";
-import { Profile } from "$/components/Profile";
+import { Profile } from "$/components/features/profile/Profile";
+import { Link } from "$/components/ui/Link";
+import { Logo } from "$/components/ui/Logo";
 import { getProfile } from "$/lib/api";
 import { notFound } from "next/navigation";
 
@@ -34,9 +34,9 @@ export default async function Page({
                 </div>
               </div>
               <h1 className="text-center font-bold">Este perfil é privado.</h1>
-              <CustomLink className="mt-4 font-bold" href="/">
+              <Link className="mt-4 font-bold" href="/">
                 Voltar a página inicial
-              </CustomLink>
+              </Link>
             </main>
           </div>
         );

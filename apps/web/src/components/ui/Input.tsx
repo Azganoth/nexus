@@ -1,6 +1,6 @@
 "use client";
 
-import { ErrorHint } from "$/components/ErrorHint";
+import { ErrorHint } from "$/components/ui/ErrorHint";
 import clsx from "clsx";
 import {
   forwardRef,
@@ -11,13 +11,13 @@ import {
   type InputHTMLAttributes,
 } from "react";
 
-interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+interface Props extends InputHTMLAttributes<HTMLInputElement> {
   id: string;
   label?: string;
   error?: string;
 }
 
-export const Input = forwardRef<HTMLInputElement, InputProps>(
+export const Input = forwardRef<HTMLInputElement, Props>(
   ({ id, className, label, error, onChange, ...props }, ref) => {
     const internalRef = useRef<HTMLInputElement | null>(null);
 

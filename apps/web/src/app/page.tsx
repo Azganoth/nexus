@@ -1,35 +1,35 @@
-import { CustomLink } from "$/components/CustomLink";
-import { Logo } from "$/components/Logo";
+import { Link } from "$/components/ui/Link";
+import { Logo } from "$/components/ui/Logo";
 import profile1 from "$/images/Profile1.png";
 import Image from "next/image";
 
 export default function Page() {
   return (
-    <div className="tablet:p-12 tablet:pb-44 flex flex-col items-center p-8 pb-32">
-      <header className="mb-16">
+    <div className="view tablet:pb-44 pb-32">
+      <header>
         <Logo variant="icon-and-name" />
       </header>
-      <main className="max-tablet:flex-col tablet:gap-8 desktop:w-full desktop:justify-around flex gap-16">
+      <main className="max-tablet:flex-col tablet:gap-8 desktop:w-full desktop:justify-around mt-16 flex gap-16">
         <article className="desktop:max-w-[550px] flex flex-col gap-16">
           <h1 className="text-center text-3xl font-light">
             Seu universo,
             <br /> em um só lugar.
           </h1>
           <div className="tablet:order-last flex gap-4 self-center">
-            <CustomLink
+            <Link
               className="btn bg-purple text-white"
               variant="unstyled"
               href="/signup"
             >
               Cadastrar
-            </CustomLink>
-            <CustomLink
+            </Link>
+            <Link
               className="btn bg-black text-white"
               variant="unstyled"
               href="/login"
             >
               Logar
-            </CustomLink>
+            </Link>
           </div>
           <ul className="flex flex-col gap-6">
             <li>

@@ -1,18 +1,17 @@
 import clsx from "clsx";
 import type { ButtonHTMLAttributes } from "react";
 
-export interface PromiseButtonProps
-  extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
   isPending?: boolean;
 }
 
-export function PromiseButton({
+export function LoadingButton({
   className,
   children,
   disabled,
   isPending,
   ...props
-}: PromiseButtonProps) {
+}: Props) {
   return (
     <button
       className={clsx("btn", className)}

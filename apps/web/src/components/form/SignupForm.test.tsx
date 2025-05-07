@@ -1,8 +1,8 @@
 import { spyConsole } from "$/__tests__/helpers";
-import { SignupForm } from "$/components/SignupForm";
+import { SignupForm } from "$/components/form/SignupForm";
 import { useAuth, type AuthContextType } from "$/contexts/AuthContext";
 import { fetchApi } from "$/lib/api";
-import { HttpError } from "$/lib/errors";
+import { ApiError, ValidationError } from "$/lib/errors";
 import {
   afterEach,
   beforeEach,
@@ -140,10 +140,7 @@ describe("SignupForm", () => {
       const user = userEvent.setup();
 
       mockFetchApi.mockRejectedValue(
-        new HttpError({
-          status: "fail",
-          data: { email: ["O email já está em uso."] },
-        }),
+        new ValidationError({ email: ["O email já está em uso."] }),
       );
       render(<SignupForm />);
 
@@ -164,11 +161,10 @@ describe("SignupForm", () => {
     it("should display a generic unexpected error for an unhandled API failure", async () => {
       const user = userEvent.setup();
 
-      const unknownError = new HttpError({
-        status: "error",
-        code: "SERVER_UNKNOWN_ERROR",
-        message: ERRORS.SERVER_UNKNOWN_ERROR,
-      });
+      const unknownError = new ApiError(
+        "SERVER_UNKNOWN_ERROR",
+        ERRORS.SERVER_UNKNOWN_ERROR,
+      );
       mockFetchApi.mockRejectedValue(unknownError);
       spyConsole("error", [unknownError]);
       render(<SignupForm />);

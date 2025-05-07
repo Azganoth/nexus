@@ -1,26 +1,26 @@
 import clsx from "clsx";
-import Link, { type LinkProps } from "next/link";
+import NextLink, { type LinkProps } from "next/link";
 import type { AnchorHTMLAttributes, ReactNode } from "react";
 
 type AnchorProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "href"> &
   LinkProps;
 
-export interface CustomLinkProps extends AnchorProps {
+interface Props extends AnchorProps {
   children: ReactNode;
   newTab?: boolean;
   variant?: "default" | "unstyled";
 }
 
-export function CustomLink({
+export function Link({
   className,
   children,
   href,
   newTab,
   variant = "default",
   ...other
-}: CustomLinkProps) {
+}: Props) {
   return (
-    <Link
+    <NextLink
       href={href}
       rel={newTab ? "noreferrer" : undefined}
       target={newTab ? "_blank" : undefined}
@@ -31,6 +31,6 @@ export function CustomLink({
       {...other}
     >
       {children}
-    </Link>
+    </NextLink>
   );
 }

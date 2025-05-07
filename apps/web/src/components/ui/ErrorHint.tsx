@@ -1,12 +1,12 @@
 import clsx from "clsx";
 
-export interface ErrorHintProps {
+interface Props {
   id?: string;
   className?: string;
   message?: string;
 }
 
-export function ErrorHint({ id, className, message }: ErrorHintProps) {
+export function ErrorHint({ id, className, message }: Props) {
   return (
     <div
       className={clsx(

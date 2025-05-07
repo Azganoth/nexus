@@ -2,4 +2,8 @@
   .btn {
     @apply rounded-full px-6 py-4 font-bold tracking-wide;
   }
+
+  .view {
+    @apply tablet:p-12 flex min-h-dvh flex-col items-center p-8;
+  }
 }

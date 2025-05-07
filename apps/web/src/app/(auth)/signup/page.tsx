@@ -1,5 +1,5 @@
-import { CustomLink } from "$/components/CustomLink";
-import { SignupForm } from "$/components/SignupForm";
+import { SignupForm } from "$/components/form/SignupForm";
+import { Link } from "$/components/ui/Link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -17,7 +17,7 @@ export default function Page() {
       <SignupForm />
       <div className="mt-8 flex flex-col items-center gap-4">
         <span className="text-medium-grey mt-8 text-sm font-bold">
-          Já tem uma conta? <CustomLink href="/login">Faça login!</CustomLink>
+          Já tem uma conta? <Link href="/login">Faça login!</Link>
         </span>
       </div>
     </main>

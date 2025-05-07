@@ -1,8 +1,8 @@
 import { spyConsole } from "$/__tests__/helpers";
-import { LoginForm } from "$/components/LoginForm";
+import { LoginForm } from "$/components/form/LoginForm";
 import { useAuth, type AuthContextType } from "$/contexts/AuthContext";
 import { fetchApi } from "$/lib/api";
-import { HttpError } from "$/lib/errors";
+import { ApiError } from "$/lib/errors";
 import {
   afterEach,
   beforeEach,
@@ -121,11 +121,7 @@ describe("LoginForm", () => {
 
       const errorMessage = ERRORS["INCORRECT_CREDENTIALS"];
       mockFetchApi.mockRejectedValue(
-        new HttpError({
-          status: "error",
-          code: "INCORRECT_CREDENTIALS",
-          message: errorMessage,
-        }),
+        new ApiError("INCORRECT_CREDENTIALS", errorMessage),
       );
       render(<LoginForm />);
 
@@ -140,11 +136,10 @@ describe("LoginForm", () => {
       const user = userEvent.setup();
 
       const expectedMessage = `${ERRORS.UNEXPECTED_ERROR} Tente novamente.`;
-      const unknownError = new HttpError({
-        status: "error",
-        code: "SERVER_UNKNOWN_ERROR",
-        message: ERRORS.SERVER_UNKNOWN_ERROR,
-      });
+      const unknownError = new ApiError(
+        "SERVER_UNKNOWN_ERROR",
+        ERRORS.SERVER_UNKNOWN_ERROR,
+      );
       mockFetchApi.mockRejectedValue(unknownError);
       spyConsole("error", [unknownError]);
       render(<LoginForm />);

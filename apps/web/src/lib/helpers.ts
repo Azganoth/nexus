@@ -8,3 +8,11 @@ export const unknownError = (error: unknown) => {
     duration: 5000,
   });
 };
+
+export const delayFor = async (ms: number) =>
+  new Promise((res) => {
+    setTimeout(res, ms);
+  });
+
+export const hangFor = async <T>(target: Promise<T>, ms: number) =>
+  (await Promise.all([target, delayFor(ms)]))[0];

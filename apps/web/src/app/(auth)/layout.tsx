@@ -1,4 +1,4 @@
-import { Logo } from "$/components/Logo";
+import { Logo } from "$/components/ui/Logo";
 import "$/styles/globals.css";
 
 export default function Layout({
@@ -7,8 +7,10 @@ export default function Layout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="tablet:p-12 flex flex-col items-center p-8">
-      <Logo variant="icon-and-name" />
+    <div className="view">
+      <header>
+        <Logo variant="icon-and-name" />
+      </header>
       {children}
     </div>
   );

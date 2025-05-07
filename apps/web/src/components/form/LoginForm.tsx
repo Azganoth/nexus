@@ -1,8 +1,8 @@
 "use client";
 
-import { ErrorHint } from "$/components/ErrorHint";
-import { Input } from "$/components/Input";
-import { PromiseButton } from "$/components/PromiseButton";
+import { ErrorHint } from "$/components/ui/ErrorHint";
+import { Input } from "$/components/ui/Input";
+import { LoadingButton } from "$/components/ui/LoadingButton";
 import { useAuth } from "$/contexts/AuthContext";
 import { useApiForm } from "$/hooks/useApiForm";
 import { fetchApi } from "$/lib/api";
@@ -56,13 +56,13 @@ export function LoginForm() {
         />
       </div>
       <ErrorHint className="mt-6 text-center" message={errors.root?.message} />
-      <PromiseButton
+      <LoadingButton
         className="bg-purple mt-2 w-full min-w-56 text-white"
         type="submit"
         isPending={isSubmitting}
       >
         Entrar
-      </PromiseButton>
+      </LoadingButton>
     </form>
   );
 }

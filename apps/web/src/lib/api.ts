@@ -1,5 +1,5 @@
 import { API_URL } from "$/lib/constants";
-import { HttpError } from "$/lib/errors";
+import { ApiError, ValidationError } from "$/lib/errors";
 import { getAccessToken, storeAccessToken } from "$/lib/token";
 import type { AccessTokenPayload, ApiResponse } from "@repo/shared/contracts";
 
@@ -27,18 +27,25 @@ export async function fetchApi<T>(
         credentials: "include",
       });
 
+      if (response.status === 204) {
+        return undefined as T;
+      }
+
       const body: ApiResponse<T> = await response.json();
 
       if (body.status === "success") {
         return body.data;
       }
 
-      throw new HttpError(body);
+      if (body.status === "fail") {
+        throw new ValidationError(body.data);
+      }
+
+      throw new ApiError(body.code, body.message);
     } catch (error) {
       if (
-        error instanceof HttpError &&
-        error.payload.status === "error" &&
-        error.payload.code === "ACCESS_TOKEN_INVALID" &&
+        error instanceof ApiError &&
+        error.code === "ACCESS_TOKEN_INVALID" &&
         retries < 1
       ) {
         retries++;

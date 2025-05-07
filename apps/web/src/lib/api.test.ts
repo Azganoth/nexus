@@ -6,7 +6,7 @@ import {
 import { spyFetch } from "$/__tests__/helpers";
 import { fetchApi } from "$/lib/api";
 import { API_URL } from "$/lib/constants";
-import { HttpError } from "$/lib/errors";
+import { ApiError, ValidationError } from "$/lib/errors";
 import { getAccessToken, storeAccessToken } from "$/lib/token";
 import {
   afterEach,
@@ -48,6 +48,19 @@ describe("fetchApi", () => {
     expect(result).toEqual(successData);
   });
 
+  it("should make a successful request and return the nothing for status 204", async () => {
+    const _204Response = new Response(null, { status: 204 });
+    const fetchSpy = spyFetch().mockResolvedValue(_204Response);
+
+    const result = await fetchApi<void>("/test");
+
+    expect(fetchSpy).toHaveBeenCalledWith(`${API_URL}/test`, {
+      headers: new Headers({}),
+      credentials: "include",
+    });
+    expect(result).toBeUndefined();
+  });
+
   it("should include the Authorization header if a token exists", async () => {
     const successResponse = createTestSuccessResponse({});
     const fetchSpy = spyFetch().mockResolvedValue(successResponse);
@@ -87,7 +100,7 @@ describe("fetchApi", () => {
     const failResponse = createTestFailResponse({});
     spyFetch().mockResolvedValue(failResponse);
 
-    await expect(fetchApi("/fail")).rejects.toBeInstanceOf(HttpError);
+    await expect(fetchApi("/fail")).rejects.toBeInstanceOf(ValidationError);
   });
 
   describe("Automatic Token Refresh Logic", () => {
@@ -131,7 +144,7 @@ describe("fetchApi", () => {
         .mockResolvedValueOnce(refreshFailedResponse);
 
       await expect(fetchApi("/protected-resource")).rejects.toBeInstanceOf(
-        HttpError,
+        ApiError,
       );
 
       expect(fetchSpy).toHaveBeenCalledTimes(2);
@@ -143,7 +156,7 @@ describe("fetchApi", () => {
       const fetchSpy = spyFetch().mockResolvedValue(invalidResponse);
 
       await expect(fetchApi("/protected-resource")).rejects.toBeInstanceOf(
-        HttpError,
+        ApiError,
       );
 
       expect(fetchSpy).toHaveBeenCalledTimes(2);
