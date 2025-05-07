@@ -51,6 +51,22 @@ export const createRandomLink = (
   ...overrides,
 });
 
+export const createRandomProfileWithLinks = (
+  userId: string,
+  linkCount = 3,
+  overrides?: Partial<Profile>,
+): Profile & { links: Link[] } => {
+  const profile = createRandomProfile(userId, overrides);
+  const links = Array.from({ length: linkCount }, () =>
+    createRandomLink(profile.id),
+  );
+
+  return {
+    ...profile,
+    links,
+  };
+};
+
 export const createRandomRefreshToken = (
   userId: string,
   overrides?: Partial<RefreshToken>,

@@ -15,6 +15,7 @@ export const ERRORS = {
 
   PASSWORD_RESET_TOKEN_INVALID:
     "Token de redefinição de senha é inválido ou expirou.",
+  PRIVATE_PROFILE: "Perfil privado.",
 
   // Server Errors
   SERVER_UNKNOWN_ERROR: "Ocorreu um erro interno no servidor.",

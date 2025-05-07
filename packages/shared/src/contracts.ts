@@ -41,3 +41,28 @@ export interface PublicUser {
   name: string;
   role: UserRole;
 }
+
+export interface Timestamp {
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface PublicProfile extends Timestamp {
+  id: string;
+  username: string;
+  displayName: string;
+  avatarUrl: string;
+  bio: string | null;
+  links: PublicLink[];
+  seoTitle: string | null;
+  seoDescription: string | null;
+  isPublic: boolean;
+}
+
+export interface PublicLink extends Timestamp {
+  id: number;
+  title: string;
+  url: string;
+  displayOrder: number;
+  isPublic: boolean;
+}
