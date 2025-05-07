@@ -6,6 +6,7 @@ import {
   logoutUser,
   refreshAccessToken,
   requestPasswordReset,
+  verifyPasswordResetToken,
 } from "$/services/auth.service";
 import { composeResponse, validateSchema } from "$/utils/helpers";
 import type { AccessTokenPayload, AuthPayload } from "@repo/shared/contracts";
@@ -87,6 +88,16 @@ export const resetPassword = async (req: Request, res: Response) => {
     req.body,
   );
   await changePassword(token, password);
+
+  res.status(204).end();
+};
+
+export const verifyResetToken = async (req: Request, res: Response) => {
+  const { token } = await validateSchema(
+    RESET_PASSWORD_SCHEMA.pick({ token: true }),
+    req.body,
+  );
+  await verifyPasswordResetToken(token);
 
   res.status(204).end();
 };

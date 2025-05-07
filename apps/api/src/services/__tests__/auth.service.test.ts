@@ -13,6 +13,7 @@ import {
   logoutUser,
   refreshAccessToken,
   requestPasswordReset,
+  verifyPasswordResetToken,
 } from "$/services/auth.service";
 import { sendPasswordResetEmail } from "$/services/notification.service";
 import {
@@ -449,6 +450,40 @@ describe("Auth Service", () => {
 
       await expect(
         changePassword(mockPasswordResetToken.token, mockNewPassword),
+      ).rejects.toThrowApiError(400, "PASSWORD_RESET_TOKEN_INVALID");
+    });
+  });
+
+  describe("verifyPasswordResetToken", () => {
+    it("should return successfully if the token is valid and not expired", async () => {
+      const validToken = createRandomPasswordResetToken(mockUser.id);
+      mockPrisma.passwordResetToken.findUnique.mockResolvedValue(validToken);
+
+      await expect(
+        verifyPasswordResetToken(validToken.token),
+      ).resolves.toBeUndefined();
+
+      expect(mockPrisma.passwordResetToken.findUnique).toHaveBeenCalledWith(
+        expect.objectContaining({ where: { token: validToken.token } }),
+      );
+    });
+
+    it("should throw ApiError if the token is not found in the database", async () => {
+      mockPrisma.passwordResetToken.findUnique.mockResolvedValue(null);
+
+      await expect(
+        verifyPasswordResetToken("non-existent-token"),
+      ).rejects.toThrowApiError(400, "PASSWORD_RESET_TOKEN_INVALID");
+    });
+
+    it("should throw ApiError if the token has expired", async () => {
+      const expiredToken = createRandomPasswordResetToken(mockUser.id, {
+        expiresAt: new Date(Date.now() - 24 * 60 * 60 * 1000),
+      });
+      mockPrisma.passwordResetToken.findUnique.mockResolvedValue(expiredToken);
+
+      await expect(
+        verifyPasswordResetToken(expiredToken.token),
       ).rejects.toThrowApiError(400, "PASSWORD_RESET_TOKEN_INVALID");
     });
   });

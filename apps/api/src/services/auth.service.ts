@@ -205,3 +205,16 @@ export const changePassword = async (token: string, newPassword: string) => {
     }),
   ]);
 };
+
+export const verifyPasswordResetToken = async (token: string) => {
+  const resetToken = await prisma.passwordResetToken.findUnique({
+    where: { token },
+    select: { expiresAt: true },
+  });
+
+  if (!resetToken || resetToken.expiresAt < new Date()) {
+    throw new ApiError(400, "PASSWORD_RESET_TOKEN_INVALID");
+  }
+
+  return;
+};

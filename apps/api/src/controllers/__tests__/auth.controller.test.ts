@@ -12,9 +12,11 @@ import {
   logoutUser,
   refreshAccessToken,
   requestPasswordReset,
+  verifyPasswordResetToken,
 } from "$/services/auth.service";
 import { ApiError } from "$/utils/errors";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
+import { randomBytes } from "crypto";
 import type { Express } from "express";
 import supertest from "supertest";
 
@@ -26,6 +28,7 @@ const mockRefreshAccessToken = jest.mocked(refreshAccessToken);
 const mockLogoutUser = jest.mocked(logoutUser);
 const mockRequestPasswordReset = jest.mocked(requestPasswordReset);
 const mockChangePassword = jest.mocked(changePassword);
+const mockVerifyPasswordResetToken = jest.mocked(verifyPasswordResetToken);
 
 describe("Auth Controller", () => {
   let app: Express;
@@ -217,6 +220,38 @@ describe("Auth Controller", () => {
 
       const response = await supertest(app)
         .post("/auth/reset-password")
+        .send(mockValidPayload);
+
+      expect(response.status).toBe(400);
+      expect(response.body.code).toBe("PASSWORD_RESET_TOKEN_INVALID");
+    });
+  });
+
+  describe("POST /auth/verify-reset-token", () => {
+    const mockValidPayload = {
+      token: randomBytes(32).toString("hex"),
+    };
+
+    it("should return 204 if the token is valid", async () => {
+      mockVerifyPasswordResetToken.mockResolvedValue(undefined);
+
+      const response = await supertest(app)
+        .post("/auth/verify-reset-token")
+        .send(mockValidPayload);
+
+      expect(response.status).toBe(204);
+      expect(mockVerifyPasswordResetToken).toHaveBeenCalledWith(
+        mockValidPayload.token,
+      );
+    });
+
+    it("should return 400 for invalid token", async () => {
+      mockVerifyPasswordResetToken.mockRejectedValue(
+        new ApiError(400, "PASSWORD_RESET_TOKEN_INVALID"),
+      );
+
+      const response = await supertest(app)
+        .post("/auth/verify-reset-token")
         .send(mockValidPayload);
 
       expect(response.status).toBe(400);
