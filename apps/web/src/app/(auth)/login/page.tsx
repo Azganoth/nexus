@@ -1,9 +1,10 @@
 import { LoginForm } from "$/components/form/LoginForm";
 import { Link } from "$/components/ui/Link";
+import { composeTitle } from "$/lib/helpers";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Nexus - Login",
+  title: composeTitle("Acesse a sua conta"),
   description:
     "Acesse sua conta no Nexus para gerenciar e compartilhar seus links.",
 };

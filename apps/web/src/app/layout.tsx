@@ -1,14 +1,7 @@
 import { AuthProvider } from "$/contexts/AuthContext";
 import "$/styles/globals.css";
-import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Toaster } from "sonner";
-
-export const metadata: Metadata = {
-  title: "Nexus - Agregador de Links",
-  description:
-    "Seu hub central de links. Organize, compartilhe e simplifique sua presença digital com Nexus.",
-};
 
 const inter = Inter({
   weight: "variable",

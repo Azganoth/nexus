@@ -1,9 +1,10 @@
 import { ForgotPasswordForm } from "$/components/form/ForgotPasswordForm";
 import { Link } from "$/components/ui/Link";
+import { composeTitle } from "$/lib/helpers";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Nexus - Recuperar Conta",
+  title: composeTitle("Recupere a sua conta"),
   description: "Recupere o acesso à sua conta Nexus.",
 };
 

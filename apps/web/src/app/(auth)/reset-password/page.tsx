@@ -1,10 +1,11 @@
 import { TokenVerification } from "$/components/features/auth/ResetPasswordToken";
 import { ResetPasswordForm } from "$/components/form/ResetPasswordForm";
+import { composeTitle } from "$/lib/helpers";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
 export const metadata: Metadata = {
-  title: "Nexus - Redefinir Senha",
+  title: composeTitle("Redefina a sua senha"),
   description: "Crie uma nova senha para sua conta",
 };
 

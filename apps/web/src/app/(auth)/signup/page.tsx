@@ -1,9 +1,10 @@
 import { SignupForm } from "$/components/form/SignupForm";
 import { Link } from "$/components/ui/Link";
+import { composeTitle } from "$/lib/helpers";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Nexus - Cadastre-se",
+  title: composeTitle("Crie uma conta"),
   description:
     "Crie sua conta gratuitamente no Nexus e comece a organizar todos os seus links em um só lugar.",
 };

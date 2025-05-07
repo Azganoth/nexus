@@ -1,5 +1,11 @@
 import { ErrorDisplay } from "$/components/ui/ErrorDisplay";
 import { Logo } from "$/components/ui/Logo";
+import { composeTitle } from "$/lib/helpers";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: composeTitle("Página não encontrada"),
+};
 
 export default function NotFound() {
   return (

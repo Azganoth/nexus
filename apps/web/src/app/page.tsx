@@ -1,7 +1,14 @@
 import { Link } from "$/components/ui/Link";
 import { Logo } from "$/components/ui/Logo";
 import profile1 from "$/images/Profile1.png";
+import type { Metadata } from "next";
 import Image from "next/image";
+
+export const metadata: Metadata = {
+  title: "Nexus | Seu universo, em um só lugar",
+  description:
+    "Seu hub central de links. Organize, compartilhe e simplifique sua presença digital com Nexus.",
+};
 
 export default function Page() {
   return (
