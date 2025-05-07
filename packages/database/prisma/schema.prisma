@@ -14,15 +14,16 @@ enum Role {
 }
 
 model User {
-  id            String         @id @default(uuid())
-  email         String         @unique
-  password      String
-  name          String         @db.VarChar(60)
-  role          Role           @default(USER)
-  profile       Profile?
-  refreshTokens RefreshToken[]
-  createdAt     DateTime       @default(now()) @map("created_at")
-  updatedAt     DateTime       @updatedAt @map("updated_at")
+  id                 String              @id @default(uuid())
+  email              String              @unique
+  password           String
+  name               String              @db.VarChar(60)
+  role               Role                @default(USER)
+  profile            Profile?
+  refreshTokens      RefreshToken[]
+  passwordResetToken PasswordResetToken?
+  createdAt          DateTime            @default(now()) @map("created_at")
+  updatedAt          DateTime            @updatedAt @map("updated_at")
 
   @@map("users")
 }
@@ -69,4 +70,15 @@ model RefreshToken {
   createdAt DateTime @default(now()) @map("created_at")
 
   @@map("refresh_tokens")
+}
+
+model PasswordResetToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String   @unique @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("password_reset_tokens")
 }

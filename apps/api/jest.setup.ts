@@ -1,6 +1,11 @@
 import { resetAllDeepMocks } from "$/__tests__/helpers";
 import "$/__tests__/matchers";
-import { mockEnv, mockPrisma, resetMockEnv } from "$/__tests__/mocks";
+import {
+  mockEnv,
+  mockPrisma,
+  mockResendClass,
+  resetMockEnv,
+} from "$/__tests__/mocks";
 import { beforeEach, jest } from "@jest/globals";
 
 jest.mock("$/config/env", () => ({
@@ -9,6 +14,10 @@ jest.mock("$/config/env", () => ({
 jest.mock("@repo/database", () => ({
   ...(jest.requireActual("@repo/database") as object),
   prisma: mockPrisma,
+}));
+jest.mock("resend", () => ({
+  ...(jest.requireActual("resend") as object),
+  Resend: mockResendClass,
 }));
 
 beforeEach(() => {

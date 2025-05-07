@@ -1,12 +1,17 @@
-import { createRandomUser } from "$/__tests__/factories";
+import {
+  createRandomPasswordResetToken,
+  createRandomUser,
+} from "$/__tests__/factories";
 import { selectData } from "$/__tests__/helpers";
 import { PUBLIC_USER_SELECT } from "$/constants";
 import { createServer } from "$/server";
 import {
+  changePassword,
   createUser,
   loginUser,
   logoutUser,
   refreshAccessToken,
+  requestPasswordReset,
 } from "$/services/auth.service";
 import { ApiError } from "$/utils/errors";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
@@ -19,6 +24,8 @@ const mockLoginUser = jest.mocked(loginUser);
 const mockCreateUser = jest.mocked(createUser);
 const mockRefreshAccessToken = jest.mocked(refreshAccessToken);
 const mockLogoutUser = jest.mocked(logoutUser);
+const mockRequestPasswordReset = jest.mocked(requestPasswordReset);
+const mockChangePassword = jest.mocked(changePassword);
 
 describe("Auth Controller", () => {
   let app: Express;
@@ -158,6 +165,62 @@ describe("Auth Controller", () => {
 
       expect(response.status).toBe(401);
       expect(response.body.code).toMatch("REFRESH_TOKEN_INVALID");
+    });
+  });
+
+  describe("POST /auth/forgot-password", () => {
+    it("should return 204 when the request is valid", async () => {
+      mockRequestPasswordReset.mockResolvedValue(undefined);
+
+      const response = await supertest(app)
+        .post("/auth/forgot-password")
+        .send({ email: mockUser.email });
+
+      expect(response.status).toBe(204);
+      expect(mockRequestPasswordReset).toHaveBeenCalledWith(mockUser.email);
+    });
+
+    it("should return 422 for invalid email input", async () => {
+      const response = await supertest(app)
+        .post("/auth/forgot-password")
+        .send({ email: "not-a-valid-email" });
+
+      expect(response.status).toBe(422);
+    });
+  });
+
+  describe("POST /auth/reset-password", () => {
+    const mockPasswordResetToken = createRandomPasswordResetToken(mockUser.id);
+    const mockValidPayload = {
+      token: mockPasswordResetToken.token,
+      password: "newStrongPassword123",
+    };
+
+    it("should return 204 on a successful password reset", async () => {
+      mockChangePassword.mockResolvedValue(undefined);
+
+      const response = await supertest(app)
+        .post("/auth/reset-password")
+        .send(mockValidPayload);
+
+      expect(response.status).toBe(204);
+      expect(mockChangePassword).toHaveBeenCalledWith(
+        mockValidPayload.token,
+        mockValidPayload.password,
+      );
+    });
+
+    it("should return 400 for invalid token", async () => {
+      mockChangePassword.mockRejectedValue(
+        new ApiError(400, "PASSWORD_RESET_TOKEN_INVALID"),
+      );
+
+      const response = await supertest(app)
+        .post("/auth/reset-password")
+        .send(mockValidPayload);
+
+      expect(response.status).toBe(400);
+      expect(response.body.code).toBe("PASSWORD_RESET_TOKEN_INVALID");
     });
   });
 });

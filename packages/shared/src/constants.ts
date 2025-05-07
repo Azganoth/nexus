@@ -13,6 +13,9 @@ export const ERRORS = {
   REFRESH_TOKEN_INVALID: "Token de atualização inválido.",
   REFRESH_TOKEN_EXPIRED: "Token de atualização expirado.",
 
+  PASSWORD_RESET_TOKEN_INVALID:
+    "Token de redefinição de senha é inválido ou expirou.",
+
   // Server Errors
   SERVER_UNKNOWN_ERROR: "Ocorreu um erro interno no servidor.",
   SERVER_UNAVAILABLE: "Serviço indisponível.",

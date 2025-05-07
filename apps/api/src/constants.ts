@@ -11,6 +11,8 @@ export const ALLOWED_ORIGINS = IS_DEV ? "*" : [env.APP_URL];
 export const JWT_ACCESS_EXPIRES_IN = 15 * 60 * 1000;
 export const JWT_REFRESH_EXPIRES_IN = 7 * 24 * 60 * 60 * 1000;
 
+export const PASSWORD_RESET_EXPIRES_IN = 15 * 60 * 1000;
+
 // Query selects
 export const ID_SELECT = { id: true } satisfies StrictQuerySelect<{
   id: string | number;

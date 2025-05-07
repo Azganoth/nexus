@@ -27,6 +27,7 @@
     "express-rate-limit": "^7.5.0",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
+    "resend": "^4.5.1",
     "zod": "catalog:"
   },
   "devDependencies": {

@@ -1,8 +1,10 @@
 import {
   ID_SELECT,
   JWT_REFRESH_EXPIRES_IN,
+  PASSWORD_RESET_EXPIRES_IN,
   PUBLIC_USER_SELECT,
 } from "$/constants";
+import { sendPasswordResetEmail } from "$/services/notification.service";
 import { ApiError, ValidationError } from "$/utils/errors";
 import {
   signAccessToken,
@@ -13,6 +15,7 @@ import type { PrismaTx } from "$/utils/types";
 import { Prisma, prisma } from "@repo/database";
 import type { UserRole } from "@repo/shared/contracts";
 import bcrypt from "bcrypt";
+import { randomBytes } from "node:crypto";
 
 const createTokens = async (
   userId: string,
@@ -155,4 +158,50 @@ export const logoutUser = async (refreshToken: string) => {
   await prisma.refreshToken.deleteMany({
     where: { token: refreshToken },
   });
+};
+
+export const requestPasswordReset = async (email: string) => {
+  const user = await prisma.user.findUnique({
+    where: { email },
+    select: { id: true, email: true },
+  });
+  if (!user) {
+    return;
+  }
+
+  const token = randomBytes(32).toString("hex");
+  const expiresAt = new Date(Date.now() + PASSWORD_RESET_EXPIRES_IN);
+  await prisma.passwordResetToken.upsert({
+    where: { userId: user.id },
+    update: { token, expiresAt },
+    create: { userId: user.id, token, expiresAt },
+    select: ID_SELECT,
+  });
+
+  sendPasswordResetEmail(user.email, token);
+};
+
+export const changePassword = async (token: string, newPassword: string) => {
+  const resetToken = await prisma.passwordResetToken.findUnique({
+    where: { token },
+    select: { id: true, expiresAt: true, userId: true },
+  });
+
+  if (!resetToken || resetToken.expiresAt < new Date()) {
+    throw new ApiError(400, "PASSWORD_RESET_TOKEN_INVALID");
+  }
+
+  const newHashedPassword = await bcrypt.hash(newPassword, 10);
+  await prisma.$transaction([
+    prisma.user.update({
+      where: { id: resetToken.userId },
+      data: { password: newHashedPassword },
+      select: ID_SELECT,
+    }),
+    // Enforce single use
+    prisma.passwordResetToken.delete({
+      where: { id: resetToken.id },
+      select: ID_SELECT,
+    }),
+  ]);
 };

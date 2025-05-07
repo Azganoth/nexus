@@ -1,5 +1,11 @@
 import { fakerPT_BR as faker } from "@faker-js/faker";
-import type { Link, Profile, RefreshToken, User } from "@repo/database";
+import type {
+  Link,
+  PasswordResetToken,
+  Profile,
+  RefreshToken,
+  User,
+} from "@repo/database";
 
 export const createRandomUser = (overrides?: Partial<User>): User => ({
   id: faker.string.uuid(),
@@ -53,6 +59,18 @@ export const createRandomRefreshToken = (
   token: faker.string.uuid(),
   userId: userId,
   expiresAt: faker.date.future(),
+  createdAt: faker.date.past(),
+  ...overrides,
+});
+
+export const createRandomPasswordResetToken = (
+  userId: string,
+  overrides?: Partial<PasswordResetToken>,
+): PasswordResetToken => ({
+  id: faker.string.uuid(),
+  token: faker.string.hexadecimal({ length: 64, prefix: "" }),
+  userId: userId,
+  expiresAt: faker.date.future({ years: 0.01 }),
   createdAt: faker.date.past(),
   ...overrides,
 });
