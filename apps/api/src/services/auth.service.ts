@@ -106,8 +106,7 @@ export const refreshAccessToken = async (refreshToken: string) => {
   let decoded;
   try {
     decoded = verifyRefreshToken(refreshToken);
-  } catch (err) {
-    console.log(err);
+  } catch {
     throw new ApiError(401, "REFRESH_TOKEN_INVALID");
   }
   const { userId } = decoded;

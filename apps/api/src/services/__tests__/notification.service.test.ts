@@ -34,7 +34,10 @@ describe("Notification Service", () => {
         message: "Failed to send",
         name: "internal_server_error",
       } satisfies ErrorResponse;
-      const consoleErrorSpy = spyConsole("error", [error]);
+      const consoleErrorSpy = spyConsole("error", [
+        "Failed to send password reset email:",
+        error,
+      ]);
       mockResend.emails.send.mockResolvedValue({ data: null, error });
 
       await sendPasswordResetEmail(mockEmail, mockToken);
