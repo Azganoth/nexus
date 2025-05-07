@@ -1,25 +1,8 @@
 import { Logo } from "$/components/ui/Logo";
 import logo from "$/images/Logo.png";
 import logoWithName from "$/images/LogoWithName.png";
-import { describe, expect, it, jest } from "@jest/globals";
+import { describe, expect, it } from "@jest/globals";
 import { render, screen } from "@testing-library/react";
-
-jest.mock("next/image", () => ({
-  __esModule: true,
-  default: jest.fn((props) => {
-    // @ts-expect-error Irrelevant
-    // eslint-disable-next-line @next/next/no-img-element
-    return <img {...props} />;
-  }),
-}));
-jest.mock("$/images/Logo.png", () => ({
-  __esModule: true,
-  default: "logo-image.png",
-}));
-jest.mock("$/images/LogoWithName.png", () => ({
-  __esModule: true,
-  default: "logo-with-name-image.png",
-}));
 
 describe("Logo", () => {
   it('should render the icon-only variant when variant is "icon-only"', () => {
