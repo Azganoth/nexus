@@ -4,15 +4,28 @@ import clsx from "clsx";
 import type { ReactNode } from "react";
 import { toast as sonnerToast } from "sonner";
 
+type ToastOptions = { duration?: number } & Omit<Props, "id" | "message">;
+
 export const toast = (
   message: Props["message"],
-  options: { duration?: number } & Omit<Props, "id" | "message"> = {},
+  options: ToastOptions = {},
 ) => {
   const { duration, ...props } = options;
   sonnerToast.custom((id) => <Toast id={id} message={message} {...props} />, {
     duration,
   });
 };
+
+type ToastShortcut = (
+  message: Props["message"],
+  options?: Omit<ToastOptions, "variant">,
+) => void;
+toast.success = ((message, options) =>
+  toast(message, { ...options, variant: "success" })) as ToastShortcut;
+toast.warning = ((message, options) =>
+  toast(message, { ...options, variant: "warning" })) as ToastShortcut;
+toast.error = ((message, options) =>
+  toast(message, { ...options, variant: "error" })) as ToastShortcut;
 
 interface Props {
   id: string | number;

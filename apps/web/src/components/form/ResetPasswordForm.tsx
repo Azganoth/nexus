@@ -40,7 +40,7 @@ export function ResetPasswordForm({ token }: Props) {
       });
     },
     onSuccess: () => {
-      toast("Senha alterada com sucesso.", { variant: "success" });
+      toast.success("Senha alterada com sucesso.");
       router.push("/login");
     },
   });

@@ -43,7 +43,7 @@ export function ForgotPasswordForm() {
       setSubmittedEmail(email);
       setView("notice");
       setCountdown(TIMEOUT);
-      toast("Email de redefinição enviado!", { variant: "success" });
+      toast.success("Email de redefinição enviado!");
     },
     onUnexpectedError: (error) => {
       console.log(error);
@@ -57,11 +57,11 @@ export function ForgotPasswordForm() {
         method: "POST",
         body: JSON.stringify({ email: submittedEmail }),
       });
-      toast("Email de redefinição reenviado!", { variant: "success" });
+      toast.success("Email de redefinição reenviado!");
       setCountdown(TIMEOUT);
     } catch (error) {
       console.error(error);
-      toast("Ocorreu um erro ao reenviar o email.", { variant: "error" });
+      toast.error("Ocorreu um erro ao reenviar o email.");
     } finally {
       setIsResending(false);
     }
