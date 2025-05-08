@@ -17,6 +17,8 @@ export const ERRORS = {
     "Token de redefinição de senha é inválido ou expirou.",
   PRIVATE_PROFILE: "Perfil privado.",
 
+  TOO_MANY_LINKS: "Limite de links excedido.",
+
   // Server Errors
   SERVER_UNKNOWN_ERROR: "Ocorreu um erro interno no servidor.",
   SERVER_UNAVAILABLE: "Serviço indisponível.",

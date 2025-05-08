@@ -56,3 +56,13 @@ export const UPDATE_PROFILE_SCHEMA = z.object({
     .max(255, "A descrição de SEO não pode exceder 255 caracteres.")
     .optional(),
 });
+
+export const CREATE_LINK_SCHEMA = z.object({
+  title: z
+    .string()
+    .nonempty("O título é obrigatório.")
+    .max(60, "O título não pode exceder 60 caracteres."),
+  url: z.string().url("A URL deve ser um endereço válido."),
+});
+
+export const UPDATE_LINK_SCHEMA = CREATE_LINK_SCHEMA.partial();
