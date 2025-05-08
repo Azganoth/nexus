@@ -51,11 +51,13 @@ export const createRandomLink = (
   ...overrides,
 });
 
+export type ProfileWithLinks = Profile & { links: Link[] };
+
 export const createRandomProfileWithLinks = (
   userId: string,
   linkCount = 3,
   overrides?: Partial<Profile>,
-): Profile & { links: Link[] } => {
+): ProfileWithLinks => {
   const profile = createRandomProfile(userId, overrides);
   const links = Array.from({ length: linkCount }, () =>
     createRandomLink(profile.id),

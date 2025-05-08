@@ -21,13 +21,15 @@ const newPassword = z
   .regex(/[a-z]/, "A senha deve conter pelo menos uma letra minúscula.")
   .regex(/[0-9]/, "A senha deve conter pelo menos um número.");
 
+const displayName = z
+  .string({ required_error: "O nome é obrigatório." })
+  .nonempty("O nome é obrigatório.")
+  .max(60, "O nome não pode exceder 60 caracteres.");
+
 export const SIGNUP_SCHEMA = z.object({
   email: unknownEmail,
   password: newPassword,
-  name: z
-    .string({ required_error: "O nome é obrigatório." })
-    .nonempty("O nome é obrigatório.")
-    .max(60, "O nome não pode exceder 60 caracteres."),
+  name: displayName,
 });
 
 export const FORGOT_PASSWORD_SCHEMA = z.object({
@@ -39,4 +41,18 @@ export const RESET_PASSWORD_SCHEMA = z.object({
     .string({ required_error: "O token é obrigatório." })
     .nonempty("O token é obrigatório."),
   password: newPassword,
+});
+
+export const UPDATE_PROFILE_SCHEMA = z.object({
+  displayName: displayName.optional(),
+  bio: z.string().max(255, "A bio não pode exceder 255 caracteres.").optional(),
+  isPublic: z.boolean().optional(),
+  seoTitle: z
+    .string()
+    .max(60, "O título de SEO não pode exceder 60 caracteres.")
+    .optional(),
+  seoDescription: z
+    .string()
+    .max(255, "A descrição de SEO não pode exceder 255 caracteres.")
+    .optional(),
 });

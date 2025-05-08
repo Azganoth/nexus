@@ -9,6 +9,7 @@ import { createServer } from "$/server";
 import {
   getProfileByUserId,
   getProfileByUsername,
+  updateProfile,
 } from "$/services/profile.service";
 import { ApiError } from "$/utils/errors";
 import { signAccessToken } from "$/utils/jwt";
@@ -21,11 +22,13 @@ jest.mock("$/services/profile.service");
 
 const mockGetProfileByUserId = jest.mocked(getProfileByUserId);
 const mockGetProfileByUsername = jest.mocked(getProfileByUsername);
+const mockUpdateProfile = jest.mocked(updateProfile);
 
 describe("Profile Controller", () => {
   let app: Express;
   const mockUser = createRandomUser();
   const mockPublicUser = selectData(mockUser, PUBLIC_USER_SELECT);
+  const mockAccessToken = signAccessToken(mockUser.id, mockUser.role);
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -33,22 +36,15 @@ describe("Profile Controller", () => {
   });
 
   describe("GET /profiles/me", () => {
-    it("should return 401 if no token is provided", async () => {
-      const response = await supertest(app).get("/profiles/me");
-      expect(response.status).toBe(401);
-      expect(response.body.code).toBe("NOT_LOGGED_IN");
-    });
-
-    it("should return the authenticated user's profile if the token is valid", async () => {
+    it("should successfully return the authenticated user's profile", async () => {
       const profile = createRandomProfileWithLinks(mockUser.id);
       const publicProfile = selectData(profile, PUBLIC_PROFILE_SELECT);
-      const accessToken = signAccessToken(mockUser.id, mockUser.role);
       mockPrisma.user.findUnique.mockResolvedValue(mockPublicUser as User);
       mockGetProfileByUserId.mockResolvedValue(publicProfile);
 
       const response = await supertest(app)
         .get("/profiles/me")
-        .set("Authorization", `Bearer ${accessToken}`);
+        .set("Authorization", `Bearer ${mockAccessToken}`);
 
       expect(response.status).toBe(200);
       expect(response.body.status).toBe("success");
@@ -56,10 +52,16 @@ describe("Profile Controller", () => {
       expect(response.body.data.username).toBe(publicProfile.username);
       expect(response.body.data.links.length).toBe(3);
     });
+
+    it("should return 401 if no token is provided", async () => {
+      const response = await supertest(app).get("/profiles/me");
+      expect(response.status).toBe(401);
+      expect(response.body.code).toBe("NOT_LOGGED_IN");
+    });
   });
 
   describe("GET /profiles/:username", () => {
-    it("should return a public profile successfully", async () => {
+    it("should successfully return a public profile", async () => {
       const profile = createRandomProfileWithLinks(mockUser.id, 5, {
         isPublic: true,
       });
@@ -99,6 +101,50 @@ describe("Profile Controller", () => {
 
       expect(response.status).toBe(404);
       expect(response.body.code).toBe("NOT_FOUND");
+    });
+  });
+
+  describe("PATCH /profiles/me", () => {
+    it("should successfully update the profile and return the updated data", async () => {
+      const updateData = {
+        bio: "Minha bio atualizada.",
+      };
+      const updatedProfile = {
+        ...createRandomProfileWithLinks(mockUser.id),
+        ...updateData,
+      };
+      mockPrisma.user.findUnique.mockResolvedValue(mockPublicUser as User);
+      mockUpdateProfile.mockResolvedValue(updatedProfile);
+
+      const response = await supertest(app)
+        .patch("/profiles/me")
+        .set("Authorization", `Bearer ${mockAccessToken}`)
+        .send(updateData);
+
+      expect(response.status).toBe(200);
+      expect(response.body.data.bio).toBe(updateData.bio);
+      expect(mockUpdateProfile).toHaveBeenCalledWith(mockUser.id, updateData);
+    });
+
+    it("should return 401 if no token is provided", async () => {
+      const response = await supertest(app)
+        .patch("/profiles/me")
+        .send({ bio: "new bio" });
+
+      expect(response.status).toBe(401);
+    });
+
+    it("should return 422 for invalid update data", async () => {
+      mockPrisma.user.findUnique.mockResolvedValue(mockPublicUser as User);
+
+      const response = await supertest(app)
+        .patch("/profiles/me")
+        .set("Authorization", `Bearer ${mockAccessToken}`)
+        .send({ displayName: "a".repeat(61) });
+
+      expect(response.status).toBe(422);
+      expect(response.body.status).toBe("fail");
+      expect(response.body.data).toHaveProperty("displayName");
     });
   });
 });

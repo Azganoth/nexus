@@ -1,6 +1,8 @@
 import { PUBLIC_LINK_SELECT, PUBLIC_PROFILE_SELECT } from "$/constants";
 import { ApiError } from "$/utils/errors";
 import { prisma } from "@repo/database";
+import type { UPDATE_PROFILE_SCHEMA } from "@repo/shared/schemas";
+import type { z } from "zod";
 
 export const getProfileByUserId = async (userId: string) => {
   const profile = await prisma.profile.findUnique({
@@ -45,4 +47,25 @@ export const getProfileByUsername = async (username: string) => {
   }
 
   return profile;
+};
+
+export const updateProfile = async (
+  userId: string,
+  data: z.infer<typeof UPDATE_PROFILE_SCHEMA>,
+) => {
+  const updatedProfile = await prisma.profile.update({
+    where: { userId },
+    data,
+    select: {
+      ...PUBLIC_PROFILE_SELECT,
+      links: {
+        orderBy: {
+          displayOrder: "asc",
+        },
+        select: PUBLIC_LINK_SELECT,
+      },
+    },
+  });
+
+  return updatedProfile;
 };
