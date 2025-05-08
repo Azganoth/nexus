@@ -1,10 +1,9 @@
 import { Link } from "$/components/ui/Link";
-import profileAvatar from "$/images/Profile.webp";
-import type { Profile } from "$/lib/api";
+import type { PublicProfile } from "@repo/shared/contracts";
 import Image from "next/image";
 
 interface Props {
-  profile: Profile;
+  profile: PublicProfile;
 }
 
 export function Profile({ profile }: Props) {
@@ -14,10 +13,13 @@ export function Profile({ profile }: Props) {
         className="rounded-full"
         width={128}
         height={128}
-        src={profileAvatar}
+        src={profile.avatarUrl}
         alt=""
+        priority
       />
-      <h1 className="mt-3 text-center text-xl font-bold">{profile.name}</h1>
+      <h1 className="mt-3 text-center text-xl font-bold">
+        {profile.displayName}
+      </h1>
       {profile.bio && (
         <p className="text-dark-grey mt-2 text-center font-bold">
           {profile.bio}

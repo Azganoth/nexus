@@ -57,6 +57,23 @@ export default {
       },
     ];
   },
+  images: {
+    dangerouslyAllowSVG: true,
+    // Disable any scripts (mitigates XSS attacks through svgs)
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "ui-avatars.com",
+        pathname: "/api/**",
+      },
+      {
+        protocol: "https",
+        hostname: "pub-f4942703ba94414ab97ca08e29bff222.r2.dev",
+        pathname: "/**",
+      },
+    ],
+  },
   typescript: {
     ignoreBuildErrors: true,
   },
