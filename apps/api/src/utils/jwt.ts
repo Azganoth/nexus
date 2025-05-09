@@ -2,6 +2,7 @@ import { env } from "$/config/env";
 import { JWT_ACCESS_EXPIRES_IN, JWT_REFRESH_EXPIRES_IN } from "$/constants";
 import type { UserRole } from "@repo/shared/contracts";
 import jwt from "jsonwebtoken";
+import { randomBytes } from "node:crypto";
 
 export interface AccessTokenPayload {
   userId: string;
@@ -28,6 +29,7 @@ export const signRefreshToken = (userId: string) => {
     env.JWT_REFRESH_SECRET,
     {
       expiresIn: JWT_REFRESH_EXPIRES_IN,
+      jwtid: randomBytes(16).toString("hex"),
     },
   );
 };
