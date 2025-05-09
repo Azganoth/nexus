@@ -3,13 +3,14 @@ import {
   createRandomProfileWithLinks,
   createRandomUser,
 } from "$/__tests__/factories";
-import { selectData } from "$/__tests__/helpers";
+import { mockTransaction, selectData } from "$/__tests__/helpers";
 import { mockPrisma } from "$/__tests__/mocks";
 import { PUBLIC_LINK_SELECT } from "$/constants";
 import {
   createLinkForUser,
   deleteUserLink,
   getLinksForUser,
+  updateLinkOrderForUser,
   updateUserLink,
 } from "$/services/link.service";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
@@ -157,6 +158,44 @@ describe("Link Service", () => {
       await expect(
         deleteUserLink(mockUser.id, mockLink.id),
       ).rejects.toThrowApiError(404, "NOT_FOUND");
+    });
+  });
+
+  describe("updateLinkOrderForUser", () => {
+    const mockLinks = [{ id: 1 }, { id: 2 }, { id: 3 }];
+
+    it("should successfully update the order of links", async () => {
+      const newOrder = [2, 3, 1];
+      mockPrisma.link.findMany.mockResolvedValue(mockLinks as Link[]);
+      mockTransaction(mockPrisma);
+
+      await updateLinkOrderForUser(mockUser.id, newOrder);
+
+      expect(mockPrisma.link.update).toHaveBeenCalledTimes(3);
+      expect(mockPrisma.link.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: expect.any(Number) },
+          data: { displayOrder: expect.any(Number) },
+        }),
+      );
+    });
+
+    it("should throw ApiError if ID counts do not match", async () => {
+      mockPrisma.link.findMany.mockResolvedValue(mockLinks as Link[]);
+      const newOrderWithMissingId = [1];
+
+      await expect(
+        updateLinkOrderForUser(mockUser.id, newOrderWithMissingId),
+      ).rejects.toThrowApiError(400, "BAD_REQUEST");
+    });
+
+    it("should throw ApiError if an unknown ID is provided", async () => {
+      mockPrisma.link.findMany.mockResolvedValue(mockLinks as Link[]);
+      const newOrderWithUnknownId = [1, 999];
+
+      await expect(
+        updateLinkOrderForUser(mockUser.id, newOrderWithUnknownId),
+      ).rejects.toThrowApiError(400, "BAD_REQUEST");
     });
   });
 });

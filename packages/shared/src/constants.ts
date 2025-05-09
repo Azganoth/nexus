@@ -2,6 +2,7 @@ export const ERRORS = {
   // General Errors
   NOT_FOUND: "Recurso não encontrado.",
   TOO_MANY_REQUESTS: "Limite de solicitações excedido.",
+  BAD_REQUEST: "Requisição não pode ser processada.",
 
   // Authentication & Authorization Errors
   NOT_AUTHORIZED: "Permissão insuficiente.",

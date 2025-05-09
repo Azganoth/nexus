@@ -2,11 +2,16 @@ import {
   createLinkForUser,
   deleteUserLink,
   getLinksForUser,
+  updateLinkOrderForUser,
   updateUserLink,
 } from "$/services/link.service";
 import { composeResponse, validateSchema } from "$/utils/helpers";
 import type { PublicLink } from "@repo/shared/contracts";
-import { CREATE_LINK_SCHEMA, UPDATE_LINK_SCHEMA } from "@repo/shared/schemas";
+import {
+  CREATE_LINK_SCHEMA,
+  UPDATE_LINK_ORDER_SCHEMA,
+  UPDATE_LINK_SCHEMA,
+} from "@repo/shared/schemas";
 import type { Request, Response } from "express";
 
 export const getLinks = async (req: Request, res: Response) => {
@@ -33,6 +38,18 @@ export const updateLink = async (req: Request, res: Response) => {
 export const deleteLink = async (req: Request, res: Response) => {
   const linkId = Number(req.params.id);
   await deleteUserLink(req.user!.id, linkId);
+
+  res.status(204).end();
+};
+
+export const updateLinkOrder = async (req: Request, res: Response) => {
+  const { orderedIds } = await validateSchema(
+    UPDATE_LINK_ORDER_SCHEMA,
+    req.body,
+  );
+  console.log("test 1");
+  await updateLinkOrderForUser(req.user!.id, orderedIds);
+  console.log("test 2");
 
   res.status(204).end();
 };

@@ -66,3 +66,11 @@ export const CREATE_LINK_SCHEMA = z.object({
 });
 
 export const UPDATE_LINK_SCHEMA = CREATE_LINK_SCHEMA.partial();
+
+export const UPDATE_LINK_ORDER_SCHEMA = z.object({
+  orderedIds: z
+    .array(z.number().int().positive(), {
+      required_error: "O array de IDs é obrigatório.",
+    })
+    .nonempty("É necessário fornecer ao menos um ID."),
+});

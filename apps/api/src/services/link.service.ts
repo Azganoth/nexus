@@ -84,3 +84,38 @@ export const deleteUserLink = async (userId: string, linkId: number) => {
     throw error;
   }
 };
+
+export const updateLinkOrderForUser = async (
+  userId: string,
+  orderedIds: number[],
+) => {
+  const userLinks = await prisma.link.findMany({
+    where: { profile: { userId } },
+    select: { id: true },
+  });
+
+  const existingIds = new Set(userLinks.map((link) => link.id));
+  const receivedIds = new Set(orderedIds);
+
+  // Ensure the received IDs match exactly the user's actual links.
+  if (
+    existingIds.size !== receivedIds.size ||
+    !orderedIds.every((id) => existingIds.has(id))
+  ) {
+    throw new ApiError(
+      400,
+      "BAD_REQUEST",
+      "A lista de IDs fornecida é inválida ou não corresponde aos seus links.",
+    );
+  }
+
+  await prisma.$transaction(
+    orderedIds.map((id, index) =>
+      prisma.link.update({
+        where: { id },
+        data: { displayOrder: index },
+        select: { id: true },
+      }),
+    ),
+  );
+};

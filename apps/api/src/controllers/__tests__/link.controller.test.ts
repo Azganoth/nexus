@@ -11,6 +11,7 @@ import {
   createLinkForUser,
   deleteUserLink,
   getLinksForUser,
+  updateLinkOrderForUser,
   updateUserLink,
 } from "$/services/link.service";
 import { ApiError } from "$/utils/errors";
@@ -26,6 +27,7 @@ const mockGetLinksForUser = jest.mocked(getLinksForUser);
 const mockCreateLinkForUser = jest.mocked(createLinkForUser);
 const mockUpdateUserLink = jest.mocked(updateUserLink);
 const mockDeleteUserLink = jest.mocked(deleteUserLink);
+const mockUpdateLinkOrderForUser = jest.mocked(updateLinkOrderForUser);
 
 describe("Link Controller", () => {
   let app: Express;
@@ -180,6 +182,58 @@ describe("Link Controller", () => {
     it("should return 401 if unauthenticated", async () => {
       const response = await supertest(app).delete("/links/999");
       expect(response.status).toBe(401);
+    });
+  });
+
+  describe("PATCH /links/order", () => {
+    const mockLinks = [3, 1, 2];
+
+    it("should successfully reorder links", async () => {
+      mockPrisma.user.findUnique.mockResolvedValue(mockPublicUser as User);
+      mockUpdateLinkOrderForUser.mockResolvedValue();
+
+      const response = await supertest(app)
+        .patch("/links/order")
+        .set("Authorization", `Bearer ${mockAccessToken}`)
+        .send({ orderedIds: mockLinks });
+
+      expect(response.status).toBe(204);
+      expect(mockUpdateLinkOrderForUser).toHaveBeenCalledWith(
+        mockUser.id,
+        mockLinks,
+      );
+    });
+
+    it("should return 401 if unauthenticated", async () => {
+      const response = await supertest(app)
+        .patch("/links/order")
+        .send({ orderedIds: mockLinks });
+
+      expect(response.status).toBe(401);
+    });
+
+    it("should return 422 for invalid request body", async () => {
+      mockPrisma.user.findUnique.mockResolvedValue(mockPublicUser as User);
+
+      const response = await supertest(app)
+        .patch("/links/order")
+        .set("Authorization", `Bearer ${mockAccessToken}`)
+        .send({ orderedIds: "not-an-array" });
+
+      expect(response.status).toBe(422);
+    });
+
+    it("should return 400 if the service rejects the ID list", async () => {
+      mockPrisma.user.findUnique.mockResolvedValue(mockPublicUser as User);
+      const error = new ApiError(400, "BAD_REQUEST");
+      mockUpdateLinkOrderForUser.mockRejectedValue(error);
+
+      const response = await supertest(app)
+        .patch("/links/order")
+        .set("Authorization", `Bearer ${mockAccessToken}`)
+        .send({ orderedIds: [99, 1, 2] });
+
+      expect(response.status).toBe(400);
     });
   });
 });
