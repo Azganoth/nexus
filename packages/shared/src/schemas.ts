@@ -74,3 +74,13 @@ export const UPDATE_LINK_ORDER_SCHEMA = z.object({
     })
     .nonempty("É necessário fornecer ao menos um ID."),
 });
+
+export const UPDATE_USER_SCHEMA = z.object({
+  name: z.string().max(60, "O nome não pode exceder 60 caracteres.").optional(),
+});
+
+export const DELETE_USER_SCHEMA = z.object({
+  password: z
+    .string({ required_error: "A senha é obrigatória." })
+    .nonempty("A senha é obrigatória."),
+});
