@@ -22,7 +22,7 @@ describe("Link Service", () => {
   const mockLink = createRandomLink(mockProfile.id);
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.resetAllMocks();
   });
 
   describe("getLinksForUser", () => {
@@ -100,7 +100,6 @@ describe("Link Service", () => {
         ...selectData(mockLink, PUBLIC_LINK_SELECT),
         ...mockUpdateData,
       };
-      console.log(updatedLink);
       mockPrisma.link.update.mockResolvedValue(updatedLink as Link);
 
       const result = await updateUserLink(
