@@ -1,4 +1,4 @@
-import { fetchApi } from "$/lib/api";
+import { fetchApi } from "$/services/apiClient";
 import { cache, use, type ReactNode } from "react";
 
 const verifyToken = cache(async (token: string) =>

@@ -4,9 +4,9 @@ import { SlidingView } from "$/components/layout/SlidingView";
 import { ErrorHint } from "$/components/ui/ErrorHint";
 import { Input } from "$/components/ui/Input";
 import { LoadingButton } from "$/components/ui/LoadingButton";
+import { toast } from "$/components/ui/Toast";
 import { useApiForm } from "$/hooks/useApiForm";
-import { fetchApi } from "$/lib/api";
-import { toast } from "$/lib/toast";
+import { fetchApi } from "$/services/apiClient";
 import { FORGOT_PASSWORD_SCHEMA } from "@repo/shared/schemas";
 import { useEffect, useState } from "react";
 

@@ -1,8 +1,8 @@
 import { createTestPublicUser } from "$/__tests__/factories";
 import { spyConsole } from "$/__tests__/helpers";
 import { AuthProvider, useAuth } from "$/contexts/AuthContext";
-import { fetchApi } from "$/lib/api";
-import { getAccessToken, storeAccessToken } from "$/lib/auth/token";
+import { getAccessToken, storeAccessToken } from "$/lib/auth/client";
+import { fetchApi } from "$/services/apiClient";
 import {
   afterEach,
   beforeEach,

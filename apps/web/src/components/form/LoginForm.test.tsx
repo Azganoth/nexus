@@ -1,30 +1,19 @@
 import { spyConsole } from "$/__tests__/helpers";
 import { LoginForm } from "$/components/form/LoginForm";
-import { fetchApi } from "$/lib/api";
-import { ApiError } from "$/lib/errors";
-import {
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  jest,
-} from "@jest/globals";
+import { fetchApi } from "$/services/apiClient";
+import { ApiError } from "$/services/errors";
+import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { ERRORS } from "@repo/shared/constants";
 import { render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 
-jest.mock("$/lib/api");
-jest.mock("$/contexts/AuthContext");
+jest.mock("$/services/apiClient");
 
 const mockFetchApi = jest.mocked(fetchApi);
 
 describe("LoginForm", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-  });
-
-  afterEach(() => {
     jest.restoreAllMocks();
   });
 

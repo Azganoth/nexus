@@ -72,11 +72,8 @@ describe("useApiForm", () => {
   // describe("Error Handling", () => {
   //   it("should set fieldErrors from the API response", async () => {
   //     const emailMessage = "O email já está em uso.";
-  //     const apiError = new HttpError({
-  //       status: "fail",
-  //       data: {
-  //         email: [emailMessage],
-  //       },
+  //     const apiError = new ValidationError({
+  //       email: [emailMessage],
   //     });
   //     mockMutationFn.mockRejectedValue(apiError);
 
@@ -90,11 +87,8 @@ describe("useApiForm", () => {
 
   //   it("should set rootErrors from the API response", async () => {
   //     const errorMessage = "Esta ação não pode ser executada.";
-  //     const apiError = new HttpError({
-  //       status: "fail",
-  //       data: {
-  //         root: [errorMessage],
-  //       },
+  //     const apiError = new ValidationError({
+  //       root: [errorMessage],
   //     });
   //     mockMutationFn.mockRejectedValue(apiError);
 
@@ -106,11 +100,7 @@ describe("useApiForm", () => {
 
   //   it("should set a root error for an expected error code", async () => {
   //     const errorMessage = ERRORS.INCORRECT_CREDENTIALS;
-  //     const apiError = new HttpError({
-  //       status: "error",
-  //       code: "INCORRECT_CREDENTIALS",
-  //       message: errorMessage,
-  //     });
+  //     const apiError = new ApiError("INCORRECT_CREDENTIALS", errorMessage);
   //     mockMutationFn.mockRejectedValue(apiError);
 
   //     const { result } = renderApiFormHook({
@@ -123,11 +113,10 @@ describe("useApiForm", () => {
   //   });
 
   //   it("should set an unexpected error and call onUnexpectedError for an unhandled API error", async () => {
-  //     const apiError = new HttpError({
-  //       status: "error",
-  //       code: "SERVER_DB_UNHEALTHY",
-  //       message: ERRORS.SERVER_DB_UNHEALTHY,
-  //     });
+  //     const apiError = new ApiError(
+  //       "SERVER_UNAVAILABLE",
+  //       ERRORS.SERVER_UNAVAILABLE,
+  //     );
   //     mockMutationFn.mockRejectedValue(apiError);
 
   //     const { result } = renderApiFormHook();

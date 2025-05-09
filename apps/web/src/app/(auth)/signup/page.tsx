@@ -1,6 +1,6 @@
 import { SignupForm } from "$/components/form/SignupForm";
 import { Link } from "$/components/ui/Link";
-import { composeTitle } from "$/lib/helpers";
+import { composeTitle } from "$/lib/utils";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {

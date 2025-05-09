@@ -1,6 +1,6 @@
-import { TokenVerification } from "$/components/features/auth/ResetPasswordToken";
+import { TokenVerification } from "$/components/features/ResetPasswordToken";
 import { ResetPasswordForm } from "$/components/form/ResetPasswordForm";
-import { composeTitle } from "$/lib/helpers";
+import { composeTitle } from "$/lib/utils";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 

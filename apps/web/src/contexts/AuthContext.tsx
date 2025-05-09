@@ -1,7 +1,7 @@
 "use client";
 
-import { fetchApi } from "$/lib/api";
-import { storeAccessToken } from "$/lib/auth/token";
+import { storeAccessToken } from "$/lib/auth/client";
+import { fetchApi } from "$/services/apiClient";
 import type { AuthPayload, PublicUser } from "@repo/shared/contracts";
 import {
   createContext,

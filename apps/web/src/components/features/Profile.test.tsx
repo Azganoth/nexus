@@ -1,5 +1,5 @@
 import { createTestPublicProfile } from "$/__tests__/factories";
-import { Profile } from "$/components/features/profile/Profile";
+import { Profile } from "$/components/features/Profile";
 import { describe, expect, it } from "@jest/globals";
 import { render, screen } from "@testing-library/react";
 

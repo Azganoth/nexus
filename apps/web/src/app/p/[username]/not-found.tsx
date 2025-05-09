@@ -1,6 +1,6 @@
 import { ErrorDisplay } from "$/components/ui/ErrorDisplay";
 import { Logo } from "$/components/ui/Logo";
-import { composeTitle } from "$/lib/helpers";
+import { composeTitle } from "$/lib/utils";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {

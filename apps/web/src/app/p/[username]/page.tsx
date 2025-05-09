@@ -1,9 +1,9 @@
-import { Profile } from "$/components/features/profile/Profile";
+import { Profile } from "$/components/features/Profile";
 import { Link } from "$/components/ui/Link";
 import { Logo } from "$/components/ui/Logo";
-import { fetchApi } from "$/lib/api";
-import { ApiError } from "$/lib/errors";
-import { composeTitle } from "$/lib/helpers";
+import { composeTitle } from "$/lib/utils";
+import { fetchApi } from "$/services/apiClient";
+import { ApiError } from "$/services/errors";
 import type { PublicProfile } from "@repo/shared/contracts";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";

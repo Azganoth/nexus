@@ -4,9 +4,9 @@ import {
   createTestSuccessResponse,
 } from "$/__tests__/factories";
 import { spyFetch } from "$/__tests__/helpers";
-import { fetchApi } from "$/lib/api";
-import { getAccessToken, storeAccessToken } from "$/lib/auth/token";
-import { ApiError, ValidationError } from "$/lib/errors";
+import { getAccessToken, storeAccessToken } from "$/lib/auth/client";
+import { fetchApi } from "$/services/apiClient";
+import { ApiError, ValidationError } from "$/services/errors";
 import {
   afterEach,
   beforeEach,

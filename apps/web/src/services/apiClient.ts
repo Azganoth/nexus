@@ -1,5 +1,5 @@
-import { getAccessToken, storeAccessToken } from "$/lib/auth/token";
-import { ApiError, ValidationError } from "$/lib/errors";
+import { getAccessToken, storeAccessToken } from "$/lib/auth/client";
+import { ApiError, ValidationError } from "$/services/errors";
 import type { ApiResponse, AuthPayload } from "@repo/shared/contracts";
 
 // This shared promise acts as a lock to prevent multiple, simultaneous token refresh requests.

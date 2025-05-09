@@ -1,4 +1,4 @@
-import { toast } from "$/lib/toast";
+import { toast } from "$/components/ui/Toast";
 import { ERRORS } from "@repo/shared/constants";
 
 export const composeTitle = (title: string) => `${title} | Nexus`;
