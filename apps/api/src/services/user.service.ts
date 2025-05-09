@@ -5,13 +5,6 @@ import type { UPDATE_USER_SCHEMA } from "@repo/shared/schemas";
 import bcrypt from "bcrypt";
 import type { z } from "zod";
 
-export const getUserById = async (userId: string) => {
-  return prisma.user.findUniqueOrThrow({
-    where: { id: userId },
-    select: PUBLIC_USER_SELECT,
-  });
-};
-
 export const updateUser = async (
   userId: string,
   data: z.infer<typeof UPDATE_USER_SCHEMA>,
@@ -29,7 +22,6 @@ export const deleteUser = async (userId: string, password: string) => {
   const user = await prisma.user.findUnique({
     where: { id: userId },
   });
-
   if (!user) {
     throw new ApiError(404, "NOT_FOUND");
   }

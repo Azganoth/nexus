@@ -24,11 +24,8 @@ export type ApiResponse<T = unknown> =
   | ErrorResponse;
 
 // Payloads
-export interface AccessTokenPayload {
+export interface AuthPayload {
   accessToken: string;
-}
-
-export interface AuthPayload extends AccessTokenPayload {
   user: PublicUser;
 }
 

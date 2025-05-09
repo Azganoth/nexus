@@ -1,7 +1,6 @@
-import { API_URL } from "$/lib/constants";
+import { getAccessToken, storeAccessToken } from "$/lib/auth/token";
 import { ApiError, ValidationError } from "$/lib/errors";
-import { getAccessToken, storeAccessToken } from "$/lib/token";
-import type { AccessTokenPayload, ApiResponse } from "@repo/shared/contracts";
+import type { ApiResponse, AuthPayload } from "@repo/shared/contracts";
 
 export async function fetchApi<T>(
   endpoint: string,
@@ -21,7 +20,7 @@ export async function fetchApi<T>(
     }
 
     try {
-      const response = await fetch(`${API_URL}${endpoint}`, {
+      const response = await fetch(`/api${endpoint}`, {
         ...options,
         headers,
         credentials: "include",
@@ -51,12 +50,12 @@ export async function fetchApi<T>(
         retries++;
 
         try {
-          const refreshResponse = await fetch(`${API_URL}/auth/refresh`, {
+          const refreshResponse = await fetch("/api/auth/refresh", {
             method: "POST",
             credentials: "include",
           });
 
-          const refreshBody: ApiResponse<AccessTokenPayload> =
+          const refreshBody: ApiResponse<AuthPayload> =
             await refreshResponse.json();
 
           if (refreshBody.status === "success") {

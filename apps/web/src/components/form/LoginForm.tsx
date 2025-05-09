@@ -3,7 +3,6 @@
 import { ErrorHint } from "$/components/ui/ErrorHint";
 import { Input } from "$/components/ui/Input";
 import { LoadingButton } from "$/components/ui/LoadingButton";
-import { useAuth } from "$/contexts/AuthContext";
 import { useApiForm } from "$/hooks/useApiForm";
 import { fetchApi } from "$/lib/api";
 import { unknownError } from "$/lib/helpers";
@@ -13,8 +12,6 @@ import { LOGIN_SCHEMA } from "@repo/shared/schemas";
 const schema = LOGIN_SCHEMA;
 
 export function LoginForm() {
-  const { login } = useAuth();
-
   const {
     register,
     handleSubmit,
@@ -26,8 +23,8 @@ export function LoginForm() {
         method: "POST",
         body: JSON.stringify(data),
       }),
-    onSuccess: (data) => {
-      login(data);
+    onSuccess: (payload) => {
+      console.log("Logged in: ", payload);
       // router.push("/dashboard");
     },
     expectedErrors: ["INCORRECT_CREDENTIALS"],

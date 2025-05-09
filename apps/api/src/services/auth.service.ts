@@ -25,16 +25,17 @@ const createTokens = async (
   const accessToken = signAccessToken(userId, userRole);
   const refreshToken = signRefreshToken(userId);
 
+  const refreshTokenExpires = new Date(Date.now() + JWT_REFRESH_EXPIRES_IN);
   await client.refreshToken.create({
     data: {
       token: refreshToken,
       userId: userId,
-      expiresAt: new Date(Date.now() + JWT_REFRESH_EXPIRES_IN),
+      expiresAt: refreshTokenExpires,
     },
     select: ID_SELECT,
   });
 
-  return { accessToken, refreshToken };
+  return { accessToken, refreshToken, refreshTokenExpires };
 };
 
 export const loginUser = async (email: string, password: string) => {
@@ -47,15 +48,19 @@ export const loginUser = async (email: string, password: string) => {
     throw new ApiError(401, "INCORRECT_CREDENTIALS");
   }
 
-  const { accessToken, refreshToken } = await createTokens(user.id, user.role);
+  const { accessToken, refreshToken, refreshTokenExpires } = await createTokens(
+    user.id,
+    user.role,
+  );
   return {
     accessToken,
     refreshToken,
+    refreshTokenExpires,
     user: { id: user.id, email: user.email, name: user.name, role: user.role },
   };
 };
 
-export const createUser = async (
+export const signupUser = async (
   email: string,
   password: string,
   name: string,
@@ -80,11 +85,9 @@ export const createUser = async (
       select: PUBLIC_USER_SELECT,
     });
 
-    const { accessToken, refreshToken } = await createTokens(
-      user.id,
-      user.role,
-    );
-    return { accessToken, refreshToken, user };
+    const { accessToken, refreshToken, refreshTokenExpires } =
+      await createTokens(user.id, user.role);
+    return { accessToken, refreshToken, refreshTokenExpires, user };
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === "P2002") {
@@ -135,20 +138,19 @@ export const refreshAccessToken = async (refreshToken: string) => {
 
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { id: true, role: true },
+    select: PUBLIC_USER_SELECT,
   });
   if (!user) {
     throw new ApiError(401, "REFRESH_TOKEN_INVALID");
   }
 
   // Enforce single use refresh token
-  const { accessToken, refreshToken: newRefreshToken } =
-    await prisma.$transaction(async (tx) => {
-      tx.refreshToken.delete({ where: { id: storedToken.id } });
-      return createTokens(user.id, user.role, tx);
-    });
+  const tokens = await prisma.$transaction(async (tx) => {
+    tx.refreshToken.delete({ where: { id: storedToken.id } });
+    return createTokens(user.id, user.role, tx);
+  });
 
-  return { accessToken, newRefreshToken };
+  return { ...tokens, user };
 };
 
 export const logoutUser = async (refreshToken: string) => {
@@ -157,6 +159,40 @@ export const logoutUser = async (refreshToken: string) => {
   await prisma.refreshToken.deleteMany({
     where: { token: refreshToken },
   });
+};
+
+export const revalidateUser = async (refreshToken: string) => {
+  if (!refreshToken) {
+    return null;
+  }
+
+  let decoded;
+  try {
+    decoded = verifyRefreshToken(refreshToken);
+  } catch {
+    return null;
+  }
+  const { userId } = decoded;
+
+  const storedToken = await prisma.refreshToken.findUnique({
+    where: { token: refreshToken },
+    select: { id: true, expiresAt: true },
+  });
+
+  if (!storedToken || storedToken.expiresAt < new Date()) {
+    return null;
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: PUBLIC_USER_SELECT,
+  });
+  if (!user) {
+    return null;
+  }
+
+  const accessToken = signAccessToken(user.id, user.role);
+  return { accessToken, user };
 };
 
 export const requestPasswordReset = async (email: string) => {

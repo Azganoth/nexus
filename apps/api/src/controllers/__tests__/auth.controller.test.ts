@@ -7,11 +7,12 @@ import { PUBLIC_USER_SELECT } from "$/constants";
 import { createServer } from "$/server";
 import {
   changePassword,
-  createUser,
   loginUser,
   logoutUser,
   refreshAccessToken,
   requestPasswordReset,
+  revalidateUser,
+  signupUser,
   verifyPasswordResetToken,
 } from "$/services/auth.service";
 import { ApiError } from "$/utils/errors";
@@ -23,9 +24,10 @@ import supertest from "supertest";
 jest.mock("$/services/auth.service");
 
 const mockLoginUser = jest.mocked(loginUser);
-const mockCreateUser = jest.mocked(createUser);
+const mockSignupUser = jest.mocked(signupUser);
 const mockRefreshAccessToken = jest.mocked(refreshAccessToken);
 const mockLogoutUser = jest.mocked(logoutUser);
+const mockRevalidateUser = jest.mocked(revalidateUser);
 const mockRequestPasswordReset = jest.mocked(requestPasswordReset);
 const mockChangePassword = jest.mocked(changePassword);
 const mockVerifyPasswordResetToken = jest.mocked(verifyPasswordResetToken);
@@ -43,6 +45,7 @@ describe("Auth Controller", () => {
   const mockInput = {
     ...mockOutput,
     refreshToken: mockRefreshToken,
+    refreshTokenExpires: new Date(),
   };
 
   beforeEach(() => {
@@ -52,7 +55,7 @@ describe("Auth Controller", () => {
 
   describe("POST /auth/signup", () => {
     it("should successfully create a user and return 201", async () => {
-      mockCreateUser.mockResolvedValue(mockInput);
+      mockSignupUser.mockResolvedValue(mockInput);
 
       const password = "Password123";
       const response = await supertest(app).post("/auth/signup").send({
@@ -66,7 +69,7 @@ describe("Auth Controller", () => {
       expect(response.headers["set-cookie"][0]).toMatch(
         new RegExp(`^refreshToken=${mockRefreshToken}`),
       );
-      expect(mockCreateUser).toHaveBeenCalledWith(
+      expect(mockSignupUser).toHaveBeenCalledWith(
         mockUser.email,
         password,
         mockUser.name,
@@ -138,10 +141,13 @@ describe("Auth Controller", () => {
   describe("POST /auth/refresh", () => {
     it("should successfully refresh tokens and set a new refresh token cookie", async () => {
       const newRefreshToken = "this-is-a-new-valid-refresh-token";
-      mockRefreshAccessToken.mockResolvedValue({
+      const returnData = {
         accessToken: mockAccessToken,
-        newRefreshToken,
-      });
+        refreshToken: newRefreshToken,
+        refreshTokenExpires: mockInput.refreshTokenExpires,
+        user: mockPublicUser,
+      };
+      mockRefreshAccessToken.mockResolvedValue(returnData);
 
       const response = await supertest(app)
         .post("/auth/refresh")
@@ -150,6 +156,7 @@ describe("Auth Controller", () => {
       expect(response.status).toBe(200);
       expect(response.body.data).toEqual({
         accessToken: mockAccessToken,
+        user: mockPublicUser,
       });
       expect(response.headers["set-cookie"][0]).toMatch(
         new RegExp(`^refreshToken=${newRefreshToken}`),
@@ -168,6 +175,24 @@ describe("Auth Controller", () => {
 
       expect(response.status).toBe(401);
       expect(response.body.code).toMatch("REFRESH_TOKEN_INVALID");
+    });
+  });
+
+  describe("GET /auth/session", () => {
+    it("should sucessfully return the user data and a new access token if the session is valid", async () => {
+      mockRevalidateUser.mockResolvedValue(mockOutput);
+      const response = await supertest(app)
+        .get("/auth/session")
+        .set("Cookie", `refreshToken=${mockRefreshToken}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body.data).toEqual(mockOutput);
+    });
+
+    it("should return 401 if no valid refresh token is provided", async () => {
+      mockRevalidateUser.mockResolvedValue(null);
+      const response = await supertest(app).get("/auth/session");
+      expect(response.status).toBe(401);
     });
   });
 

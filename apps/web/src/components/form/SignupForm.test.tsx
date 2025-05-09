@@ -1,6 +1,5 @@
 import { spyConsole } from "$/__tests__/helpers";
 import { SignupForm } from "$/components/form/SignupForm";
-import { useAuth, type AuthContextType } from "$/contexts/AuthContext";
 import { fetchApi } from "$/lib/api";
 import { ApiError, ValidationError } from "$/lib/errors";
 import {
@@ -19,9 +18,6 @@ jest.mock("$/lib/api");
 jest.mock("$/contexts/AuthContext");
 
 const mockFetchApi = jest.mocked(fetchApi);
-const mockUseAuth = jest.mocked(useAuth);
-const mockLogin = jest.fn<AuthContextType["login"]>();
-const mockLogout = jest.fn<AuthContextType["logout"]>();
 
 describe("SignupForm", () => {
   const mockNewUser = {
@@ -32,12 +28,6 @@ describe("SignupForm", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUseAuth.mockReturnValue({
-      login: mockLogin,
-      auth: null,
-      isAuthenticating: false,
-      logout: mockLogout,
-    });
   });
 
   afterEach(() => {
@@ -49,7 +39,11 @@ describe("SignupForm", () => {
 
     const successData = {
       accessToken: "this-is-an-access-token",
-      user: { id: "1", email: mockNewUser.email, name: mockNewUser.name },
+      user: {
+        id: "1dc8d7c75-b500-4500-bb21-b0cc2a4ead41",
+        email: mockNewUser.email,
+        name: mockNewUser.name,
+      },
     };
     mockFetchApi.mockResolvedValue(successData);
     render(<SignupForm />);
@@ -73,7 +67,6 @@ describe("SignupForm", () => {
         }),
       });
     });
-    expect(mockLogin).toHaveBeenCalledWith(successData);
   });
 
   describe("UI State and Feedback", () => {

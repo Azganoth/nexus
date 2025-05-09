@@ -47,9 +47,7 @@ export const updateLinkOrder = async (req: Request, res: Response) => {
     UPDATE_LINK_ORDER_SCHEMA,
     req.body,
   );
-  console.log("test 1");
   await updateLinkOrderForUser(req.user!.id, orderedIds);
-  console.log("test 2");
 
   res.status(204).end();
 };

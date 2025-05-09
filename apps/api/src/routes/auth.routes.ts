@@ -4,6 +4,7 @@ import {
   logout,
   refreshAccess,
   resetPassword,
+  revalidateSession,
   signup,
   verifyResetToken,
 } from "$/controllers/auth.controller";
@@ -12,6 +13,7 @@ import { Router } from "express";
 
 export const authRouter: Router = Router();
 
+authRouter.get("/session", revalidateSession);
 authRouter.post("/login", authLimiter, login);
 authRouter.post("/signup", signup);
 authRouter.post("/logout", logout);

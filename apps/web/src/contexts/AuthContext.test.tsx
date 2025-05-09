@@ -2,7 +2,7 @@ import { createTestPublicUser } from "$/__tests__/factories";
 import { spyConsole } from "$/__tests__/helpers";
 import { AuthProvider, useAuth } from "$/contexts/AuthContext";
 import { fetchApi } from "$/lib/api";
-import { getAccessToken, storeAccessToken } from "$/lib/token";
+import { getAccessToken, storeAccessToken } from "$/lib/auth/token";
 import {
   afterEach,
   beforeEach,
@@ -14,7 +14,7 @@ import {
 import { act, renderHook, waitFor } from "@testing-library/react";
 
 jest.mock("$/lib/api");
-jest.mock("$/lib/token");
+jest.mock("$/lib/auth/token");
 
 const mockFetchApi = jest.mocked(fetchApi);
 const mockStoreAccessToken = jest.mocked(storeAccessToken);
@@ -45,29 +45,22 @@ describe("AuthContext", () => {
     const { result } = renderAuthHook();
 
     expect(result.current.isAuthenticating).toBe(true);
-    expect(result.current.auth).toBeNull();
+    expect(result.current.user).toBeNull();
   });
 
   it("should authenticate the user on initial load if the refresh token is valid", async () => {
     mockGetAccessToken.mockReturnValue(mockAccessToken);
     // @ts-expect-error Fetch api uses generics.
-    mockFetchApi.mockImplementation((url: string) => {
-      if (url.endsWith("/auth/refresh")) {
-        return Promise.resolve({ accessToken: mockAccessToken });
-      }
-      if (url.endsWith("/users/me")) {
-        return Promise.resolve(mockUser);
-      }
-      return Promise.reject(new Error("Unhandled API call"));
-    });
+    mockFetchApi.mockImplementation(() => ({
+      accessToken: mockAccessToken,
+      user: mockUser,
+    }));
 
     const { result } = renderAuthHook();
 
     await waitFor(() => expect(result.current.isAuthenticating).toBe(false));
 
-    expect(result.current.auth).not.toBeNull();
-    expect(result.current.auth?.user).toEqual(mockUser);
-    expect(result.current.auth?.accessToken).toBe(mockAccessToken);
+    expect(result.current.user).toEqual(mockUser);
     expect(mockStoreAccessToken).toHaveBeenCalledWith(mockAccessToken);
   });
 
@@ -76,7 +69,7 @@ describe("AuthContext", () => {
 
     await waitFor(() => expect(result.current.isAuthenticating).toBe(false));
 
-    expect(result.current.auth).toBeNull();
+    expect(result.current.user).toBeNull();
   });
 
   it("should update the auth state correctly when login is called", async () => {
@@ -93,8 +86,7 @@ describe("AuthContext", () => {
       result.current.login(loginData);
     });
 
-    expect(result.current.auth?.accessToken).toBe(mockAccessToken);
-    expect(result.current.auth?.user).toEqual(mockUser);
+    expect(result.current.user).toEqual(mockUser);
     expect(mockStoreAccessToken).toHaveBeenCalledWith(mockAccessToken);
   });
 
@@ -105,14 +97,14 @@ describe("AuthContext", () => {
       result.current.login({ accessToken: mockAccessToken, user: mockUser });
     });
 
-    expect(result.current.auth).not.toBeNull();
+    expect(result.current.user).not.toBeNull();
 
     await act(async () => {
       await result.current.logout();
     });
 
     expect(fetchApi).toHaveBeenCalledWith("/auth/logout", { method: "POST" });
-    expect(result.current.auth).toBeNull();
+    expect(result.current.user).toBeNull();
     expect(mockStoreAccessToken).toHaveBeenCalledWith(null);
   });
 
@@ -130,7 +122,7 @@ describe("AuthContext", () => {
       await result.current.logout();
     });
 
-    expect(result.current.auth).toBeNull();
+    expect(result.current.user).toBeNull();
     expect(mockStoreAccessToken).toHaveBeenCalledWith(null);
     expect(consoleErrorSpy).toHaveBeenCalledWith(networkError);
   });

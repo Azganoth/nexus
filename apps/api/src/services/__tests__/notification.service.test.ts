@@ -15,6 +15,9 @@ describe("Notification Service", () => {
 
   describe("sendPasswordResetEmail", () => {
     it("should call resend.emails.send with the correct parameters", async () => {
+      spyConsole("error", [
+        "An unexpected error occurred while sending email:",
+      ]);
       const expectedResetLink = `${env.APP_URL}/reset-password?token=${mockToken}`;
 
       await sendPasswordResetEmail(mockEmail, mockToken);

@@ -1,15 +1,17 @@
-import { IS_PROD, JWT_REFRESH_EXPIRES_IN } from "$/constants";
+import { IS_PROD } from "$/constants";
 import {
   changePassword,
-  createUser,
   loginUser,
   logoutUser,
   refreshAccessToken,
   requestPasswordReset,
+  revalidateUser,
+  signupUser,
   verifyPasswordResetToken,
 } from "$/services/auth.service";
+import { ApiError } from "$/utils/errors";
 import { composeResponse, validateSchema } from "$/utils/helpers";
-import type { AccessTokenPayload, AuthPayload } from "@repo/shared/contracts";
+import type { AuthPayload } from "@repo/shared/contracts";
 import {
   FORGOT_PASSWORD_SCHEMA,
   LOGIN_SCHEMA,
@@ -18,20 +20,25 @@ import {
 } from "@repo/shared/schemas";
 import type { Request, Response } from "express";
 
-const setRefreshToken = (res: Response, refreshToken: string) => {
+const setRefreshToken = (
+  res: Response,
+  refreshToken: string,
+  refreshTokenExpires: Date,
+) => {
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
     secure: IS_PROD,
     sameSite: "lax",
-    expires: new Date(Date.now() + JWT_REFRESH_EXPIRES_IN),
+    expires: refreshTokenExpires,
   });
 };
 
 export const login = async (req: Request, res: Response) => {
   const { email, password } = await validateSchema(LOGIN_SCHEMA, req.body);
 
-  const { accessToken, refreshToken, user } = await loginUser(email, password);
-  setRefreshToken(res, refreshToken);
+  const { accessToken, refreshToken, refreshTokenExpires, user } =
+    await loginUser(email, password);
+  setRefreshToken(res, refreshToken, refreshTokenExpires);
 
   res.status(200).json(composeResponse<AuthPayload>({ accessToken, user }));
 };
@@ -42,19 +49,15 @@ export const signup = async (req: Request, res: Response) => {
     req.body,
   );
 
-  const { accessToken, refreshToken, user } = await createUser(
-    email,
-    password,
-    name,
-  );
-  setRefreshToken(res, refreshToken);
+  const { accessToken, refreshToken, refreshTokenExpires, user } =
+    await signupUser(email, password, name);
+  setRefreshToken(res, refreshToken, refreshTokenExpires);
 
   res.status(201).json(composeResponse<AuthPayload>({ accessToken, user }));
 };
 
 export const logout = async (req: Request, res: Response) => {
-  const refreshToken = req.cookies.refreshToken;
-  await logoutUser(refreshToken);
+  await logoutUser(req.cookies.refreshToken);
 
   res
     .clearCookie("refreshToken", {
@@ -67,12 +70,20 @@ export const logout = async (req: Request, res: Response) => {
 };
 
 export const refreshAccess = async (req: Request, res: Response) => {
-  const refreshToken = req.cookies.refreshToken;
-  const { accessToken, newRefreshToken } =
-    await refreshAccessToken(refreshToken);
-  setRefreshToken(res, newRefreshToken);
+  const { accessToken, refreshToken, refreshTokenExpires, user } =
+    await refreshAccessToken(req.cookies.refreshToken);
+  setRefreshToken(res, refreshToken, refreshTokenExpires);
 
-  res.status(200).json(composeResponse<AccessTokenPayload>({ accessToken }));
+  res.status(200).json(composeResponse<AuthPayload>({ accessToken, user }));
+};
+
+export const revalidateSession = async (req: Request, res: Response) => {
+  const payload = await revalidateUser(req.cookies.refreshToken);
+  if (!payload) {
+    throw new ApiError(401, "NOT_LOGGED_IN");
+  }
+
+  res.status(200).json(composeResponse<AuthPayload>(payload));
 };
 
 export const forgotPassword = async (req: Request, res: Response) => {

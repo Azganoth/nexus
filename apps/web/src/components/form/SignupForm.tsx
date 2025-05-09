@@ -3,7 +3,6 @@
 import { ErrorHint } from "$/components/ui/ErrorHint";
 import { Input } from "$/components/ui/Input";
 import { LoadingButton } from "$/components/ui/LoadingButton";
-import { useAuth } from "$/contexts/AuthContext";
 import { useApiForm } from "$/hooks/useApiForm";
 import { fetchApi } from "$/lib/api";
 import { unknownError } from "$/lib/helpers";
@@ -19,8 +18,6 @@ const schema = SIGNUP_SCHEMA.extend({
 });
 
 export function SignupForm() {
-  const { login } = useAuth();
-
   const {
     register,
     handleSubmit,
@@ -34,8 +31,8 @@ export function SignupForm() {
         body: JSON.stringify({ name, email, password }),
       });
     },
-    onSuccess: (data) => {
-      login(data);
+    onSuccess: (payload) => {
+      console.log("Signed up: ", payload);
       // router.push("/dashboard");
     },
     onUnexpectedError: unknownError,

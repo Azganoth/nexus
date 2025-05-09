@@ -1,24 +1,18 @@
 "use client";
 
 import { fetchApi } from "$/lib/api";
-import { getAccessToken, storeAccessToken } from "$/lib/token";
+import { storeAccessToken } from "$/lib/auth/token";
 import type { AuthPayload, PublicUser } from "@repo/shared/contracts";
 import {
   createContext,
   ReactNode,
-  useCallback,
   useContext,
   useEffect,
   useState,
 } from "react";
 
-interface AuthenticatedState {
-  accessToken: string;
-  user: PublicUser;
-}
-
 export interface AuthContextType {
-  auth: AuthenticatedState | null;
+  user: PublicUser | null;
   isAuthenticating: boolean;
   login: (data: AuthPayload) => void;
   logout: () => Promise<void>;
@@ -26,32 +20,29 @@ export interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [auth, setAuth] = useState<AuthenticatedState | null>(null);
-  const [isAuthenticating, setIsAuthenticating] = useState(true);
+interface AuthProviderProps {
+  children: ReactNode;
+  initialUser?: PublicUser | null;
+}
 
-  const fetchUser = useCallback(async () => {
-    try {
-      const user = await fetchApi<PublicUser>("/users/me");
-      const accessToken = getAccessToken();
-      if (user && accessToken) {
-        setAuth({ user, accessToken });
-      }
-    } catch {
-      setAuth(null);
-      storeAccessToken(null);
-    }
-  }, []);
+export function AuthProvider({ children, initialUser }: AuthProviderProps) {
+  const [user, setUser] = useState(initialUser ?? null);
+  const [isAuthenticating, setIsAuthenticating] = useState(!initialUser);
 
-  // On initial app load, try a silent refresh to log the user in
   useEffect(() => {
+    if (initialUser) {
+      return;
+    }
+
+    // Try a silent refresh to log the user.
     const initializeAuth = async () => {
       try {
-        const { accessToken } = await fetchApi<AuthPayload>("/auth/refresh", {
-          method: "POST",
-        });
+        const { accessToken, user } = await fetchApi<AuthPayload>(
+          "/auth/refresh",
+          { method: "POST" },
+        );
         storeAccessToken(accessToken);
-        await fetchUser();
+        setUser(user);
       } catch {
         // This is not an error, it just means the user isn't logged in (no valid refresh token cookie).
       } finally {
@@ -60,11 +51,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     initializeAuth();
-  }, [fetchUser]);
+  }, [initialUser]);
 
   const login = ({ accessToken, user }: AuthPayload) => {
     storeAccessToken(accessToken);
-    setAuth({ accessToken, user });
+    setUser(user);
   };
 
   const logout = async () => {
@@ -74,13 +65,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // The important part is ensuring the user intent happens client-side.
       console.error(error);
     } finally {
-      setAuth(null);
+      setUser(null);
       storeAccessToken(null);
     }
   };
 
   return (
-    <AuthContext.Provider value={{ auth, isAuthenticating, login, logout }}>
+    <AuthContext.Provider value={{ user, isAuthenticating, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

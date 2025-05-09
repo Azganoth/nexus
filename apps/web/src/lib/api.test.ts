@@ -5,9 +5,8 @@ import {
 } from "$/__tests__/factories";
 import { spyFetch } from "$/__tests__/helpers";
 import { fetchApi } from "$/lib/api";
-import { API_URL } from "$/lib/constants";
+import { getAccessToken, storeAccessToken } from "$/lib/auth/token";
 import { ApiError, ValidationError } from "$/lib/errors";
-import { getAccessToken, storeAccessToken } from "$/lib/token";
 import {
   afterEach,
   beforeEach,
@@ -17,10 +16,7 @@ import {
   jest,
 } from "@jest/globals";
 
-jest.mock("$/lib/token");
-jest.mock("$/lib/constants", () => ({
-  API_URL: "http://test.mock.com",
-}));
+jest.mock("$/lib/auth/token");
 
 const mockGetAccessToken = jest.mocked(getAccessToken);
 const mockStoreAccessToken = jest.mocked(storeAccessToken);
@@ -41,7 +37,7 @@ describe("fetchApi", () => {
 
     const result = await fetchApi<{ message: string }>("/test");
 
-    expect(fetchSpy).toHaveBeenCalledWith(`${API_URL}/test`, {
+    expect(fetchSpy).toHaveBeenCalledWith("/api/test", {
       headers: new Headers({}),
       credentials: "include",
     });
@@ -54,7 +50,7 @@ describe("fetchApi", () => {
 
     const result = await fetchApi<void>("/test");
 
-    expect(fetchSpy).toHaveBeenCalledWith(`${API_URL}/test`, {
+    expect(fetchSpy).toHaveBeenCalledWith("/api/test", {
       headers: new Headers({}),
       credentials: "include",
     });
@@ -108,7 +104,7 @@ describe("fetchApi", () => {
       mockGetAccessToken.mockReturnValue("expired-token");
     });
 
-    it("should refresh the token and retry the request successfully", async () => {
+    it("should successfully refresh the token and retry the request", async () => {
       const accessToken = "this-is-a-fresh-token";
       const successData = { data: "Conteúdo protegido." };
       const invalidResponse = createTestErrorResponse("ACCESS_TOKEN_INVALID");
@@ -124,8 +120,9 @@ describe("fetchApi", () => {
       const result = await fetchApi("/protected-resource");
 
       expect(fetchSpy).toHaveBeenCalledTimes(3);
-      expect(fetchSpy).toHaveBeenCalledWith(
-        `${API_URL}/auth/refresh`,
+      expect(fetchSpy).toHaveBeenNthCalledWith(
+        2,
+        "/api/auth/refresh",
         expect.anything(),
       );
       expect(mockStoreAccessToken).toHaveBeenCalledWith(accessToken);
