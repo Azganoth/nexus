@@ -3,9 +3,9 @@ import "@testing-library/jest-dom/jest-globals";
 import { createElement } from "react";
 import "whatwg-fetch";
 
+jest.mock("$/lib/envGuard", () => ({}));
 jest.mock("$/lib/constants", () => ({
-  __esModule: true,
-  IS_SERVER: false,
+  ...(jest.requireActual("$/lib/constants") as object),
   API_URL: "http://localhost:3000",
   WEB_URL: "http://localhost:3002",
 }));
