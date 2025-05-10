@@ -11,9 +11,16 @@ export const IS_DEV = env.NODE_ENV !== "production";
 export const IS_PROD = env.NODE_ENV === "production";
 export const IS_TEST = env.NODE_ENV === "test";
 
-export const ALLOWED_ORIGINS = IS_DEV ? "*" : [env.APP_URL];
+export const ALLOWED_ORIGINS = IS_DEV
+  ? [
+      "http://localhost:3000",
+      "http://localhost:3002",
+      "http://127.0.0.1:3000",
+      "http://127.0.0.1:3002",
+    ]
+  : [env.APP_URL];
 
-export const JWT_ACCESS_EXPIRES_IN = 15 * 60 * 1000;
+export const JWT_ACCESS_EXPIRES_IN = 60 * 60 * 1000;
 export const JWT_REFRESH_EXPIRES_IN = 7 * 24 * 60 * 60 * 1000;
 
 export const PASSWORD_RESET_EXPIRES_IN = 15 * 60 * 1000;
