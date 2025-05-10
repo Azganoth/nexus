@@ -2,7 +2,7 @@ import { createTestPublicUser } from "$/__tests__/factories";
 import { spyConsole } from "$/__tests__/helpers";
 import { AuthProvider, useAuth } from "$/contexts/AuthContext";
 import { getAccessToken, storeAccessToken } from "$/lib/auth/client";
-import { fetchApi } from "$/services/apiClient";
+import { apiClient } from "$/services/apiClient";
 import {
   afterEach,
   beforeEach,
@@ -13,10 +13,10 @@ import {
 } from "@jest/globals";
 import { act, renderHook, waitFor } from "@testing-library/react";
 
-jest.mock("$/lib/api");
-jest.mock("$/lib/auth/token");
+jest.mock("$/services/apiClient");
+jest.mock("$/lib/auth/client");
 
-const mockFetchApi = jest.mocked(fetchApi);
+const mockApiClient = jest.mocked(apiClient);
 const mockStoreAccessToken = jest.mocked(storeAccessToken);
 const mockGetAccessToken = jest.mocked(getAccessToken);
 
@@ -51,7 +51,7 @@ describe("AuthContext", () => {
   it("should authenticate the user on initial load if the refresh token is valid", async () => {
     mockGetAccessToken.mockReturnValue(mockAccessToken);
     // @ts-expect-error Fetch api uses generics.
-    mockFetchApi.mockImplementation(() => ({
+    mockApiClient.post.mockImplementation(() => ({
       accessToken: mockAccessToken,
       user: mockUser,
     }));
@@ -103,7 +103,7 @@ describe("AuthContext", () => {
       await result.current.logout();
     });
 
-    expect(fetchApi).toHaveBeenCalledWith("/auth/logout", { method: "POST" });
+    expect(mockApiClient.post).toHaveBeenCalledWith("/auth/logout");
     expect(result.current.user).toBeNull();
     expect(mockStoreAccessToken).toHaveBeenCalledWith(null);
   });
@@ -111,7 +111,7 @@ describe("AuthContext", () => {
   it("should clear the auth state even if the logout API call fails", async () => {
     const networkError = new Error("Network failed");
     const consoleErrorSpy = spyConsole("error", [networkError]);
-    mockFetchApi.mockRejectedValue(networkError);
+    mockApiClient.post.mockRejectedValue(networkError);
     const { result } = renderAuthHook();
 
     act(() => {

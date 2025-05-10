@@ -1,6 +1,6 @@
 import { spyConsole } from "$/__tests__/helpers";
 import { LoginForm } from "$/components/form/LoginForm";
-import { fetchApi } from "$/services/apiClient";
+import { apiClient } from "$/services/apiClient";
 import { ApiError } from "$/services/errors";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { ERRORS } from "@repo/shared/constants";
@@ -9,7 +9,7 @@ import { userEvent } from "@testing-library/user-event";
 
 jest.mock("$/services/apiClient");
 
-const mockFetchApi = jest.mocked(fetchApi);
+const mockApiClient = jest.mocked(apiClient);
 
 describe("LoginForm", () => {
   beforeEach(() => {
@@ -24,7 +24,7 @@ describe("LoginForm", () => {
       accessToken: "this-is-an-access-token",
       user: { id: "1", email: "test@example.com", name: "Test User" },
     };
-    mockFetchApi.mockResolvedValue(successData);
+    mockApiClient.post.mockResolvedValue(successData);
     render(<LoginForm />);
 
     await user.type(screen.getByLabelText("Email"), "test@example.com");
@@ -32,12 +32,9 @@ describe("LoginForm", () => {
     await user.click(screen.getByRole("button", { name: /entrar/i }));
 
     await waitFor(() => {
-      expect(mockFetchApi).toHaveBeenCalledWith("/auth/login", {
-        method: "POST",
-        body: JSON.stringify({
-          email: "test@example.com",
-          password: "password123",
-        }),
+      expect(mockApiClient.post).toHaveBeenCalledWith("/auth/login", {
+        email: "test@example.com",
+        password: "password123",
       });
     });
   });
@@ -47,7 +44,7 @@ describe("LoginForm", () => {
       const user = userEvent.setup();
 
       // Make the promise hang so the intermediate state can be checked
-      mockFetchApi.mockImplementation(() => new Promise(() => {}));
+      mockApiClient.post.mockImplementation(() => new Promise(() => {}));
       render(<LoginForm />);
 
       await user.type(screen.getByLabelText("Email"), "test@example.com");
@@ -97,7 +94,7 @@ describe("LoginForm", () => {
       const user = userEvent.setup();
 
       const errorMessage = ERRORS["INCORRECT_CREDENTIALS"];
-      mockFetchApi.mockRejectedValue(
+      mockApiClient.post.mockRejectedValue(
         new ApiError("INCORRECT_CREDENTIALS", errorMessage),
       );
       render(<LoginForm />);
@@ -117,7 +114,7 @@ describe("LoginForm", () => {
         "SERVER_UNKNOWN_ERROR",
         ERRORS.SERVER_UNKNOWN_ERROR,
       );
-      mockFetchApi.mockRejectedValue(unknownError);
+      mockApiClient.post.mockRejectedValue(unknownError);
       spyConsole("error", [unknownError]);
       render(<LoginForm />);
 

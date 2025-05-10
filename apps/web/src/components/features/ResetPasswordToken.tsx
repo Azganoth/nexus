@@ -1,11 +1,8 @@
-import { fetchApi } from "$/services/apiClient";
+import { apiClient } from "$/services/apiClient";
 import { cache, use, type ReactNode } from "react";
 
 const verifyToken = cache(async (token: string) =>
-  fetchApi<void>("/auth/verify-reset-token", {
-    method: "POST",
-    body: JSON.stringify({ token }),
-  }),
+  apiClient.post("/auth/verify-reset-token", { token }),
 );
 
 interface Props {

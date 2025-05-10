@@ -1,6 +1,6 @@
 import { ForgotPasswordForm } from "$/components/form/ForgotPasswordForm";
 import { toast } from "$/components/ui/Toast";
-import { fetchApi } from "$/services/apiClient";
+import { apiClient } from "$/services/apiClient";
 import {
   afterEach,
   beforeEach,
@@ -30,7 +30,7 @@ jest.mock("$/components/layout/SlidingView", () => ({
   }) => <div>{views[currentView]}</div>,
 }));
 
-const mockFetchApi = jest.mocked(fetchApi);
+const mockApiClient = jest.mocked(apiClient);
 const mockToast = jest.mocked(toast);
 
 describe("ForgotPasswordForm", () => {
@@ -46,7 +46,7 @@ describe("ForgotPasswordForm", () => {
 
   it("should successfully submit the email and switch to the notice view", async () => {
     const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
-    mockFetchApi.mockResolvedValue(undefined);
+    mockApiClient.post.mockResolvedValue(undefined);
     render(<ForgotPasswordForm />);
 
     const emailInput = screen.getByLabelText("Email");
@@ -58,9 +58,8 @@ describe("ForgotPasswordForm", () => {
     await user.click(submitButton);
 
     await waitFor(() => {
-      expect(mockFetchApi).toHaveBeenCalledWith("/auth/forgot-password", {
-        method: "POST",
-        body: JSON.stringify({ email: "test@example.com" }),
+      expect(mockApiClient.post).toHaveBeenCalledWith("/auth/forgot-password", {
+        email: "test@example.com",
       });
     });
 
@@ -75,7 +74,7 @@ describe("ForgotPasswordForm", () => {
 
   it("should handle the resend cooldown and functionality", async () => {
     const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
-    mockFetchApi.mockResolvedValue(undefined);
+    mockApiClient.post.mockResolvedValue(undefined);
     render(<ForgotPasswordForm />);
 
     await user.type(screen.getByLabelText("Email"), "test@example.com");
@@ -106,7 +105,7 @@ describe("ForgotPasswordForm", () => {
     await user.click(resendButton);
 
     await waitFor(() => {
-      expect(mockFetchApi).toHaveBeenCalledTimes(2);
+      expect(mockApiClient.post).toHaveBeenCalledTimes(2);
     });
     expect(mockToast.success).toHaveBeenCalledWith(
       "Email de redefinição reenviado!",

@@ -5,7 +5,7 @@ import { Input } from "$/components/ui/Input";
 import { LoadingButton } from "$/components/ui/LoadingButton";
 import { toast } from "$/components/ui/Toast";
 import { useApiForm } from "$/hooks/useApiForm";
-import { fetchApi } from "$/services/apiClient";
+import { apiClient } from "$/services/apiClient";
 import { RESET_PASSWORD_SCHEMA } from "@repo/shared/schemas";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
@@ -34,10 +34,7 @@ export function ResetPasswordForm({ token }: Props) {
     schema,
     mutationFn: (data) => {
       const { password } = data;
-      return fetchApi("/auth/reset-password", {
-        method: "POST",
-        body: JSON.stringify({ token, password }),
-      });
+      return apiClient.post("/auth/reset-password", { token, password });
     },
     onSuccess: () => {
       toast.success("Senha alterada com sucesso.");

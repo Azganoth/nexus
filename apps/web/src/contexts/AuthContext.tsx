@@ -1,7 +1,7 @@
 "use client";
 
 import { storeAccessToken } from "$/lib/auth/client";
-import { fetchApi } from "$/services/apiClient";
+import { apiClient } from "$/services/apiClient";
 import type { AuthPayload, PublicUser } from "@repo/shared/contracts";
 import {
   createContext,
@@ -37,10 +37,8 @@ export function AuthProvider({ children, initialUser }: AuthProviderProps) {
     // Try a silent refresh to log the user.
     const initializeAuth = async () => {
       try {
-        const { accessToken, user } = await fetchApi<AuthPayload>(
-          "/auth/refresh",
-          { method: "POST" },
-        );
+        const { accessToken, user } =
+          await apiClient.post<AuthPayload>("/auth/refresh");
         storeAccessToken(accessToken);
         setUser(user);
       } catch {
@@ -60,7 +58,7 @@ export function AuthProvider({ children, initialUser }: AuthProviderProps) {
 
   const logout = async () => {
     try {
-      await fetchApi("/auth/logout", { method: "POST" });
+      await apiClient.post("/auth/logout");
     } catch (error) {
       // The important part is ensuring the user intent happens client-side.
       console.error(error);

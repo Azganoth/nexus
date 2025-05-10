@@ -1,4 +1,3 @@
-import { ERRORS, type ErrorCode } from "@repo/shared/constants";
 import type {
   ApiResponse,
   PublicProfile,
@@ -52,26 +51,5 @@ export const createTestPublicProfile = (
   ...overrides,
 });
 
-// Responses
-const statusToStatusCode: Record<ApiResponse["status"], number> = {
-  success: 200,
-  fail: 400,
-  error: 500,
-};
-export const createTestResponse = (
-  response: ApiResponse,
-  status = statusToStatusCode[response.status],
-) => new Response(JSON.stringify(response), { status });
-
-export const createTestSuccessResponse = (data: unknown) =>
-  createTestResponse({ status: "success", data });
-
-export const createTestFailResponse = (data: Record<string, string[]>) =>
-  createTestResponse({ status: "fail", data });
-
-export const createTestErrorResponse = (code: ErrorCode, message?: string) =>
-  createTestResponse({
-    status: "error",
-    code,
-    message: message ?? ERRORS[code],
-  });
+export const createTestApiResponse = (status: number, response: ApiResponse) =>
+  new Response(JSON.stringify(response), { status });

@@ -1,6 +1,6 @@
 import { spyConsole } from "$/__tests__/helpers";
 import { SignupForm } from "$/components/form/SignupForm";
-import { fetchApi } from "$/services/apiClient";
+import { apiClient } from "$/services/apiClient";
 import { ApiError, ValidationError } from "$/services/errors";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { ERRORS } from "@repo/shared/constants";
@@ -9,7 +9,7 @@ import { userEvent } from "@testing-library/user-event";
 
 jest.mock("$/services/apiClient");
 
-const mockFetchApi = jest.mocked(fetchApi);
+const mockApiClient = jest.mocked(apiClient);
 
 describe("SignupForm", () => {
   const mockNewUser = {
@@ -34,7 +34,7 @@ describe("SignupForm", () => {
         name: mockNewUser.name,
       },
     };
-    mockFetchApi.mockResolvedValue(successData);
+    mockApiClient.post.mockResolvedValue(successData);
     render(<SignupForm />);
 
     await user.type(screen.getByLabelText("Nome"), mockNewUser.name);
@@ -47,13 +47,10 @@ describe("SignupForm", () => {
     await user.click(screen.getByRole("button", { name: /cadastrar/i }));
 
     await waitFor(() => {
-      expect(mockFetchApi).toHaveBeenCalledWith("/auth/signup", {
-        method: "POST",
-        body: JSON.stringify({
-          name: mockNewUser.name,
-          email: mockNewUser.email,
-          password: mockNewUser.password,
-        }),
+      expect(mockApiClient.post).toHaveBeenCalledWith("/auth/signup", {
+        name: mockNewUser.name,
+        email: mockNewUser.email,
+        password: mockNewUser.password,
       });
     });
   });
@@ -62,7 +59,7 @@ describe("SignupForm", () => {
     it("should disable the submit button during submission", async () => {
       const user = userEvent.setup();
 
-      mockFetchApi.mockImplementation(() => new Promise(() => {}));
+      mockApiClient.post.mockImplementation(() => new Promise(() => {}));
       render(<SignupForm />);
 
       await user.type(screen.getByLabelText("Nome"), mockNewUser.name);
@@ -121,7 +118,7 @@ describe("SignupForm", () => {
     it("should show a server error if the email is already in use", async () => {
       const user = userEvent.setup();
 
-      mockFetchApi.mockRejectedValue(
+      mockApiClient.post.mockRejectedValue(
         new ValidationError({ email: ["O email já está em uso."] }),
       );
       render(<SignupForm />);
@@ -147,7 +144,7 @@ describe("SignupForm", () => {
         "SERVER_UNKNOWN_ERROR",
         ERRORS.SERVER_UNKNOWN_ERROR,
       );
-      mockFetchApi.mockRejectedValue(unknownError);
+      mockApiClient.post.mockRejectedValue(unknownError);
       spyConsole("error", [unknownError]);
       render(<SignupForm />);
 

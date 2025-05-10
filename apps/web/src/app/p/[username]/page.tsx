@@ -2,7 +2,7 @@ import { Profile } from "$/components/features/Profile";
 import { Link } from "$/components/ui/Link";
 import { Logo } from "$/components/ui/Logo";
 import { composeTitle } from "$/lib/utils";
-import { fetchApi } from "$/services/apiClient";
+import { apiClient } from "$/services/apiClient";
 import { ApiError } from "$/services/errors";
 import type { PublicProfile } from "@repo/shared/contracts";
 import type { Metadata } from "next";
@@ -11,7 +11,7 @@ import { cache } from "react";
 
 const getProfile = cache(async (username: string) => {
   try {
-    return await fetchApi<PublicProfile>(`/profiles/${username}`);
+    return apiClient.get<PublicProfile>(`/profiles/${username}`);
   } catch (error) {
     if (error instanceof ApiError) {
       if (error.code === "NOT_FOUND") {

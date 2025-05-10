@@ -6,7 +6,7 @@ import { Input } from "$/components/ui/Input";
 import { LoadingButton } from "$/components/ui/LoadingButton";
 import { toast } from "$/components/ui/Toast";
 import { useApiForm } from "$/hooks/useApiForm";
-import { fetchApi } from "$/services/apiClient";
+import { apiClient } from "$/services/apiClient";
 import { FORGOT_PASSWORD_SCHEMA } from "@repo/shared/schemas";
 import { useEffect, useState } from "react";
 
@@ -33,11 +33,7 @@ export function ForgotPasswordForm() {
     formState: { errors, isSubmitting },
   } = useApiForm({
     schema,
-    mutationFn: (data) =>
-      fetchApi<void>("/auth/forgot-password", {
-        method: "POST",
-        body: JSON.stringify(data),
-      }),
+    mutationFn: (data) => apiClient.post("/auth/forgot-password", data),
     onSuccess: () => {
       const email = getValues("email");
       setSubmittedEmail(email);
@@ -53,9 +49,8 @@ export function ForgotPasswordForm() {
   const handleResend = async () => {
     setIsResending(true);
     try {
-      await fetchApi<void>("/auth/forgot-password", {
-        method: "POST",
-        body: JSON.stringify({ email: submittedEmail }),
+      await apiClient.post("/auth/forgot-password", {
+        email: submittedEmail,
       });
       toast.success("Email de redefinição reenviado!");
       setCountdown(TIMEOUT);
