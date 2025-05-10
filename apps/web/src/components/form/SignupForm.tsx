@@ -8,7 +8,7 @@ import { unknownError } from "$/lib/utils";
 import { apiClient } from "$/services/apiClient";
 import type { AuthPayload } from "@repo/shared/contracts";
 import { SIGNUP_SCHEMA } from "@repo/shared/schemas";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 const schema = SIGNUP_SCHEMA.extend({
   confirmPassword: z.string(),

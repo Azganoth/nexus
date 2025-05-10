@@ -1,6 +1,6 @@
 import { ValidationError } from "$/utils/errors";
 import type { SuccessResponse } from "@repo/shared/contracts";
-import type { ZodSchema } from "zod";
+import type z from "zod/v4";
 
 export const composeResponse = <T = unknown>(data: T): SuccessResponse<T> => ({
   status: "success",
@@ -8,7 +8,7 @@ export const composeResponse = <T = unknown>(data: T): SuccessResponse<T> => ({
 });
 
 export const validateSchema = async <T>(
-  schema: ZodSchema<T>,
+  schema: z.ZodType<T>,
   data: unknown,
 ) => {
   const result = await schema.safeParseAsync(data);

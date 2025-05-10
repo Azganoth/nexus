@@ -18,6 +18,22 @@ export const baseConfig = [
     },
   },
   {
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            {
+              name: "zod",
+              message:
+                "Please import from 'zod/v4' instead to ensure compatibility with the v4 catalog.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
     plugins: {
       onlyWarn,
     },

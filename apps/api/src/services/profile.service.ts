@@ -2,7 +2,7 @@ import { PUBLIC_LINK_SELECT, PUBLIC_PROFILE_SELECT } from "$/constants";
 import { ApiError } from "$/utils/errors";
 import { prisma } from "@repo/database";
 import type { UPDATE_PROFILE_SCHEMA } from "@repo/shared/schemas";
-import type { z } from "zod";
+import type { z } from "zod/v4";
 
 export const getProfileByUserId = async (userId: string) => {
   const profile = await prisma.profile.findUnique({

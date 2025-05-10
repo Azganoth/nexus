@@ -3,33 +3,35 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ERRORS, type ErrorCode } from "@repo/shared/constants";
 import {
   useForm,
-  type FieldValues,
   type Path,
+  type Resolver,
   type SubmitHandler,
   type UseFormProps,
 } from "react-hook-form";
-import type { z } from "zod";
+import type { z } from "zod/v4";
 
-interface UseApiFormProps<Data extends FieldValues, Output>
-  extends UseFormProps<Data> {
-  schema: z.Schema<Data>;
-  mutationFn: (data: Data) => Promise<Output>;
+interface UseApiFormProps<Schema extends z.ZodObject, Output>
+  extends Omit<UseFormProps<z.infer<Schema>>, "resolver"> {
+  schema: Schema;
+  mutationFn: (data: z.infer<Schema>) => Promise<Output>;
   onSuccess?: (response: Output) => void;
   expectedErrors?: ErrorCode[];
   onUnexpectedError?: (error: unknown) => void;
 }
 
-export function useApiForm<Data extends FieldValues, Output>({
+export function useApiForm<Schema extends z.ZodObject, Output>({
   schema,
   mutationFn,
   onSuccess,
   expectedErrors,
   onUnexpectedError,
   ...useFormProps
-}: UseApiFormProps<Data, Output>) {
+}: UseApiFormProps<Schema, Output>) {
+  type Data = z.infer<Schema>;
+
   const form = useForm<Data>({
     ...useFormProps,
-    resolver: zodResolver(schema),
+    resolver: zodResolver(schema) as Resolver<Data>,
   });
 
   const { setError } = form;

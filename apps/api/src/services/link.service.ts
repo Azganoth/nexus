@@ -2,7 +2,7 @@ import { ID_SELECT, PUBLIC_LINK_SELECT } from "$/constants";
 import { ApiError } from "$/utils/errors";
 import { prisma, Prisma } from "@repo/database";
 import type { CREATE_LINK_SCHEMA } from "@repo/shared/schemas";
-import type { z } from "zod";
+import type { z } from "zod/v4";
 
 export const getLinksForUser = async (userId: string) => {
   const links = await prisma.link.findMany({

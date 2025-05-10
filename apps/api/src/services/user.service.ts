@@ -3,7 +3,7 @@ import { ApiError, ValidationError } from "$/utils/errors";
 import { prisma } from "@repo/database";
 import type { UPDATE_USER_SCHEMA } from "@repo/shared/schemas";
 import bcrypt from "bcrypt";
-import type { z } from "zod";
+import type { z } from "zod/v4";
 
 export const updateUser = async (
   userId: string,

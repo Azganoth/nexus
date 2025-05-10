@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 // NOTE: Keep turbo 'env' updated.
 const envSchema = z.object({

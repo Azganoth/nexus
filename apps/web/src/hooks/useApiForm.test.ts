@@ -1,7 +1,7 @@
 import { useApiForm } from "$/hooks/useApiForm";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { act, renderHook } from "@testing-library/react";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 const testSchema = z.object({
   name: z.string().min(1),
@@ -41,7 +41,7 @@ describe("useApiForm", () => {
   ) => {
     act(() => {
       Object.entries(data).forEach(([key, value]) => {
-        result.current.setValue(key, value);
+        result.current.setValue(key as keyof typeof data, value);
       });
     });
 

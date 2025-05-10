@@ -149,8 +149,8 @@ importers:
   apps/web:
     dependencies:
       '@hookform/resolvers':
-        specifier: ^5.0.1
-        version: 5.0.1(react-hook-form@7.57.0(react@18.3.1))
+        specifier: ^5.1.1
+        version: 5.1.1(react-hook-form@7.58.1(react@18.3.1))
       '@repo/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -168,7 +168,7 @@ importers:
         version: 18.3.1(react@18.3.1)
       react-hook-form:
         specifier: ^7.55.0
-        version: 7.57.0(react@18.3.1)
+        version: 7.58.1(react@18.3.1)
       sonner:
         specifier: ^2.0.3
         version: 2.0.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -869,8 +869,8 @@ packages:
   '@fastify/deepmerge@1.3.0':
     resolution: {integrity: sha512-J8TOSBq3SoZbDhM9+R/u77hP93gz/rajSA+K2kGyijPpORPWUXHUpTaleoj+92As0S9uPRP7Oi8IqMf0u+ro6A==}
 
-  '@hookform/resolvers@5.0.1':
-    resolution: {integrity: sha512-u/+Jp83luQNx9AdyW2fIPGY6Y7NG68eN2ZW8FOJYL+M0i4s49+refdJdOp/A9n9HFQtQs3HIDHQvX3ZET2o7YA==}
+  '@hookform/resolvers@5.1.1':
+    resolution: {integrity: sha512-J/NVING3LMAEvexJkyTLjruSm7aOFx7QX21pzkiJfMoNG0wl5aFEjLTl7ay7IQb9EWY6AkrBy7tHL2Alijpdcg==}
     peerDependencies:
       react-hook-form: ^7.55.0
 
@@ -3874,8 +3874,8 @@ packages:
     peerDependencies:
       react: ^18.3.1
 
-  react-hook-form@7.57.0:
-    resolution: {integrity: sha512-RbEks3+cbvTP84l/VXGUZ+JMrKOS8ykQCRYdm5aYsxnDquL0vspsyNhGRO7pcH6hsZqWlPOjLye7rJqdtdAmlg==}
+  react-hook-form@7.58.1:
+    resolution: {integrity: sha512-Lml/KZYEEFfPhUVgE0RdCVpnC4yhW+PndRhbiTtdvSlQTL8IfVR+iQkBjLIvmmc6+GGoVeM11z37ktKFPAb0FA==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18 || ^19
@@ -5005,10 +5005,10 @@ snapshots:
 
   '@fastify/deepmerge@1.3.0': {}
 
-  '@hookform/resolvers@5.0.1(react-hook-form@7.57.0(react@18.3.1))':
+  '@hookform/resolvers@5.1.1(react-hook-form@7.58.1(react@18.3.1))':
     dependencies:
       '@standard-schema/utils': 0.3.0
-      react-hook-form: 7.57.0(react@18.3.1)
+      react-hook-form: 7.58.1(react@18.3.1)
 
   '@humanfs/core@0.19.1': {}
 
@@ -8383,7 +8383,7 @@ snapshots:
       react: 18.3.1
       scheduler: 0.23.2
 
-  react-hook-form@7.57.0(react@18.3.1):
+  react-hook-form@7.58.1(react@18.3.1):
     dependencies:
       react: 18.3.1
 

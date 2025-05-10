@@ -8,7 +8,7 @@ import { useApiForm } from "$/hooks/useApiForm";
 import { apiClient } from "$/services/apiClient";
 import { RESET_PASSWORD_SCHEMA } from "@repo/shared/schemas";
 import { useRouter } from "next/navigation";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 const schema = RESET_PASSWORD_SCHEMA.omit({ token: true })
   .extend({

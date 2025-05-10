@@ -1,6 +1,6 @@
 import { composeResponse, validateSchema } from "$/utils/helpers";
 import { describe, expect, it } from "@jest/globals";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 describe("Helper Utils", () => {
   describe("composeResponse", () => {
