@@ -32,13 +32,14 @@ describe("AuthContext", () => {
 
   beforeEach(() => {
     jest.resetAllMocks();
+    jest.restoreAllMocks();
   });
 
   afterEach(() => {
     jest.restoreAllMocks();
   });
 
-  it("should initially be in an authenticating state with no user", () => {
+  it("initially is in an authenticating state with no user", () => {
     // Ignore 'act' warning
     spyConsole("error", "any");
 
@@ -48,7 +49,7 @@ describe("AuthContext", () => {
     expect(result.current.user).toBeNull();
   });
 
-  it("should authenticate the user on initial load if the refresh token is valid", async () => {
+  it("authenticates the user on initial load if the refresh token is valid", async () => {
     mockGetAccessToken.mockReturnValue(mockAccessToken);
     // @ts-expect-error Fetch api uses generics.
     mockApiClient.post.mockImplementation(() => ({
@@ -72,7 +73,7 @@ describe("AuthContext", () => {
     expect(result.current.user).toBeNull();
   });
 
-  it("should update the auth state correctly when login is called", async () => {
+  it("updates the auth state correctly when login is called", async () => {
     const { result } = renderAuthHook();
 
     await waitFor(() => expect(result.current.isAuthenticating).toBe(false));
@@ -90,7 +91,7 @@ describe("AuthContext", () => {
     expect(mockStoreAccessToken).toHaveBeenCalledWith(mockAccessToken);
   });
 
-  it("should clear the auth state and call the API when logout is called", async () => {
+  it("clears the auth state and calls the API when logout is called", async () => {
     const { result } = renderAuthHook();
 
     act(() => {

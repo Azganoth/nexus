@@ -27,6 +27,26 @@ describe("User Controller", () => {
     app = createServer();
   });
 
+  describe("GET /users/me", () => {
+    it("should return 401 if no token is provided", async () => {
+      const response = await supertest(app).get("/users/me");
+      expect(response.status).toBe(401);
+    });
+
+    it("returns the current user's data if the token is valid", async () => {
+      mockPrisma.user.findUnique.mockResolvedValue(
+        mockAuthenticatedUser as User,
+      );
+
+      const response = await supertest(app)
+        .get("/users/me")
+        .set("Authorization", `Bearer ${mockAccessToken}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body.data.name).toBe(mockAuthenticatedUser.name);
+    });
+  });
+
   describe("PATCH /users/me", () => {
     it("should return 401 if unauthenticated", async () => {
       const response = await supertest(app)
@@ -35,7 +55,7 @@ describe("User Controller", () => {
       expect(response.status).toBe(401);
     });
 
-    it("should return 200 and the updated user on success", async () => {
+    it("returns 200 and the updated user on success", async () => {
       mockPrisma.user.findUnique.mockResolvedValue(
         mockAuthenticatedUser as User,
       );
@@ -56,25 +76,6 @@ describe("User Controller", () => {
   });
 
   describe("DELETE /users/me", () => {
-    it("should sucessfully delete an user", async () => {
-      mockPrisma.user.findUnique.mockResolvedValue(
-        mockAuthenticatedUser as User,
-      );
-
-      mockDeleteUser.mockResolvedValue(undefined);
-
-      const response = await supertest(app)
-        .delete("/users/me")
-        .set("Authorization", `Bearer ${mockAccessToken}`)
-        .send({ password: "correct_password" });
-
-      expect(response.status).toBe(204);
-      expect(mockDeleteUser).toHaveBeenCalledWith(
-        mockUser.id,
-        "correct_password",
-      );
-    });
-
     it("should return 401 if unauthenticated", async () => {
       const response = await supertest(app)
         .delete("/users/me")
@@ -112,6 +113,25 @@ describe("User Controller", () => {
         .send({ password: "wrong_password" });
 
       expect(response.status).toBe(422);
+    });
+
+    it("deletes the user if the password is correct", async () => {
+      mockPrisma.user.findUnique.mockResolvedValue(
+        mockAuthenticatedUser as User,
+      );
+
+      mockDeleteUser.mockResolvedValue(undefined);
+
+      const response = await supertest(app)
+        .delete("/users/me")
+        .set("Authorization", `Bearer ${mockAccessToken}`)
+        .send({ password: "correct_password" });
+
+      expect(response.status).toBe(204);
+      expect(mockDeleteUser).toHaveBeenCalledWith(
+        mockUser.id,
+        "correct_password",
+      );
     });
   });
 });

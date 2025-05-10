@@ -19,7 +19,7 @@ describe("User Service", () => {
   });
 
   describe("updateUser", () => {
-    it("should successfully update an user's name", async () => {
+    it("updates an user's name", async () => {
       const updateData = { name: "Novo nome" };
       const updatedUser = {
         ...selectData(mockUser, AUTHENTICATED_USER_SELECT),
@@ -40,7 +40,7 @@ describe("User Service", () => {
   });
 
   describe("deleteUser", () => {
-    it("should successfully delete the user if the password is correct", async () => {
+    it("deletes the user if the password is correct", async () => {
       mockPrisma.user.findUnique.mockResolvedValue(
         selectData(mockUser, { password: true }) as User,
       );

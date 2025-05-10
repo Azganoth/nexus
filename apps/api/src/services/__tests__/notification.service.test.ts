@@ -14,7 +14,7 @@ describe("Notification Service", () => {
   });
 
   describe("sendPasswordResetEmail", () => {
-    it("should call resend.emails.send with the correct parameters", async () => {
+    it("sends a password reset email", async () => {
       spyConsole("error", [
         "An unexpected error occurred while sending email:",
       ]);

@@ -26,7 +26,7 @@ describe("SlidingView", () => {
     view3: <div>View 3</div>,
   };
 
-  it("should render all views but only show the current one", () => {
+  it("renders all views but only shows the current one", () => {
     render(<SlidingView views={views} currentView="view1" />);
 
     const view1 = screen.getByTestId("view-1");
@@ -43,7 +43,7 @@ describe("SlidingView", () => {
     expect(view3).toHaveAttribute("inert");
   });
 
-  it("should switch the active view when currentView prop changes", () => {
+  it("switches the active view when currentView prop changes", () => {
     const { rerender } = render(
       <SlidingView views={views} currentView="view1" />,
     );
@@ -60,7 +60,7 @@ describe("SlidingView", () => {
     expect(view2).not.toHaveAttribute("inert");
   });
 
-  it("should auto-focus the first focusable element in the new view if autoFocus is true", async () => {
+  it("auto-focuses the first focusable element in the new view if autoFocus is true", async () => {
     const { rerender } = render(
       <SlidingView views={views} currentView="view1" autoFocus />,
     );

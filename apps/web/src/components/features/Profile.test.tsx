@@ -6,7 +6,7 @@ import { render, screen } from "@testing-library/react";
 describe("Profile", () => {
   const mockProfile = createRandomPublicProfile(2);
 
-  it("should render all profile details correctly", () => {
+  it("renders the profile component", () => {
     render(<Profile profile={mockProfile} />);
 
     const avatar = screen.getByRole("presentation");

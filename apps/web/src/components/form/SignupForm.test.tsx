@@ -23,7 +23,7 @@ describe("SignupForm", () => {
     jest.restoreAllMocks();
   });
 
-  it("should successfully create and log in a new user", async () => {
+  it("creates and logs in a new user", async () => {
     const user = userEvent.setup();
 
     const successData = {
@@ -56,7 +56,7 @@ describe("SignupForm", () => {
   });
 
   describe("UI State and Feedback", () => {
-    it("should disable the submit button during submission", async () => {
+    it("disables the submit button during submission", async () => {
       const user = userEvent.setup();
 
       mockApiClient.post.mockImplementation(() => new Promise(() => {}));
@@ -75,7 +75,7 @@ describe("SignupForm", () => {
       expect(submitButton).toBeDisabled();
     });
 
-    it("should display a password mismatch error and then clear it", async () => {
+    it("displays a password mismatch error and then clears it", async () => {
       const user = userEvent.setup();
 
       const correctPassword = "Password123";
@@ -99,7 +99,7 @@ describe("SignupForm", () => {
   });
 
   describe("Validation and Error Handling", () => {
-    it("should set aria-invalid to true on password confirmation when passwords do not match", async () => {
+    it("sets aria-invalid to true on password confirmation when passwords do not match", async () => {
       const user = userEvent.setup();
 
       render(<SignupForm />);
@@ -137,7 +137,7 @@ describe("SignupForm", () => {
       ).toBeInTheDocument();
     });
 
-    it("should display a generic unexpected error for an unhandled API failure", async () => {
+    it("should show a generic unexpected error for an unhandled API failure", async () => {
       const user = userEvent.setup();
 
       const unknownError = new ApiError(

@@ -4,7 +4,7 @@ import { ERRORS } from "@repo/shared/constants";
 
 describe("Error Classes", () => {
   describe("ApiError", () => {
-    it("should correctly construct with a custom message", () => {
+    it("correctly constructs with a custom message", () => {
       const customMessage = "Você não está autorizado a realizar esta ação.";
       const error = new ApiError(403, "NOT_AUTHORIZED", customMessage);
 
@@ -18,7 +18,7 @@ describe("Error Classes", () => {
       expect(error.message).toBe(customMessage);
     });
 
-    it("should use the default message from ERRORS if no message is provided", () => {
+    it("uses the default message from ERRORS if no message is provided", () => {
       const error = new ApiError(404, "NOT_FOUND");
 
       expect(error.statusCode).toBe(404);
@@ -27,7 +27,7 @@ describe("Error Classes", () => {
     });
 
     describe("toJSON", () => {
-      it("should return a correctly formatted ErrorResponse object", () => {
+      it("returns a correctly formatted ErrorResponse object", () => {
         const error = new ApiError(500, "SERVER_UNKNOWN_ERROR");
         const jsonResponse = error.toJSON();
 
@@ -46,7 +46,7 @@ describe("Error Classes", () => {
       password: ["A senha deve ter no mínimo 8 caracteres."],
     };
 
-    it("should correctly construct with a data payload", () => {
+    it("correctly constructs with a data payload", () => {
       const error = new ValidationError(mockValidationData);
 
       expect(error).toBeInstanceOf(Error);
@@ -60,7 +60,7 @@ describe("Error Classes", () => {
     });
 
     describe("toJSON", () => {
-      it("should return a correctly formatted FailResponse object", () => {
+      it("returns a correctly formatted FailResponse object", () => {
         const error = new ValidationError(mockValidationData);
         const jsonResponse = error.toJSON();
 

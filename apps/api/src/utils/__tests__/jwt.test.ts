@@ -11,14 +11,14 @@ describe("JWT Utils", () => {
   const mockUser = createRandomUser();
 
   describe("Access Token", () => {
-    it("should perform a successful sign and verify roundtrip", () => {
+    it("performs a successful sign and verify roundtrip", () => {
       const token = signAccessToken(mockUser.id, mockUser.role);
       const decoded = verifyAccessToken(token);
 
       expect(decoded.userId).toBe(mockUser.id);
     });
 
-    it("should throw an error for an invalid signature", () => {
+    it("should throw an error for invalid signature", () => {
       const token = signAccessToken(mockUser.id, mockUser.role);
       const tamperedToken = token.slice(0, -1) + "X";
 
@@ -29,14 +29,14 @@ describe("JWT Utils", () => {
   });
 
   describe("Refresh Token", () => {
-    it("should perform a successful sign and verify roundtrip", () => {
+    it("performs a successful sign and verify roundtrip", () => {
       const token = signRefreshToken(mockUser.id);
       const decoded = verifyRefreshToken(token);
 
       expect(decoded.userId).toBe(mockUser.id);
     });
 
-    it("should throw an error for an invalid signature", () => {
+    it("should throw an error for invalid signature", () => {
       const token = signRefreshToken(mockUser.id);
       const tamperedToken = token.slice(0, -1) + "Y";
 

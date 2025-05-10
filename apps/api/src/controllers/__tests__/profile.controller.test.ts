@@ -40,7 +40,7 @@ describe("Profile Controller", () => {
   });
 
   describe("GET /profiles/me", () => {
-    it("should successfully return the authenticated user's profile", async () => {
+    it("returns the authenticated user's profile", async () => {
       const profile = createRandomProfileWithLinks(mockUser.id);
       const publicProfile = selectData(profile, AUTHENTICATED_PROFILE_SELECT);
       mockPrisma.user.findUnique.mockResolvedValue(
@@ -67,7 +67,7 @@ describe("Profile Controller", () => {
   });
 
   describe("GET /profiles/:username", () => {
-    it("should successfully return a public profile", async () => {
+    it("returns a public profile", async () => {
       const profile = selectData(
         createRandomProfileWithLinks(mockUser.id, 5, { isPublic: true }),
         {
@@ -117,29 +117,6 @@ describe("Profile Controller", () => {
   });
 
   describe("PATCH /profiles/me", () => {
-    it("should successfully update the profile and return the updated data", async () => {
-      const updateData = {
-        bio: "Minha bio atualizada.",
-      };
-      const updatedProfile = {
-        ...createRandomProfileWithLinks(mockUser.id),
-        ...updateData,
-      };
-      mockPrisma.user.findUnique.mockResolvedValue(
-        mockAuthenticatedUser as User,
-      );
-      mockUpdateProfile.mockResolvedValue(updatedProfile);
-
-      const response = await supertest(app)
-        .patch("/profiles/me")
-        .set("Authorization", `Bearer ${mockAccessToken}`)
-        .send(updateData);
-
-      expect(response.status).toBe(200);
-      expect(response.body.data.bio).toBe(updateData.bio);
-      expect(mockUpdateProfile).toHaveBeenCalledWith(mockUser.id, updateData);
-    });
-
     it("should return 401 if no token is provided", async () => {
       const response = await supertest(app)
         .patch("/profiles/me")
@@ -161,6 +138,29 @@ describe("Profile Controller", () => {
       expect(response.status).toBe(422);
       expect(response.body.status).toBe("fail");
       expect(response.body.data).toHaveProperty("displayName");
+    });
+
+    it("updates the profile and returns the updated data", async () => {
+      const updateData = {
+        bio: "Minha bio atualizada.",
+      };
+      const updatedProfile = {
+        ...createRandomProfileWithLinks(mockUser.id),
+        ...updateData,
+      };
+      mockPrisma.user.findUnique.mockResolvedValue(
+        mockAuthenticatedUser as User,
+      );
+      mockUpdateProfile.mockResolvedValue(updatedProfile);
+
+      const response = await supertest(app)
+        .patch("/profiles/me")
+        .set("Authorization", `Bearer ${mockAccessToken}`)
+        .send(updateData);
+
+      expect(response.status).toBe(200);
+      expect(response.body.data.bio).toBe(updateData.bio);
+      expect(mockUpdateProfile).toHaveBeenCalledWith(mockUser.id, updateData);
     });
   });
 });

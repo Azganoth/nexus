@@ -27,7 +27,7 @@ describe("Link Service", () => {
   });
 
   describe("getLinksForUser", () => {
-    it("should return an array of links for a given user", async () => {
+    it("returns an array of links for a given user", async () => {
       const foundLinks = mockLinks.map(
         (link) => selectData(link, AUTHENTICATED_LINK_SELECT) as Link,
       );
@@ -45,7 +45,7 @@ describe("Link Service", () => {
       expect(result).toEqual(foundLinks);
     });
 
-    it("should return an empty array if the user has no links", async () => {
+    it("returns an empty array if the user has no links", async () => {
       mockPrisma.link.findMany.mockResolvedValue([]);
 
       const result = await getLinksForUser(mockUser.id);
@@ -61,7 +61,7 @@ describe("Link Service", () => {
       11,
     );
 
-    it("should successfully create a link if the user is under the limit", async () => {
+    it("creates a link if the user is under the limit", async () => {
       const foundProfile = {
         ...selectData(mockProfile, { id: true }),
         _count: { links: mockProfile.links.length },
@@ -104,7 +104,7 @@ describe("Link Service", () => {
   describe("updateUserLink", () => {
     const mockUpdateData = { title: "Título Atualizado" };
 
-    it("should successfully update a link", async () => {
+    it("updates a link", async () => {
       const updatedLink = {
         ...selectData(mockLink, AUTHENTICATED_LINK_SELECT),
         ...mockUpdateData,
@@ -140,7 +140,7 @@ describe("Link Service", () => {
   });
 
   describe("deleteUserLink", () => {
-    it("should successfully delete a link", async () => {
+    it("deletes a link", async () => {
       await expect(
         deleteUserLink(mockUser.id, mockLink.id),
       ).resolves.not.toThrow();
@@ -168,7 +168,7 @@ describe("Link Service", () => {
   describe("updateLinkOrderForUser", () => {
     const mockLinks = [{ id: 1 }, { id: 2 }, { id: 3 }];
 
-    it("should successfully update the order of links", async () => {
+    it("updates the order of links", async () => {
       const newOrder = [2, 3, 1];
       mockPrisma.link.findMany.mockResolvedValue(mockLinks as Link[]);
       mockTransaction(mockPrisma);

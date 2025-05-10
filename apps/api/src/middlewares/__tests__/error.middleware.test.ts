@@ -1,6 +1,6 @@
 import { createMockHttp, spyConsole } from "$/__tests__/helpers";
 import { error as errorMiddleware } from "$/middlewares/error.middleware";
-import { ApiError } from "$/utils/errors";
+import { ApiError, ValidationError } from "$/utils/errors";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { ERRORS } from "@repo/shared/constants";
 
@@ -9,7 +9,7 @@ describe("Error Middleware", () => {
     jest.clearAllMocks();
   });
 
-  it("should handle an ApiError correctly", () => {
+  it("handles ApiError correctly", async () => {
     const { req, res, next } = createMockHttp();
     const apiError = new ApiError(404, "NOT_FOUND");
     const consoleErrorSpy = spyConsole("error", [apiError]);
@@ -27,13 +27,30 @@ describe("Error Middleware", () => {
     expect(consoleErrorSpy).not.toHaveBeenCalled();
   });
 
-  it("should handle a generic Error correctly", () => {
+  it("handles ValidationError correctly", async () => {
     const { req, res, next } = createMockHttp();
-    const genericError = new Error("Something broke!");
-    const consoleErrorSpy = spyConsole("error", [genericError]);
+    const validationError = new ValidationError({ email: ["Email usado."] });
+    const consoleErrorSpy = spyConsole("error", [validationError]);
     const handler = errorMiddleware();
 
-    handler(genericError, req, res, next);
+    handler(validationError, req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(422);
+    expect(res.json).toHaveBeenCalledWith({
+      status: "fail",
+      data: validationError.data,
+    });
+    expect(consoleErrorSpy).not.toHaveBeenCalled();
+    expect(next).not.toHaveBeenCalled();
+  });
+
+  it("handles unknown errors correctly", async () => {
+    const { req, res, next } = createMockHttp();
+    const unknownError = new Error("An unknown error occurred");
+    const consoleErrorSpy = spyConsole("error", [unknownError]);
+    const handler = errorMiddleware();
+
+    handler(unknownError, req, res, next);
 
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith(
@@ -41,7 +58,7 @@ describe("Error Middleware", () => {
         status: "error",
       }),
     );
-    expect(consoleErrorSpy).toHaveBeenCalledWith(genericError);
+    expect(consoleErrorSpy).toHaveBeenCalledWith(unknownError);
     expect(next).not.toHaveBeenCalled();
   });
 

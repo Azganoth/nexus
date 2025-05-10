@@ -50,7 +50,7 @@ describe("Link Controller", () => {
   });
 
   describe("GET /links", () => {
-    it("should successfully return an array of links for an authenticated user", async () => {
+    it("returns an array of links for an authenticated user", async () => {
       mockPrisma.user.findUnique.mockResolvedValue(
         mockAuthenticatedUser as User,
       );
@@ -65,7 +65,7 @@ describe("Link Controller", () => {
       expect(mockGetLinksForUser).toHaveBeenCalledWith(mockUser.id);
     });
 
-    it("should successfully return an empty array if the user has no links", async () => {
+    it("returns an empty array if the user has no links", async () => {
       mockPrisma.user.findUnique.mockResolvedValue(
         mockAuthenticatedUser as User,
       );
@@ -86,7 +86,7 @@ describe("Link Controller", () => {
   });
 
   describe("POST /links", () => {
-    it("should successfully create a new link", async () => {
+    it("creates a new link", async () => {
       const newData = selectData(mockAuthenticatedLink, {
         title: true,
         url: true,
@@ -143,7 +143,7 @@ describe("Link Controller", () => {
   });
 
   describe("PATCH /links/:id", () => {
-    it("should successfully update and return the updated link", async () => {
+    it("updates and returns the updated link", async () => {
       const updatedData = selectData(mockAuthenticatedLink, {
         title: true,
       });
@@ -184,7 +184,7 @@ describe("Link Controller", () => {
   });
 
   describe("DELETE /links/:id", () => {
-    it("should successfully delete the link", async () => {
+    it("deletes the link", async () => {
       mockPrisma.user.findUnique.mockResolvedValue(
         mockAuthenticatedUser as User,
       );
@@ -209,24 +209,6 @@ describe("Link Controller", () => {
 
   describe("PATCH /links/order", () => {
     const mockLinks = [3, 1, 2];
-
-    it("should successfully reorder links", async () => {
-      mockPrisma.user.findUnique.mockResolvedValue(
-        mockAuthenticatedUser as User,
-      );
-      mockUpdateLinkOrderForUser.mockResolvedValue();
-
-      const response = await supertest(app)
-        .patch("/links/order")
-        .set("Authorization", `Bearer ${mockAccessToken}`)
-        .send({ orderedIds: mockLinks });
-
-      expect(response.status).toBe(204);
-      expect(mockUpdateLinkOrderForUser).toHaveBeenCalledWith(
-        mockUser.id,
-        mockLinks,
-      );
-    });
 
     it("should return 401 if unauthenticated", async () => {
       const response = await supertest(app)
@@ -262,6 +244,24 @@ describe("Link Controller", () => {
         .send({ orderedIds: [99, 1, 2] });
 
       expect(response.status).toBe(400);
+    });
+
+    it("reorders links", async () => {
+      mockPrisma.user.findUnique.mockResolvedValue(
+        mockAuthenticatedUser as User,
+      );
+      mockUpdateLinkOrderForUser.mockResolvedValue();
+
+      const response = await supertest(app)
+        .patch("/links/order")
+        .set("Authorization", `Bearer ${mockAccessToken}`)
+        .send({ orderedIds: mockLinks });
+
+      expect(response.status).toBe(204);
+      expect(mockUpdateLinkOrderForUser).toHaveBeenCalledWith(
+        mockUser.id,
+        mockLinks,
+      );
     });
   });
 });

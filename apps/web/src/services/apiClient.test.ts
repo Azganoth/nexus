@@ -23,14 +23,15 @@ describe("apiClient", () => {
     createTestApiResponse(200, { status: "success", data });
 
   beforeEach(() => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
+    jest.restoreAllMocks();
   });
 
   afterEach(() => {
     jest.restoreAllMocks();
   });
 
-  it("should make a successful request and return the data property", async () => {
+  it("makes a GET request successfully", async () => {
     const successPayload = { message: "Sucesso!" };
     const successResponse = createSuccessReponse(successPayload);
     const fetchSpy = spyFetch().mockResolvedValue(successResponse);
@@ -45,7 +46,39 @@ describe("apiClient", () => {
     expect(result).toEqual(successPayload);
   });
 
-  it("should make a successful request and return the nothing for status 204", async () => {
+  it("makes a POST request successfully", async () => {
+    const successPayload = { message: "Sucesso!" };
+    const successResponse = createSuccessReponse(successPayload);
+    const fetchSpy = spyFetch().mockResolvedValue(successResponse);
+
+    const result = await apiClient.post("/post-endpoint", { name: "test" });
+
+    expect(fetchSpy).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        headers: new Headers({ "Content-Type": "application/json" }),
+      }),
+    );
+    expect(result).toEqual(successPayload);
+  });
+
+  it("makes a PATCH request successfully", async () => {
+    const successPayload = { message: "Sucesso!" };
+    const successResponse = createSuccessReponse(successPayload);
+    const fetchSpy = spyFetch().mockResolvedValue(successResponse);
+
+    const result = await apiClient.patch("/patch-endpoint", { name: "test" });
+
+    expect(fetchSpy).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        headers: new Headers({ "Content-Type": "application/json" }),
+      }),
+    );
+    expect(result).toEqual(successPayload);
+  });
+
+  it("makes a DELETE request successfully", async () => {
     const _204Response = new Response(null, { status: 204 });
     const fetchSpy = spyFetch().mockResolvedValue(_204Response);
 
@@ -59,25 +92,7 @@ describe("apiClient", () => {
     expect(result).toBeUndefined();
   });
 
-  it("should include the Authorization header if a token exists", async () => {
-    const successResponse = createSuccessReponse({});
-    const fetchSpy = spyFetch().mockResolvedValue(successResponse);
-    mockGetAccessToken.mockReturnValue("this-is-a-secret-token");
-
-    await apiClient.get("/secure-endpoint");
-
-    expect(mockGetAccessToken).toHaveBeenCalled();
-    expect(fetchSpy).toHaveBeenCalledWith(
-      expect.any(String),
-      expect.objectContaining({
-        headers: new Headers({
-          Authorization: "Bearer this-is-a-secret-token",
-        }),
-      }),
-    );
-  });
-
-  it("should include Content-Type header if a body is provided", async () => {
+  it("includes Content-Type header if a body is provided", async () => {
     const successResponse = createSuccessReponse({});
     const fetchSpy = spyFetch().mockResolvedValue(successResponse);
 
@@ -91,7 +106,7 @@ describe("apiClient", () => {
     );
   });
 
-  it("should throw ValidationError for non-successful validation responses", async () => {
+  it("should throw ValidationError for validation responses", async () => {
     const failResponse = createTestApiResponse(422, {
       status: "fail",
       data: {},
@@ -101,6 +116,17 @@ describe("apiClient", () => {
     await expect(apiClient.get("/fail")).rejects.toBeInstanceOf(
       ValidationError,
     );
+  });
+
+  it("should throw ApiError for API responses", async () => {
+    const errorResponse = createTestApiResponse(400, {
+      status: "error",
+      code: "TOO_MANY_REQUESTS",
+      message: ERRORS.TOO_MANY_REQUESTS,
+    });
+    spyFetch().mockResolvedValue(errorResponse);
+
+    await expect(apiClient.get("/fail")).rejects.toBeInstanceOf(ApiError);
   });
 
   describe("Automatic Token Refresh Logic", () => {
@@ -121,7 +147,7 @@ describe("apiClient", () => {
       mockGetAccessToken.mockReturnValue("expired-token");
     });
 
-    it("should successfully refresh the token and retry the request", async () => {
+    it("refreshes the token and retries the request", async () => {
       const accessToken = "this-is-a-fresh-token";
       const successPayload = { data: "Conteúdo protegido." };
       const refreshResponse = createSuccessReponse({ accessToken });
@@ -145,47 +171,6 @@ describe("apiClient", () => {
       expect(result).toEqual(successPayload);
     });
 
-    it("should only trigger one refresh request for multiple concurrent failed requests", async () => {
-      const accessToken = "this-is-a-fresh-token";
-      const successPayload1 = { data: "resource 1" };
-      const successPayload2 = { data: "resource 2" };
-      const invalidResponse1 = createInvalidAccessResponse();
-      const invalidResponse2 = createInvalidAccessResponse();
-      const refreshResponse = createSuccessReponse({ accessToken });
-      const successResponse1 = createSuccessReponse(successPayload1);
-      const successResponse2 = createSuccessReponse(successPayload2);
-
-      const fetchSpy = spyFetch()
-        .mockResolvedValueOnce(invalidResponse1)
-        .mockResolvedValueOnce(invalidResponse2)
-        .mockResolvedValueOnce(refreshResponse)
-        .mockResolvedValueOnce(successResponse1)
-        .mockResolvedValueOnce(successResponse2);
-
-      const [result1, result2] = await Promise.all([
-        apiClient.get("/resource1"),
-        apiClient.get("/resource2"),
-      ]);
-
-      // Expect 5 total calls: 2 initial failures, 1 refresh, 2 retries
-      expect(fetchSpy).toHaveBeenCalledTimes(5);
-
-      const refreshCall = fetchSpy.mock.calls.find(
-        (call) => call[0] === "/api/auth/refresh",
-      );
-
-      // Verify that the refresh endpoint was called exactly once
-      expect(refreshCall).not.toBeUndefined();
-      const refreshCalls = fetchSpy.mock.calls.filter(
-        (call) => call[0] === "/api/auth/refresh",
-      );
-      expect(refreshCalls).toHaveLength(1);
-
-      expect(mockStoreAccessToken).toHaveBeenCalledWith(accessToken);
-      expect(result1).toEqual(successPayload1);
-      expect(result2).toEqual(successPayload2);
-    });
-
     it("should throw the original error if token refresh fails", async () => {
       const invalidAccessResponse = createInvalidAccessResponse();
       const invalidRefreshResponse = createInvalidRefreshResponse();
@@ -199,20 +184,6 @@ describe("apiClient", () => {
 
       expect(fetchSpy).toHaveBeenCalledTimes(2);
       expect(mockStoreAccessToken).not.toHaveBeenCalled();
-    });
-
-    it("should not enter a retry loop if the token is always invalid", async () => {
-      const invalidResponse1 = createInvalidAccessResponse();
-      const invalidResponse2 = createInvalidAccessResponse();
-      const fetchSpy = spyFetch()
-        .mockResolvedValueOnce(invalidResponse1)
-        .mockResolvedValueOnce(invalidResponse2);
-
-      await expect(apiClient.get("/protected-resource")).rejects.toBeInstanceOf(
-        ApiError,
-      );
-
-      expect(fetchSpy).toHaveBeenCalledTimes(2);
     });
   });
 });

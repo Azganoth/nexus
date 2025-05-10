@@ -44,7 +44,7 @@ describe("ForgotPasswordForm", () => {
     jest.useRealTimers();
   });
 
-  it("should successfully submit the email and switch to the notice view", async () => {
+  it("sends a password reset email", async () => {
     const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
     mockApiClient.post.mockResolvedValue(undefined);
     render(<ForgotPasswordForm />);
@@ -70,6 +70,77 @@ describe("ForgotPasswordForm", () => {
       await screen.findByText(/Um email foi enviado para/i),
     ).toBeInTheDocument();
     expect(screen.getByText("test@example.com")).toBeInTheDocument();
+  });
+
+  describe("UI State and Feedback", () => {
+    it("disables the submit button during submission", async () => {
+      const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+      mockApiClient.post.mockResolvedValue(undefined);
+      render(<ForgotPasswordForm />);
+
+      const submitButton = screen.getByRole("button", {
+        name: /redefinir senha/i,
+      });
+      await user.type(screen.getByLabelText("Email"), "test@example.com");
+      await user.click(submitButton);
+
+      expect(submitButton).toBeDisabled();
+    });
+
+    it("shows success message after successful submission", async () => {
+      const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+      mockApiClient.post.mockResolvedValue(undefined);
+      render(<ForgotPasswordForm />);
+
+      await user.type(screen.getByLabelText("Email"), "test@example.com");
+      await user.click(
+        screen.getByRole("button", { name: /redefinir senha/i }),
+      );
+
+      expect(mockToast.success).toHaveBeenCalledWith(
+        "Email de redefinição enviado!",
+      );
+      expect(
+        await screen.findByText(/Um email foi enviado para/i),
+      ).toBeInTheDocument();
+      expect(screen.getByText("test@example.com")).toBeInTheDocument();
+    });
+  });
+
+  describe("Validation and Error Handling", () => {
+    it("should show a server error if the email is not found", async () => {
+      const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+      mockApiClient.post.mockRejectedValue(new Error("Email not found"));
+      render(<ForgotPasswordForm />);
+
+      await user.type(screen.getByLabelText("Email"), "test@example.com");
+      await user.click(
+        screen.getByRole("button", { name: /redefinir senha/i }),
+      );
+
+      expect(mockToast.error).toHaveBeenCalledWith(
+        "Email not found Tente novamente mais tarde.",
+        { duration: 5000 },
+      );
+    });
+
+    it("should show a generic unexpected error for an unhandled API failure", async () => {
+      const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+      mockApiClient.post.mockRejectedValue(
+        new Error("Generic unexpected error"),
+      );
+      render(<ForgotPasswordForm />);
+
+      await user.type(screen.getByLabelText("Email"), "test@example.com");
+      await user.click(
+        screen.getByRole("button", { name: /redefinir senha/i }),
+      );
+
+      expect(mockToast.error).toHaveBeenCalledWith(
+        "Generic unexpected error Tente novamente mais tarde.",
+        { duration: 5000 },
+      );
+    });
   });
 
   it("should handle the resend cooldown and functionality", async () => {

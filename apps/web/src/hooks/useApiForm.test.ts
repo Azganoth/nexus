@@ -56,7 +56,7 @@ describe("useApiForm", () => {
     mockOnUnexpectedError.mockReset();
   });
 
-  it("should call mutationFn with form data and onSuccess upon successful submission", async () => {
+  it("calls mutationFn with form data and onSuccess upon successful submission", async () => {
     mockMutationFn.mockResolvedValue(mockResponse);
 
     const { result } = renderApiFormHook();

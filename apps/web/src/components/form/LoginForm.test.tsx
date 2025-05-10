@@ -17,7 +17,7 @@ describe("LoginForm", () => {
     jest.restoreAllMocks();
   });
 
-  it("should successfully log in a user with valid credentials", async () => {
+  it("logs in a user with valid credentials", async () => {
     const user = userEvent.setup();
 
     const successData = {
@@ -40,7 +40,7 @@ describe("LoginForm", () => {
   });
 
   describe("UI State and Feedback", () => {
-    it("should disable the submit button during submission", async () => {
+    it("disables the submit button during submission", async () => {
       const user = userEvent.setup();
 
       // Make the promise hang so the intermediate state can be checked
@@ -55,7 +55,7 @@ describe("LoginForm", () => {
       expect(submitButton).toBeDisabled();
     });
 
-    it("should display a validation error and then clear it when the user corrects the input", async () => {
+    it("displays a validation error and then clears it when the user corrects the input", async () => {
       const user = userEvent.setup();
 
       render(<LoginForm />);
@@ -76,7 +76,7 @@ describe("LoginForm", () => {
   });
 
   describe("Validation and Error Handling", () => {
-    it("should set aria-invalid to true on an input when a validation error occurs", async () => {
+    it("sets aria-invalid to true on an input when a validation error occurs", async () => {
       const user = userEvent.setup();
 
       render(<LoginForm />);
@@ -90,7 +90,7 @@ describe("LoginForm", () => {
       expect(emailInput).toHaveAttribute("aria-invalid", "true");
     });
 
-    it("should display a server error for incorrect credentials", async () => {
+    it("should show a server error for incorrect credentials", async () => {
       const user = userEvent.setup();
 
       const errorMessage = ERRORS["INCORRECT_CREDENTIALS"];
@@ -106,7 +106,7 @@ describe("LoginForm", () => {
       expect(await screen.findByText(errorMessage)).toBeInTheDocument();
     });
 
-    it("should display a generic unexpected error message if the API fails with an unhandled error", async () => {
+    it("should show a generic unexpected error message if the API fails with an unhandled error", async () => {
       const user = userEvent.setup();
 
       const expectedMessage = `${ERRORS.UNEXPECTED_ERROR} Tente novamente.`;

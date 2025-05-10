@@ -71,7 +71,7 @@ describe("Auth Service", () => {
   });
 
   describe("loginUser", () => {
-    it("should successfully log in a user and issue tokens", async () => {
+    it("logs in a user and issues tokens", async () => {
       const foundUser = {
         ...mockAuthenticatedUser,
         password: mockUser.password,
@@ -131,7 +131,7 @@ describe("Auth Service", () => {
   });
 
   describe("signupUser", () => {
-    it("should successfully create a new user and issue tokens", async () => {
+    it("creates a new user and issues tokens", async () => {
       mockBcrypt.hash.mockImplementation(() =>
         Promise.resolve(mockUser.password),
       );
@@ -195,7 +195,7 @@ describe("Auth Service", () => {
   });
 
   describe("refreshAccessToken", () => {
-    it("should successfully refresh an access token", async () => {
+    it("refreshes an access token", async () => {
       const storedRefreshToken = selectData(
         createRandomRefreshToken(mockUser.id),
         { id: true, expiresAt: true },
@@ -318,7 +318,7 @@ describe("Auth Service", () => {
   });
 
   describe("logoutUser", () => {
-    it("should delete refresh tokens when a token is provided", async () => {
+    it("deletes the refresh token from the database", async () => {
       const refreshToken = signRefreshToken(mockUser.id);
       await logoutUser(refreshToken);
       expect(mockPrisma.refreshToken.deleteMany).toHaveBeenCalledWith(
@@ -340,7 +340,7 @@ describe("Auth Service", () => {
   });
 
   describe("revalidateUser", () => {
-    it("should successfully validate the token and return the user and a new access token", async () => {
+    it("validates the token and returns the user and a new access token", async () => {
       const storedRefreshToken = selectData(
         createRandomRefreshToken(mockUser.id),
         { id: true, expiresAt: true },
@@ -411,7 +411,7 @@ describe("Auth Service", () => {
     const mockPasswordResetToken = createRandomPasswordResetToken(mockUser.id);
     const mockResetToken = selectData(mockPasswordResetToken, { id: true });
 
-    it("should successfully create a reset token and send an email if the user exists", async () => {
+    it("creates a reset token and sends an email if the user exists", async () => {
       const foundUser = selectData(mockUser, { id: true, email: true });
       mockPrisma.user.findUnique.mockResolvedValue(foundUser as User);
       mockPrisma.passwordResetToken.upsert.mockResolvedValue(
@@ -462,7 +462,7 @@ describe("Auth Service", () => {
     });
     const mockNewPassword = "newStrongPassword123";
 
-    it("should successfully update the password and delete the token if the token is valid", async () => {
+    it("updates the password and deletes the token if the token is valid", async () => {
       const token = mockPasswordResetToken.token;
       mockTransaction(mockPrisma);
       mockPrisma.passwordResetToken.findUnique.mockResolvedValue(
@@ -523,7 +523,7 @@ describe("Auth Service", () => {
   });
 
   describe("verifyPasswordResetToken", () => {
-    it("should return successfully if the token is valid and not expired", async () => {
+    it("returns successfully if the token is valid and not expired", async () => {
       const validToken = createRandomPasswordResetToken(mockUser.id);
       mockPrisma.passwordResetToken.findUnique.mockResolvedValue(validToken);
 

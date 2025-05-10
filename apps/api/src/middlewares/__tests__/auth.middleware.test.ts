@@ -17,7 +17,7 @@ describe("Auth Middleware", () => {
   });
 
   describe("authenticate", () => {
-    it("should authenticate a user and attach them to the request", async () => {
+    it("authenticates a user and attaches them to the request", async () => {
       const { req, res, next } = createMockHttp({
         req: { headers: { authorization: `Bearer ${mockAccessToken}` } },
       });
@@ -83,7 +83,7 @@ describe("Auth Middleware", () => {
   });
 
   describe("authorize", () => {
-    it("should authorize if the user has a permitted role", () => {
+    it("authorizes if the user has a permitted role", () => {
       const { req, res, next } = createMockHttp({
         req: { user: { ...mockAuthenticatedUser, role: "ADMIN" } },
       });
@@ -94,7 +94,7 @@ describe("Auth Middleware", () => {
       expect(next).toHaveBeenCalled();
     });
 
-    it("should authorize if the user role is one of several allowed roles", () => {
+    it("authorizes if the user role is one of several allowed roles", () => {
       const { req, res, next } = createMockHttp({
         req: { user: { ...mockAuthenticatedUser, role: "USER" } },
       });

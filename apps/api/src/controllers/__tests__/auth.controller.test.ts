@@ -59,7 +59,7 @@ describe("Auth Controller", () => {
   });
 
   describe("POST /auth/signup", () => {
-    it("should successfully create a user and return 201", async () => {
+    it("creates a user and returns 201", async () => {
       mockSignupUser.mockResolvedValue(mockFullSession);
 
       const password = "Password123";
@@ -95,7 +95,7 @@ describe("Auth Controller", () => {
   });
 
   describe("POST /auth/login", () => {
-    it("should successfully log in, return accessToken and set refreshToken cookie", async () => {
+    it("logs in user, returns accessToken and sets refreshToken cookie", async () => {
       mockLoginUser.mockResolvedValue(mockFullSession);
 
       const response = await supertest(app)
@@ -128,7 +128,7 @@ describe("Auth Controller", () => {
   });
 
   describe("POST /auth/logout", () => {
-    it("should call the logout service and clear the cookie", async () => {
+    it("calls the logout service and clears the cookie", async () => {
       mockLogoutUser.mockResolvedValue(undefined);
 
       const response = await supertest(app)
@@ -144,7 +144,7 @@ describe("Auth Controller", () => {
   });
 
   describe("POST /auth/refresh", () => {
-    it("should successfully refresh tokens and set a new refresh token cookie", async () => {
+    it("refreshes tokens and sets a new refresh token cookie", async () => {
       const newRefreshToken = "this-is-a-new-valid-refresh-token";
       const fullSession = { ...mockFullSession, refreshToken: newRefreshToken };
       mockRefreshAccessToken.mockResolvedValue(fullSession);
@@ -176,7 +176,7 @@ describe("Auth Controller", () => {
   });
 
   describe("GET /auth/session", () => {
-    it("should sucessfully return the user data and a new access token if the session is valid", async () => {
+    it("returns user data and new access token for valid session", async () => {
       mockRevalidateUser.mockResolvedValue(mockSession);
       const response = await supertest(app)
         .get("/auth/session")
@@ -194,7 +194,7 @@ describe("Auth Controller", () => {
   });
 
   describe("POST /auth/forgot-password", () => {
-    it("should return 204 when the request is valid", async () => {
+    it("returns 204 when the request is valid", async () => {
       mockRequestPasswordReset.mockResolvedValue(undefined);
 
       const response = await supertest(app)
@@ -221,7 +221,7 @@ describe("Auth Controller", () => {
       password: "newStrongPassword123",
     };
 
-    it("should return 204 on a successful password reset", async () => {
+    it("resets password on valid token and password", async () => {
       mockChangePassword.mockResolvedValue(undefined);
 
       const response = await supertest(app)
@@ -254,7 +254,7 @@ describe("Auth Controller", () => {
       token: randomBytes(32).toString("hex"),
     };
 
-    it("should return 204 if the token is valid", async () => {
+    it("returns 204 if the token is valid", async () => {
       mockVerifyPasswordResetToken.mockResolvedValue(undefined);
 
       const response = await supertest(app)

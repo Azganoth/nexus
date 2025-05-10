@@ -5,7 +5,7 @@ import { describe, expect, it } from "@jest/globals";
 import { render, screen } from "@testing-library/react";
 
 describe("Logo", () => {
-  it('should render the icon-only variant when variant is "icon-only"', () => {
+  it('renders the icon-only variant when variant is "icon-only"', () => {
     render(<Logo variant="icon-only" />);
 
     const link = screen.getByRole("link");
@@ -19,7 +19,7 @@ describe("Logo", () => {
     );
   });
 
-  it('should render the icon-and-name variant when variant is "icon-and-name"', () => {
+  it('renders the icon-and-name variant when variant is "icon-and-name"', () => {
     render(<Logo variant="icon-and-name" />);
 
     const link = screen.getByRole("link");
@@ -33,7 +33,7 @@ describe("Logo", () => {
     );
   });
 
-  it("should apply custom class names", () => {
+  it("applies custom class names", () => {
     const customClass = "my-custom-logo-class";
     render(<Logo variant="icon-only" className={customClass} />);
 

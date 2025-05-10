@@ -6,7 +6,7 @@ import { userEvent } from "@testing-library/user-event";
 describe("LoadingButton", () => {
   const user = userEvent.setup();
 
-  it("should render children and be enabled by default", () => {
+  it("renders children and is enabled by default", () => {
     render(<LoadingButton>Click Me</LoadingButton>);
 
     const button = screen.getByRole("button", { name: /click me/i });
@@ -14,7 +14,7 @@ describe("LoadingButton", () => {
     expect(button).toBeEnabled();
   });
 
-  it("should call the onClick handler when clicked", async () => {
+  it("calls the onClick handler when clicked", async () => {
     const handleClick = jest.fn();
     render(<LoadingButton onClick={handleClick}>Submit</LoadingButton>);
 
@@ -25,7 +25,7 @@ describe("LoadingButton", () => {
   });
 
   describe("Pending State", () => {
-    it("should display a spinner and not the children when isPending is true", () => {
+    it("displays a spinner and not the children when isPending is true", () => {
       render(<LoadingButton isPending>Submitting...</LoadingButton>);
 
       expect(screen.queryByText("Submitting...")).not.toBeInTheDocument();
@@ -37,7 +37,7 @@ describe("LoadingButton", () => {
       expect(spinner).toBeInTheDocument();
     });
 
-    it("should be disabled when isPending is true", async () => {
+    it("is disabled when isPending is true", async () => {
       const handleClick = jest.fn();
       render(
         <LoadingButton isPending onClick={handleClick}>
@@ -54,12 +54,12 @@ describe("LoadingButton", () => {
   });
 
   describe("Disabled State", () => {
-    it("should be disabled when the disabled prop is true", () => {
+    it("is disabled when the disabled prop is true", () => {
       render(<LoadingButton disabled>Disabled</LoadingButton>);
       expect(screen.getByRole("button")).toBeDisabled();
     });
 
-    it("should be disabled if either isPending or disabled is true", () => {
+    it("is disabled if either isPending or disabled is true", () => {
       const { rerender } = render(
         <LoadingButton isPending disabled={false}>
           Test
@@ -76,7 +76,7 @@ describe("LoadingButton", () => {
     });
   });
 
-  it("should merge custom class names correctly", () => {
+  it("merges custom class names correctly", () => {
     const customClass = "my-special-button";
     render(
       <LoadingButton className={customClass}>Styled Button</LoadingButton>,

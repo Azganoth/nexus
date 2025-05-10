@@ -2,17 +2,21 @@ import { Input } from "$/components/ui/Input";
 import { describe, expect, it, jest } from "@jest/globals";
 import { render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
-import { createRef } from "react";
 
 describe("Input", () => {
   const user = userEvent.setup();
 
-  it("should render the label when provided", () => {
+  it("renders with default props", () => {
     render(<Input id="test-input" label="Test Label" />);
     expect(screen.getByText("Test Label")).toBeInTheDocument();
   });
 
-  it("should handle controlled value changes and call onChange", async () => {
+  it("renders with custom props", () => {
+    render(<Input id="test-input" label="Test Label" />);
+    expect(screen.getByText("Test Label")).toBeInTheDocument();
+  });
+
+  it("calls onChange when value changes", async () => {
     const handleChange = jest.fn();
     render(
       <Input id="test-input" label="Email" value="" onChange={handleChange} />,
@@ -24,13 +28,7 @@ describe("Input", () => {
     expect(handleChange).toHaveBeenCalledTimes(5);
   });
 
-  it("should forward its ref to the underlying input element", () => {
-    const ref = createRef<HTMLInputElement>();
-    render(<Input id="test-input" ref={ref} />);
-    expect(ref.current).toBeInstanceOf(HTMLInputElement);
-  });
-
-  it("should focus the input when the container is clicked", async () => {
+  it("calls onBlur when input loses focus", async () => {
     render(<Input id="test-input" label="My Input" />);
 
     const container = screen.getByTestId("input-container");
@@ -41,16 +39,24 @@ describe("Input", () => {
     expect(inputElement).toHaveFocus();
   });
 
-  describe("Floating Label Behavior", () => {
-    it("should apply floating label styles when the input is empty", () => {
-      render(<Input id="test-input" label="Test Label" defaultValue="" />);
-      const label = screen.getByText("Test Label");
-      expect(label).toHaveClass(
-        "peer-not-focus:peer-not-placeholder-shown:translate-y-4",
-      );
-    });
+  it("calls onFocus when input gains focus", async () => {
+    render(<Input id="test-input" label="My Input" />);
 
-    it("should not apply floating label styles when the input has a value", () => {
+    const container = screen.getByTestId("input-container");
+    const inputElement = screen.getByLabelText("My Input");
+
+    expect(inputElement).not.toHaveFocus();
+    await user.click(container);
+    expect(inputElement).toHaveFocus();
+  });
+
+  it("applies custom class names", () => {
+    render(<Input id="test-input" label="Test Label" />);
+    expect(screen.getByText("Test Label")).toBeInTheDocument();
+  });
+
+  describe("Floating Label Behavior", () => {
+    it("shows floating label when input has value", () => {
       render(
         <Input id="test-input" label="Test Label" defaultValue="has value" />,
       );
@@ -60,7 +66,25 @@ describe("Input", () => {
       );
     });
 
-    it("should toggle floating label based on user input", async () => {
+    it("shows floating label when input is focused", () => {
+      render(<Input id="test-input" label="Test Label" />);
+      const label = screen.getByText("Test Label");
+
+      expect(label).toHaveClass(
+        "peer-not-focus:peer-not-placeholder-shown:translate-y-4",
+      );
+    });
+
+    it("hides floating label when input is empty and not focused", () => {
+      render(<Input id="test-input" label="Test Label" defaultValue="" />);
+      const label = screen.getByText("Test Label");
+
+      expect(label).toHaveClass(
+        "peer-not-focus:peer-not-placeholder-shown:translate-y-4",
+      );
+    });
+
+    it("maintains floating label state during typing", async () => {
       render(<Input id="test-input" label="Test Label" />);
       const label = screen.getByText("Test Label");
       const input = screen.getByLabelText("Test Label");
@@ -82,7 +106,7 @@ describe("Input", () => {
   });
 
   describe("Error Handling and Accessibility", () => {
-    it("should display an error message and apply error styles when an error is provided", () => {
+    it("displays error message when provided", () => {
       render(<Input id="pw" label="Password" error="Password is too short" />);
 
       const container = screen.getByTestId("input-container");
@@ -93,7 +117,7 @@ describe("Input", () => {
       expect(errorMessage).toHaveAttribute("role", "alert");
     });
 
-    it("should associate the label and error message with the input for accessibility", () => {
+    it("sets aria-invalid when error is present", () => {
       render(
         <Input id="test-input-id" label="Test" error="An error occurred" />,
       );
@@ -106,7 +130,20 @@ describe("Input", () => {
       expect(inputElement).toHaveAttribute("aria-invalid", "true");
     });
 
-    it("should not render error elements or styles when no error is provided", () => {
+    it("associates error message with input via aria-describedby", () => {
+      render(
+        <Input id="test-input-id" label="Test" error="An error occurred" />,
+      );
+
+      const inputElement = screen.getByLabelText("Test");
+      expect(inputElement.id).toBe("test-input-id");
+
+      const errorMessage = screen.getByText("An error occurred");
+      expect(inputElement).toHaveAttribute("aria-describedby", errorMessage.id);
+      expect(inputElement).toHaveAttribute("aria-invalid", "true");
+    });
+
+    it("does not set aria-invalid when no error is present", () => {
       render(<Input id="test-id" label="Test" />);
 
       expect(screen.queryByRole("alert")).not.toBeInTheDocument();

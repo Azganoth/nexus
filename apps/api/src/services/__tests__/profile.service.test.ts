@@ -32,7 +32,7 @@ describe("Profile Service", () => {
   });
 
   describe("getProfileByUserId", () => {
-    it("should return a profile when found", async () => {
+    it("returns a profile when found", async () => {
       mockPrisma.profile.findUnique.mockResolvedValue(
         mockAuthenticatedProfile as ProfileWithLinks,
       );
@@ -65,7 +65,7 @@ describe("Profile Service", () => {
       isPublic: true,
     };
 
-    it("should return a profile including private fields when found", async () => {
+    it("returns a profile including private fields when found", async () => {
       mockPrisma.profile.findFirst.mockResolvedValue(
         mockProfileByUsername as ProfileWithLinks,
       );
@@ -93,7 +93,7 @@ describe("Profile Service", () => {
   });
 
   describe("updateProfile", () => {
-    it("should update a profile with valid data and return the updated profile", async () => {
+    it("updates the profile with the provided data", async () => {
       const updateData = {
         displayName: "Novo Nome",
         bio: "Bio atualizada.",

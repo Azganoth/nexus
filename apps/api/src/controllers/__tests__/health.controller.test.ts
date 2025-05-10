@@ -14,7 +14,7 @@ describe("Health Check Controller", () => {
   });
 
   describe("GET /health/live", () => {
-    it("should return 200 OK and a success message indicating the API is running", async () => {
+    it("returns 200 and a success message indicating the API is running", async () => {
       const response = await supertest(app).get("/health/live");
 
       expect(response.status).toBe(204);
@@ -22,7 +22,7 @@ describe("Health Check Controller", () => {
   });
 
   describe("GET /health/ready", () => {
-    it("should return 200 OK when the database connection is healthy", async () => {
+    it("returns 200 when the database connection is healthy", async () => {
       mockPrisma.$queryRaw.mockResolvedValue([]);
 
       const response = await supertest(app).get("/health/ready");
@@ -31,7 +31,7 @@ describe("Health Check Controller", () => {
       expect(mockPrisma.$queryRaw).toHaveBeenCalled();
     });
 
-    it("should return 503 Service Unavailable when the database connection fails", async () => {
+    it("should return 503 when the database connection fails", async () => {
       const dbError = new Error("Conexão com a base de dados falhou.");
       mockPrisma.$queryRaw.mockRejectedValue(dbError);
 
