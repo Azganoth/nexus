@@ -1,7 +1,7 @@
 import { createRandomUser } from "$/__tests__/factories";
 import { createMockHttp, selectData } from "$/__tests__/helpers";
 import { mockPrisma } from "$/__tests__/mocks";
-import { PUBLIC_USER_SELECT } from "$/constants";
+import { AUTHENTICATED_USER_SELECT } from "$/constants";
 import { authenticate, authorize } from "$/middlewares/auth.middleware";
 import { signAccessToken } from "$/utils/jwt";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
@@ -9,7 +9,7 @@ import type { User } from "@repo/database";
 
 describe("Auth Middleware", () => {
   const mockUser = createRandomUser();
-  const mockPublicUser = selectData(mockUser, PUBLIC_USER_SELECT);
+  const mockAuthenticatedUser = selectData(mockUser, AUTHENTICATED_USER_SELECT);
   const mockAccessToken = signAccessToken(mockUser.id, mockUser.role);
 
   beforeEach(() => {
@@ -21,7 +21,9 @@ describe("Auth Middleware", () => {
       const { req, res, next } = createMockHttp({
         req: { headers: { authorization: `Bearer ${mockAccessToken}` } },
       });
-      mockPrisma.user.findUnique.mockResolvedValue(mockPublicUser as User);
+      mockPrisma.user.findUnique.mockResolvedValue(
+        mockAuthenticatedUser as User,
+      );
 
       await authenticate(req, res, next);
 
@@ -30,7 +32,7 @@ describe("Auth Middleware", () => {
           where: { id: mockUser.id },
         }),
       );
-      expect(req.user).toEqual(mockPublicUser);
+      expect(req.user).toEqual(mockAuthenticatedUser);
       expect(next).toHaveBeenCalledWith();
     });
 
@@ -83,7 +85,7 @@ describe("Auth Middleware", () => {
   describe("authorize", () => {
     it("should authorize if the user has a permitted role", () => {
       const { req, res, next } = createMockHttp({
-        req: { user: { ...mockPublicUser, role: "ADMIN" } },
+        req: { user: { ...mockAuthenticatedUser, role: "ADMIN" } },
       });
       const adminOnlyMiddleware = authorize(["ADMIN"]);
 
@@ -94,7 +96,7 @@ describe("Auth Middleware", () => {
 
     it("should authorize if the user role is one of several allowed roles", () => {
       const { req, res, next } = createMockHttp({
-        req: { user: { ...mockPublicUser, role: "USER" } },
+        req: { user: { ...mockAuthenticatedUser, role: "USER" } },
       });
       const middleware = authorize(["USER", "ADMIN"]);
 
@@ -105,7 +107,7 @@ describe("Auth Middleware", () => {
 
     it("should throw ApiError if the user does not have a permitted role", () => {
       const { req, res, next } = createMockHttp({
-        req: { user: { ...mockPublicUser, role: "USER" } },
+        req: { user: { ...mockAuthenticatedUser, role: "USER" } },
       });
       const adminOnlyMiddleware = authorize(["ADMIN"]);
 

@@ -1,6 +1,7 @@
-import { PUBLIC_USER_SELECT } from "$/constants";
+import { AUTHENTICATED_USER_SELECT } from "$/constants";
 import { ApiError, ValidationError } from "$/utils/errors";
 import { prisma } from "@repo/database";
+import type { AuthenticatedUser } from "@repo/shared/contracts";
 import type { UPDATE_USER_SCHEMA } from "@repo/shared/schemas";
 import bcrypt from "bcrypt";
 import type { z } from "zod/v4";
@@ -8,19 +9,23 @@ import type { z } from "zod/v4";
 export const updateUser = async (
   userId: string,
   data: z.infer<typeof UPDATE_USER_SCHEMA>,
-) => {
+): Promise<AuthenticatedUser> => {
   const user = await prisma.user.update({
     where: { id: userId },
     data,
-    select: PUBLIC_USER_SELECT,
+    select: AUTHENTICATED_USER_SELECT,
   });
 
   return user;
 };
 
-export const deleteUser = async (userId: string, password: string) => {
+export const deleteUser = async (
+  userId: string,
+  password: string,
+): Promise<void> => {
   const user = await prisma.user.findUnique({
     where: { id: userId },
+    select: { password: true },
   });
   if (!user) {
     throw new ApiError(404, "NOT_FOUND");

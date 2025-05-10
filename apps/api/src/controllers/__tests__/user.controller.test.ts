@@ -1,7 +1,7 @@
 import { createRandomUser } from "$/__tests__/factories";
 import { selectData } from "$/__tests__/helpers";
 import { mockPrisma } from "$/__tests__/mocks";
-import { PUBLIC_USER_SELECT } from "$/constants";
+import { AUTHENTICATED_USER_SELECT } from "$/constants";
 import { createServer } from "$/server";
 import { deleteUser, updateUser } from "$/services/user.service";
 import { ValidationError } from "$/utils/errors";
@@ -19,35 +19,12 @@ const mockDeleteUser = jest.mocked(deleteUser);
 describe("User Controller", () => {
   let app: Express;
   const mockUser = createRandomUser();
-  const mockPublicUser = selectData(mockUser, PUBLIC_USER_SELECT);
+  const mockAuthenticatedUser = selectData(mockUser, AUTHENTICATED_USER_SELECT);
   const mockAccessToken = signAccessToken(mockUser.id, mockUser.role);
 
   beforeEach(() => {
     jest.clearAllMocks();
     app = createServer();
-  });
-
-  describe("GET /users/me", () => {
-    it("should return 401 if no token is provided", async () => {
-      const response = await supertest(app).get("/users/me");
-
-      expect(response.status).toBe(401);
-      expect(response.body.code).toBe("NOT_LOGGED_IN");
-    });
-
-    it("should return the current user's data if the token is valid", async () => {
-      mockPrisma.user.findUnique.mockResolvedValue(mockPublicUser as User);
-
-      const response = await supertest(app)
-        .get("/users/me")
-        .set("Authorization", `Bearer ${mockAccessToken}`);
-
-      expect(response.status).toBe(200);
-      expect(response.body.status).toBe("success");
-
-      expect(response.body.data).toEqual(mockPublicUser);
-      expect(response.body.data.password).toBeUndefined();
-    });
   });
 
   describe("PATCH /users/me", () => {
@@ -59,8 +36,10 @@ describe("User Controller", () => {
     });
 
     it("should return 200 and the updated user on success", async () => {
-      mockPrisma.user.findUnique.mockResolvedValue(mockPublicUser as User);
-      const updatedUser = { ...mockPublicUser, name: "New Name" };
+      mockPrisma.user.findUnique.mockResolvedValue(
+        mockAuthenticatedUser as User,
+      );
+      const updatedUser = { ...mockAuthenticatedUser, name: "New Name" };
       mockUpdateUser.mockResolvedValue(updatedUser);
 
       const response = await supertest(app)
@@ -78,7 +57,9 @@ describe("User Controller", () => {
 
   describe("DELETE /users/me", () => {
     it("should sucessfully delete an user", async () => {
-      mockPrisma.user.findUnique.mockResolvedValue(mockPublicUser as User);
+      mockPrisma.user.findUnique.mockResolvedValue(
+        mockAuthenticatedUser as User,
+      );
 
       mockDeleteUser.mockResolvedValue(undefined);
 
@@ -103,7 +84,9 @@ describe("User Controller", () => {
     });
 
     it("should return 422 if password is not provided", async () => {
-      mockPrisma.user.findUnique.mockResolvedValue(mockPublicUser as User);
+      mockPrisma.user.findUnique.mockResolvedValue(
+        mockAuthenticatedUser as User,
+      );
 
       const response = await supertest(app)
         .delete("/users/me")
@@ -114,7 +97,9 @@ describe("User Controller", () => {
     });
 
     it("should return 422 if the provided password is incorrect", async () => {
-      mockPrisma.user.findUnique.mockResolvedValue(mockPublicUser as User);
+      mockPrisma.user.findUnique.mockResolvedValue(
+        mockAuthenticatedUser as User,
+      );
 
       const error = new ValidationError({
         password: ["A senha está incorreta."],

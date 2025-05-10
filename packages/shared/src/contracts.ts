@@ -24,42 +24,51 @@ export type ApiResponse<T = unknown> =
   | ErrorResponse;
 
 // Payloads
-export interface AuthPayload {
+export interface Session {
   accessToken: string;
-  user: PublicUser;
+  user: AuthenticatedUser;
 }
 
 // Models
-export type UserRole = "USER" | "ADMIN";
-
-export interface PublicUser {
+export interface AuthenticatedUser extends Timestamps {
   id: string;
   email: string;
   name: string;
   role: UserRole;
 }
 
-export interface Timestamp {
-  createdAt: Date;
-  updatedAt: Date;
-}
+export type UserRole = "USER" | "ADMIN";
 
-export interface PublicProfile extends Timestamp {
+export interface PublicProfile {
   id: string;
   username: string;
   displayName: string;
   avatarUrl: string;
   bio: string | null;
-  links: PublicLink[];
   seoTitle: string | null;
   seoDescription: string | null;
-  isPublic: boolean;
+  links: PublicLink[];
 }
 
-export interface PublicLink extends Timestamp {
+export interface PublicLink {
   id: number;
   title: string;
   url: string;
   displayOrder: number;
+}
+
+export interface AuthenticatedProfile
+  extends Omit<PublicProfile, "links">,
+    Timestamps {
+  links: AuthenticatedLink[];
   isPublic: boolean;
+}
+
+export interface AuthenticatedLink extends PublicLink, Timestamps {
+  isPublic: boolean;
+}
+
+export interface Timestamps {
+  createdAt: Date;
+  updatedAt: Date;
 }

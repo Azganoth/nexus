@@ -54,7 +54,10 @@ const passwordResetEmailContent = (resetLink: string) => `
 </html>
 `;
 
-export const sendPasswordResetEmail = async (email: string, token: string) => {
+export const sendPasswordResetEmail = async (
+  email: string,
+  token: string,
+): Promise<void> => {
   const resetLink = `${env.APP_URL}/reset-password?token=${token}`;
 
   try {

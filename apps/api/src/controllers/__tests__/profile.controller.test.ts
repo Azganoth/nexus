@@ -4,7 +4,11 @@ import {
 } from "$/__tests__/factories";
 import { selectData } from "$/__tests__/helpers";
 import { mockPrisma } from "$/__tests__/mocks";
-import { PUBLIC_PROFILE_SELECT, PUBLIC_USER_SELECT } from "$/constants";
+import {
+  AUTHENTICATED_PROFILE_SELECT,
+  AUTHENTICATED_USER_SELECT,
+  PUBLIC_PROFILE_SELECT,
+} from "$/constants";
 import { createServer } from "$/server";
 import {
   getProfileByUserId,
@@ -27,7 +31,7 @@ const mockUpdateProfile = jest.mocked(updateProfile);
 describe("Profile Controller", () => {
   let app: Express;
   const mockUser = createRandomUser();
-  const mockPublicUser = selectData(mockUser, PUBLIC_USER_SELECT);
+  const mockAuthenticatedUser = selectData(mockUser, AUTHENTICATED_USER_SELECT);
   const mockAccessToken = signAccessToken(mockUser.id, mockUser.role);
 
   beforeEach(() => {
@@ -38,8 +42,10 @@ describe("Profile Controller", () => {
   describe("GET /profiles/me", () => {
     it("should successfully return the authenticated user's profile", async () => {
       const profile = createRandomProfileWithLinks(mockUser.id);
-      const publicProfile = selectData(profile, PUBLIC_PROFILE_SELECT);
-      mockPrisma.user.findUnique.mockResolvedValue(mockPublicUser as User);
+      const publicProfile = selectData(profile, AUTHENTICATED_PROFILE_SELECT);
+      mockPrisma.user.findUnique.mockResolvedValue(
+        mockAuthenticatedUser as User,
+      );
       mockGetProfileByUserId.mockResolvedValue(publicProfile);
 
       const response = await supertest(app)
@@ -62,31 +68,37 @@ describe("Profile Controller", () => {
 
   describe("GET /profiles/:username", () => {
     it("should successfully return a public profile", async () => {
-      const profile = createRandomProfileWithLinks(mockUser.id, 5, {
-        isPublic: true,
-      });
-      const publicProfile = selectData(profile, PUBLIC_PROFILE_SELECT);
-      mockGetProfileByUsername.mockResolvedValue(publicProfile);
+      const profile = selectData(
+        createRandomProfileWithLinks(mockUser.id, 5, { isPublic: true }),
+        {
+          ...PUBLIC_PROFILE_SELECT,
+          isPublic: true,
+        },
+      );
+      mockGetProfileByUsername.mockResolvedValue(profile);
 
       const response = await supertest(app).get(
-        `/profiles/${publicProfile.username}`,
+        `/profiles/${profile.username}`,
       );
 
       expect(response.status).toBe(200);
       expect(response.body.status).toBe("success");
-      expect(response.body.data.username).toBe(publicProfile.username);
+      expect(response.body.data.username).toBe(profile.username);
       expect(response.body.data.links.length).toBe(5);
     });
 
     it("should return 403 for a private profile", async () => {
-      const profile = createRandomProfileWithLinks(mockUser.id, 5, {
-        isPublic: false,
-      });
-      const publicProfile = selectData(profile, PUBLIC_PROFILE_SELECT);
-      mockGetProfileByUsername.mockResolvedValue(publicProfile);
+      const profile = selectData(
+        createRandomProfileWithLinks(mockUser.id, 5, { isPublic: false }),
+        {
+          ...PUBLIC_PROFILE_SELECT,
+          isPublic: true,
+        },
+      );
+      mockGetProfileByUsername.mockResolvedValue(profile);
 
       const response = await supertest(app).get(
-        `/profiles/${publicProfile.username}`,
+        `/profiles/${profile.username}`,
       );
 
       expect(response.status).toBe(403);
@@ -113,7 +125,9 @@ describe("Profile Controller", () => {
         ...createRandomProfileWithLinks(mockUser.id),
         ...updateData,
       };
-      mockPrisma.user.findUnique.mockResolvedValue(mockPublicUser as User);
+      mockPrisma.user.findUnique.mockResolvedValue(
+        mockAuthenticatedUser as User,
+      );
       mockUpdateProfile.mockResolvedValue(updatedProfile);
 
       const response = await supertest(app)
@@ -135,7 +149,9 @@ describe("Profile Controller", () => {
     });
 
     it("should return 422 for invalid update data", async () => {
-      mockPrisma.user.findUnique.mockResolvedValue(mockPublicUser as User);
+      mockPrisma.user.findUnique.mockResolvedValue(
+        mockAuthenticatedUser as User,
+      );
 
       const response = await supertest(app)
         .patch("/profiles/me")

@@ -2,7 +2,7 @@
 
 import { storeAccessToken } from "$/lib/auth/client";
 import { apiClient } from "$/services/apiClient";
-import type { AuthPayload, PublicUser } from "@repo/shared/contracts";
+import type { AuthenticatedUser, Session } from "@repo/shared/contracts";
 import {
   createContext,
   ReactNode,
@@ -12,9 +12,9 @@ import {
 } from "react";
 
 export interface AuthContextType {
-  user: PublicUser | null;
+  user: AuthenticatedUser | null;
   isAuthenticating: boolean;
-  login: (data: AuthPayload) => void;
+  login: (payload: Session) => void;
   logout: () => Promise<void>;
 }
 
@@ -22,7 +22,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 interface AuthProviderProps {
   children: ReactNode;
-  initialUser?: PublicUser | null;
+  initialUser?: AuthenticatedUser | null;
 }
 
 export function AuthProvider({ children, initialUser }: AuthProviderProps) {
@@ -38,7 +38,7 @@ export function AuthProvider({ children, initialUser }: AuthProviderProps) {
     const initializeAuth = async () => {
       try {
         const { accessToken, user } =
-          await apiClient.post<AuthPayload>("/auth/refresh");
+          await apiClient.post<Session>("/auth/refresh");
         storeAccessToken(accessToken);
         setUser(user);
       } catch {
@@ -51,7 +51,7 @@ export function AuthProvider({ children, initialUser }: AuthProviderProps) {
     initializeAuth();
   }, [initialUser]);
 
-  const login = ({ accessToken, user }: AuthPayload) => {
+  const login = ({ accessToken, user }: Session) => {
     storeAccessToken(accessToken);
     setUser(user);
   };

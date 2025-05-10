@@ -11,7 +11,7 @@ import {
 } from "$/services/auth.service";
 import { ApiError } from "$/utils/errors";
 import { composeResponse, validateSchema } from "$/utils/helpers";
-import type { AuthPayload } from "@repo/shared/contracts";
+import type { Session } from "@repo/shared/contracts";
 import {
   FORGOT_PASSWORD_SCHEMA,
   LOGIN_SCHEMA,
@@ -36,11 +36,13 @@ const setRefreshToken = (
 export const login = async (req: Request, res: Response) => {
   const { email, password } = await validateSchema(LOGIN_SCHEMA, req.body);
 
-  const { accessToken, refreshToken, refreshTokenExpires, user } =
-    await loginUser(email, password);
+  const { refreshToken, refreshTokenExpires, ...session } = await loginUser(
+    email,
+    password,
+  );
   setRefreshToken(res, refreshToken, refreshTokenExpires);
 
-  res.status(200).json(composeResponse<AuthPayload>({ accessToken, user }));
+  res.status(200).json(composeResponse<Session>(session));
 };
 
 export const signup = async (req: Request, res: Response) => {
@@ -49,11 +51,14 @@ export const signup = async (req: Request, res: Response) => {
     req.body,
   );
 
-  const { accessToken, refreshToken, refreshTokenExpires, user } =
-    await signupUser(email, password, name);
+  const { refreshToken, refreshTokenExpires, ...session } = await signupUser(
+    email,
+    password,
+    name,
+  );
   setRefreshToken(res, refreshToken, refreshTokenExpires);
 
-  res.status(201).json(composeResponse<AuthPayload>({ accessToken, user }));
+  res.status(201).json(composeResponse<Session>(session));
 };
 
 export const logout = async (req: Request, res: Response) => {
@@ -70,20 +75,20 @@ export const logout = async (req: Request, res: Response) => {
 };
 
 export const refreshAccess = async (req: Request, res: Response) => {
-  const { accessToken, refreshToken, refreshTokenExpires, user } =
+  const { refreshToken, refreshTokenExpires, ...session } =
     await refreshAccessToken(req.cookies.refreshToken);
   setRefreshToken(res, refreshToken, refreshTokenExpires);
 
-  res.status(200).json(composeResponse<AuthPayload>({ accessToken, user }));
+  res.status(200).json(composeResponse<Session>(session));
 };
 
 export const revalidateSession = async (req: Request, res: Response) => {
-  const payload = await revalidateUser(req.cookies.refreshToken);
-  if (!payload) {
+  const session = await revalidateUser(req.cookies.refreshToken);
+  if (!session) {
     throw new ApiError(401, "NOT_LOGGED_IN");
   }
 
-  res.status(200).json(composeResponse<AuthPayload>(payload));
+  res.status(200).json(composeResponse<Session>(session));
 };
 
 export const forgotPassword = async (req: Request, res: Response) => {

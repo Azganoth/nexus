@@ -1,19 +1,19 @@
 import { deleteUser, updateUser } from "$/services/user.service";
 import { composeResponse, validateSchema } from "$/utils/helpers";
-import type { PublicUser } from "@repo/shared/contracts";
+import type { AuthenticatedUser } from "@repo/shared/contracts";
 import { DELETE_USER_SCHEMA, UPDATE_USER_SCHEMA } from "@repo/shared/schemas";
 import type { Request, Response } from "express";
 
 export const getMe = (req: Request, res: Response) => {
-  const { id, email, name, role } = req.user!;
-  res.status(200).json(composeResponse<PublicUser>({ id, email, name, role }));
+  const user = req.user!;
+  res.status(200).json(composeResponse<AuthenticatedUser>(user));
 };
 
 export const updateMe = async (req: Request, res: Response) => {
   const data = await validateSchema(UPDATE_USER_SCHEMA, req.body);
   const updatedUser = await updateUser(req.user!.id, data);
 
-  res.status(200).json(composeResponse<PublicUser>(updatedUser));
+  res.status(200).json(composeResponse<AuthenticatedUser>(updatedUser));
 };
 
 export const deleteMe = async (req: Request, res: Response) => {

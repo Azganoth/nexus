@@ -5,7 +5,10 @@ import {
 } from "$/__tests__/factories";
 import { selectData } from "$/__tests__/helpers";
 import { mockPrisma } from "$/__tests__/mocks";
-import { PUBLIC_PROFILE_SELECT } from "$/constants";
+import {
+  AUTHENTICATED_PROFILE_SELECT,
+  PUBLIC_PROFILE_SELECT,
+} from "$/constants";
 import {
   getProfileByUserId,
   getProfileByUsername,
@@ -13,11 +16,15 @@ import {
 } from "$/services/profile.service";
 import { ApiError } from "$/utils/errors";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
-import type { PublicProfile } from "@repo/shared/contracts";
+import type { AuthenticatedProfile } from "@repo/shared/contracts";
 
 describe("Profile Service", () => {
   const mockUser = createRandomUser();
   const mockProfile = createRandomProfileWithLinks(mockUser.id);
+  const mockAuthenticatedProfile = selectData(
+    mockProfile,
+    AUTHENTICATED_PROFILE_SELECT,
+  );
   const mockPublicProfile = selectData(mockProfile, PUBLIC_PROFILE_SELECT);
 
   beforeEach(() => {
@@ -27,7 +34,7 @@ describe("Profile Service", () => {
   describe("getProfileByUserId", () => {
     it("should return a profile when found", async () => {
       mockPrisma.profile.findUnique.mockResolvedValue(
-        mockPublicProfile as ProfileWithLinks,
+        mockAuthenticatedProfile as ProfileWithLinks,
       );
 
       const profile = await getProfileByUserId(mockUser.id);
@@ -37,7 +44,7 @@ describe("Profile Service", () => {
           where: { userId: mockUser.id },
         }),
       );
-      expect(profile).toEqual(mockPublicProfile);
+      expect(profile).toEqual(mockAuthenticatedProfile);
     });
 
     it("should throw ApiError if no profile is found", async () => {
@@ -53,9 +60,14 @@ describe("Profile Service", () => {
   });
 
   describe("getProfileByUsername", () => {
+    const mockProfileByUsername = {
+      ...mockPublicProfile,
+      isPublic: true,
+    };
+
     it("should return a profile including private fields when found", async () => {
       mockPrisma.profile.findFirst.mockResolvedValue(
-        mockPublicProfile as ProfileWithLinks,
+        mockProfileByUsername as ProfileWithLinks,
       );
 
       const profile = await getProfileByUsername(mockUser.id);
@@ -65,7 +77,7 @@ describe("Profile Service", () => {
           where: { username: mockUser.id },
         }),
       );
-      expect(profile).toEqual(mockPublicProfile);
+      expect(profile).toEqual(mockProfileByUsername);
     });
 
     it("should throw ApiError if no profile is found", async () => {
@@ -86,11 +98,10 @@ describe("Profile Service", () => {
         displayName: "Novo Nome",
         bio: "Bio atualizada.",
       };
-      const updatedProfile: PublicProfile = {
-        ...mockPublicProfile,
+      const updatedProfile: AuthenticatedProfile = {
+        ...mockAuthenticatedProfile,
         ...updateData,
       };
-
       mockPrisma.profile.update.mockResolvedValue(
         updatedProfile as ProfileWithLinks,
       );

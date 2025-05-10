@@ -29,6 +29,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@faker-js/faker": "^9.8.0",
     "@iconify/json": "^2.2.322",
     "@iconify/tailwind4": "^1.0.6",
     "@jest/globals": "^29.7.0",

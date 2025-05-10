@@ -1,4 +1,4 @@
-import { createTestPublicUser } from "$/__tests__/factories";
+import { createRandomAuthenticatedUser } from "$/__tests__/factories";
 import { spyConsole } from "$/__tests__/helpers";
 import { AuthProvider, useAuth } from "$/contexts/AuthContext";
 import { getAccessToken, storeAccessToken } from "$/lib/auth/client";
@@ -22,7 +22,7 @@ const mockGetAccessToken = jest.mocked(getAccessToken);
 
 describe("AuthContext", () => {
   const mockAccessToken = "this-is-an-access-token";
-  const mockUser = createTestPublicUser();
+  const mockUser = createRandomAuthenticatedUser();
 
   const renderAuthHook = () => {
     return renderHook(() => useAuth(), {

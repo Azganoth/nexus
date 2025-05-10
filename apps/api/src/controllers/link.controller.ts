@@ -6,7 +6,7 @@ import {
   updateUserLink,
 } from "$/services/link.service";
 import { composeResponse, validateSchema } from "$/utils/helpers";
-import type { PublicLink } from "@repo/shared/contracts";
+import type { AuthenticatedLink } from "@repo/shared/contracts";
 import {
   CREATE_LINK_SCHEMA,
   UPDATE_LINK_ORDER_SCHEMA,
@@ -17,14 +17,14 @@ import type { Request, Response } from "express";
 export const getLinks = async (req: Request, res: Response) => {
   const links = await getLinksForUser(req.user!.id);
 
-  res.status(200).json(composeResponse<PublicLink[]>(links));
+  res.status(200).json(composeResponse<AuthenticatedLink[]>(links));
 };
 
 export const createLink = async (req: Request, res: Response) => {
   const data = await validateSchema(CREATE_LINK_SCHEMA, req.body);
   const newLink = await createLinkForUser(req.user!.id, data);
 
-  res.status(201).json(composeResponse<PublicLink>(newLink));
+  res.status(201).json(composeResponse<AuthenticatedLink>(newLink));
 };
 
 export const updateLink = async (req: Request, res: Response) => {
@@ -32,7 +32,7 @@ export const updateLink = async (req: Request, res: Response) => {
   const linkId = Number(req.params.id);
   const updatedLink = await updateUserLink(req.user!.id, linkId, data);
 
-  res.status(200).json(composeResponse<PublicLink>(updatedLink));
+  res.status(200).json(composeResponse<AuthenticatedLink>(updatedLink));
 };
 
 export const deleteLink = async (req: Request, res: Response) => {

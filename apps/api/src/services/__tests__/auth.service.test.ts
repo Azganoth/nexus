@@ -5,7 +5,7 @@ import {
 } from "$/__tests__/factories";
 import { mockTransaction, selectData } from "$/__tests__/helpers";
 import { mockEnv, mockPrisma } from "$/__tests__/mocks";
-import { ID_SELECT, PUBLIC_USER_SELECT } from "$/constants";
+import { AUTHENTICATED_USER_SELECT, UNUSED_SELECT } from "$/constants";
 import {
   changePassword,
   loginUser,
@@ -15,12 +15,15 @@ import {
   revalidateUser,
   signupUser,
   verifyPasswordResetToken,
+  type FullSession,
 } from "$/services/auth.service";
 import { sendPasswordResetEmail } from "$/services/notification.service";
 import {
   signRefreshToken,
   verifyAccessToken,
   verifyRefreshToken,
+  type AccessTokenPayload,
+  type RefreshTokenPayload,
 } from "$/utils/jwt";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import {
@@ -40,16 +43,28 @@ const mockSendPasswordResetEmail = jest.mocked(sendPasswordResetEmail);
 
 describe("Auth Service", () => {
   const mockUser = createRandomUser();
-  const mockPublicUser = selectData(mockUser, PUBLIC_USER_SELECT);
-  const mockPublicUserWithPassword = {
-    ...mockPublicUser,
-    password: mockUser.password,
+  const mockAuthenticatedUser = selectData(mockUser, AUTHENTICATED_USER_SELECT);
+  const mockTokens = {
+    accessToken: {
+      userId: mockUser.id,
+      userRole: mockUser.role,
+    } satisfies AccessTokenPayload,
+    refreshToken: {
+      userId: mockUser.id,
+    } satisfies RefreshTokenPayload,
   };
-  const mockAccessTokenPayload = {
-    userId: mockUser.id,
-    userRole: mockUser.role,
+  const mockSignedRefreshToken = signRefreshToken(mockUser.id);
+
+  const testFullSession = (result: FullSession) => {
+    expect(verifyAccessToken(result.accessToken)).toEqual(
+      mockTokens.accessToken,
+    );
+    expect(verifyRefreshToken(result.refreshToken)).toEqual(
+      mockTokens.refreshToken,
+    );
+    expect(result.refreshTokenExpires).toBeInstanceOf(Date);
+    expect(result.user).toEqual(mockAuthenticatedUser);
   };
-  const mockRefreshTokenPayload = { userId: mockUser.id };
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -57,13 +72,14 @@ describe("Auth Service", () => {
 
   describe("loginUser", () => {
     it("should successfully log in a user and issue tokens", async () => {
-      mockPrisma.user.findUnique.mockResolvedValue(
-        mockPublicUserWithPassword as User,
-      );
-      mockBcrypt.compare.mockImplementation(() => Promise.resolve(true));
+      const foundUser = {
+        ...mockAuthenticatedUser,
+        password: mockUser.password,
+      };
+      mockPrisma.user.findUnique.mockResolvedValue(foundUser as User);
+      mockBcrypt.compare.mockImplementation(async () => true);
 
-      const { accessToken, refreshToken, refreshTokenExpires, user } =
-        await loginUser(mockUser.email, mockUser.password);
+      const result = await loginUser(mockUser.email, mockUser.password);
 
       expect(mockPrisma.user.findUnique).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -83,13 +99,8 @@ describe("Auth Service", () => {
           },
         }),
       );
-      expect(refreshTokenExpires).toBeDefined();
-      expect(user).toEqual(mockPublicUser);
 
-      const accessTokenPayload = verifyAccessToken(accessToken);
-      const refreshTokenPayload = verifyRefreshToken(refreshToken);
-      expect(accessTokenPayload).toEqual(mockAccessTokenPayload);
-      expect(refreshTokenPayload).toEqual(mockRefreshTokenPayload);
+      testFullSession(result);
     });
 
     it("should throw ambiguous ApiError for non existent user", async () => {
@@ -102,10 +113,12 @@ describe("Auth Service", () => {
     });
 
     it("should throw ambiguous ApiError for incorrect password", async () => {
-      mockPrisma.user.findUnique.mockResolvedValue(
-        mockPublicUserWithPassword as User,
-      );
-      mockBcrypt.compare.mockImplementation(() => Promise.resolve(false));
+      const foundUser = {
+        ...mockAuthenticatedUser,
+        password: mockUser.password,
+      };
+      mockPrisma.user.findUnique.mockResolvedValue(foundUser as User);
+      mockBcrypt.compare.mockImplementation(async () => false);
 
       await expect(
         loginUser(mockUser.email, mockUser.password),
@@ -122,10 +135,13 @@ describe("Auth Service", () => {
       mockBcrypt.hash.mockImplementation(() =>
         Promise.resolve(mockUser.password),
       );
-      mockPrisma.user.create.mockResolvedValue(mockPublicUser as User);
+      mockPrisma.user.create.mockResolvedValue(mockAuthenticatedUser as User);
 
-      const { accessToken, refreshToken, refreshTokenExpires, user } =
-        await signupUser(mockUser.email, mockUser.password, mockUser.name);
+      const result = await signupUser(
+        mockUser.email,
+        mockUser.password,
+        mockUser.name,
+      );
 
       expect(mockBcrypt.hash).toHaveBeenCalledWith(mockUser.password, 10);
       expect(mockPrisma.user.create).toHaveBeenCalledWith(
@@ -154,13 +170,7 @@ describe("Auth Service", () => {
         }),
       );
 
-      expect(refreshTokenExpires).toBeDefined();
-      expect(user).toEqual(mockPublicUser);
-
-      const accessTokenPayload = verifyAccessToken(accessToken);
-      const refreshTokenPayload = verifyRefreshToken(refreshToken);
-      expect(accessTokenPayload).toEqual(mockAccessTokenPayload);
-      expect(refreshTokenPayload).toEqual(mockRefreshTokenPayload);
+      testFullSession(result);
     });
 
     it("should throw ValidationError if the email is already in use", async () => {
@@ -185,8 +195,6 @@ describe("Auth Service", () => {
   });
 
   describe("refreshAccessToken", () => {
-    const mockRefreshToken = signRefreshToken(mockUser.id);
-
     it("should successfully refresh an access token", async () => {
       const storedRefreshToken = selectData(
         createRandomRefreshToken(mockUser.id),
@@ -196,15 +204,16 @@ describe("Auth Service", () => {
       mockPrisma.refreshToken.findUnique.mockResolvedValue(
         storedRefreshToken as RefreshToken,
       );
-      mockPrisma.user.findUnique.mockResolvedValue(mockPublicUser as User);
+      mockPrisma.user.findUnique.mockResolvedValue(
+        mockAuthenticatedUser as User,
+      );
       const mockPrismaTx = mockTransaction(mockPrisma);
 
-      const { accessToken, refreshToken, refreshTokenExpires, user } =
-        await refreshAccessToken(mockRefreshToken);
+      const result = await refreshAccessToken(mockSignedRefreshToken);
 
       expect(mockPrisma.refreshToken.findUnique).toHaveBeenCalledWith(
         expect.objectContaining({
-          where: { token: mockRefreshToken },
+          where: { token: mockSignedRefreshToken },
         }),
       );
       expect(mockPrisma.user.findUnique).toHaveBeenCalledWith(
@@ -227,15 +236,7 @@ describe("Auth Service", () => {
         }),
       );
 
-      expect(accessToken).toBeDefined();
-      expect(refreshToken).toBeDefined();
-      expect(refreshTokenExpires).toBeDefined();
-      expect(user).toEqual(mockPublicUser);
-
-      const accessTokenPayload = verifyAccessToken(accessToken);
-      const refreshTokenPayload = verifyRefreshToken(refreshToken);
-      expect(accessTokenPayload).toEqual(mockAccessTokenPayload);
-      expect(refreshTokenPayload).toEqual(mockRefreshTokenPayload);
+      testFullSession(result);
     });
 
     it("should throw ApiError if no refresh token is provided", async () => {
@@ -272,7 +273,7 @@ describe("Auth Service", () => {
     it("should throw ApiError if the refresh token is not found in the database", async () => {
       mockPrisma.refreshToken.findUnique.mockResolvedValue(null);
       await expect(
-        refreshAccessToken(mockRefreshToken),
+        refreshAccessToken(mockSignedRefreshToken),
       ).rejects.toThrowApiError(401, "REFRESH_TOKEN_INVALID");
       expect(mockPrisma.refreshToken.deleteMany).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -294,7 +295,7 @@ describe("Auth Service", () => {
       );
 
       await expect(
-        refreshAccessToken(mockRefreshToken),
+        refreshAccessToken(mockSignedRefreshToken),
       ).rejects.toThrowApiError(401, "REFRESH_TOKEN_EXPIRED");
     });
 
@@ -311,7 +312,7 @@ describe("Auth Service", () => {
       mockPrisma.user.findUnique.mockResolvedValue(null);
 
       await expect(
-        refreshAccessToken(mockRefreshToken),
+        refreshAccessToken(mockSignedRefreshToken),
       ).rejects.toThrowApiError(401, "REFRESH_TOKEN_INVALID");
     });
   });
@@ -339,8 +340,6 @@ describe("Auth Service", () => {
   });
 
   describe("revalidateUser", () => {
-    const mockRefreshToken = signRefreshToken(mockUser.id);
-
     it("should successfully validate the token and return the user and a new access token", async () => {
       const storedRefreshToken = selectData(
         createRandomRefreshToken(mockUser.id),
@@ -350,15 +349,16 @@ describe("Auth Service", () => {
       mockPrisma.refreshToken.findUnique.mockResolvedValue(
         storedRefreshToken as RefreshToken,
       );
-      mockPrisma.user.findUnique.mockResolvedValue(mockPublicUser as User);
+      mockPrisma.user.findUnique.mockResolvedValue(
+        mockAuthenticatedUser as User,
+      );
 
-      const result = await revalidateUser(mockRefreshToken);
+      const result = await revalidateUser(mockSignedRefreshToken);
 
-      expect(result).toBeDefined();
-      expect(result!.user).toEqual(mockPublicUser);
-
-      const accessTokenPayload = verifyAccessToken(result!.accessToken);
-      expect(accessTokenPayload).toEqual(mockAccessTokenPayload);
+      expect(result && verifyAccessToken(result.accessToken)).toEqual(
+        mockTokens.accessToken,
+      );
+      expect(result?.user).toEqual(mockAuthenticatedUser);
     });
 
     it("should return null if no refresh token is provided", async () => {
@@ -388,7 +388,7 @@ describe("Auth Service", () => {
     it("should return null if the refresh token is not found in the database", async () => {
       mockPrisma.refreshToken.findUnique.mockResolvedValue(null);
 
-      expect(await revalidateUser(mockRefreshToken)).toBeNull();
+      expect(await revalidateUser(mockSignedRefreshToken)).toBeNull();
     });
 
     it("should return null if the user associated with the token no longer exists", async () => {
@@ -403,17 +403,17 @@ describe("Auth Service", () => {
       );
       mockPrisma.user.findUnique.mockResolvedValue(null);
 
-      expect(await revalidateUser(mockRefreshToken)).toBeNull();
+      expect(await revalidateUser(mockSignedRefreshToken)).toBeNull();
     });
   });
 
   describe("requestPasswordReset", () => {
-    const mockUserIdEmail = selectData(mockUser, { id: true, email: true });
     const mockPasswordResetToken = createRandomPasswordResetToken(mockUser.id);
     const mockResetToken = selectData(mockPasswordResetToken, { id: true });
 
     it("should successfully create a reset token and send an email if the user exists", async () => {
-      mockPrisma.user.findUnique.mockResolvedValue(mockUserIdEmail as User);
+      const foundUser = selectData(mockUser, { id: true, email: true });
+      mockPrisma.user.findUnique.mockResolvedValue(foundUser as User);
       mockPrisma.passwordResetToken.upsert.mockResolvedValue(
         mockResetToken as PasswordResetToken,
       );
@@ -473,7 +473,7 @@ describe("Auth Service", () => {
         selectData(mockUser, { id: true }) as User,
       );
       mockPrisma.passwordResetToken.delete.mockResolvedValue(
-        selectData(mockPasswordResetToken, ID_SELECT) as PasswordResetToken,
+        selectData(mockPasswordResetToken, UNUSED_SELECT) as PasswordResetToken,
       );
 
       await changePassword(token, mockNewPassword);

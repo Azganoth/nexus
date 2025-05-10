@@ -6,7 +6,7 @@ import { LoadingButton } from "$/components/ui/LoadingButton";
 import { useApiForm } from "$/hooks/useApiForm";
 import { unknownError } from "$/lib/utils";
 import { apiClient } from "$/services/apiClient";
-import type { AuthPayload } from "@repo/shared/contracts";
+import type { Session } from "@repo/shared/contracts";
 import { LOGIN_SCHEMA } from "@repo/shared/schemas";
 
 const schema = LOGIN_SCHEMA;
@@ -18,7 +18,7 @@ export function LoginForm() {
     formState: { errors, isSubmitting },
   } = useApiForm({
     schema,
-    mutationFn: (data) => apiClient.post<AuthPayload>("/auth/login", data),
+    mutationFn: (data) => apiClient.post<Session>("/auth/login", data),
     onSuccess: (payload) => {
       console.log("Logged in: ", payload);
       // router.push("/dashboard");

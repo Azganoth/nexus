@@ -3,8 +3,8 @@ import { API_URL, IS_SERVER } from "$/lib/constants";
 import { ApiError, ValidationError } from "$/services/errors";
 import type {
   ApiResponse,
-  AuthPayload,
   ErrorResponse,
+  Session,
   SuccessResponse,
 } from "@repo/shared/contracts";
 
@@ -22,7 +22,7 @@ const processPayload = <T>(payload: ApiResponse<T>) => {
 
 // This shared promise acts as a lock to prevent multiple, simultaneous token refresh requests.
 let browserRefreshResponse: Promise<
-  SuccessResponse<AuthPayload> | ErrorResponse
+  SuccessResponse<Session> | ErrorResponse
 > | null = null;
 const browserRefreshIgnore = ["/auth/refresh", "/auth/login", "/auth/signup"];
 

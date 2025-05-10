@@ -1,4 +1,4 @@
-import { PUBLIC_USER_SELECT } from "$/constants";
+import { AUTHENTICATED_USER_SELECT } from "$/constants";
 import { ApiError } from "$/utils/errors";
 import { verifyAccessToken } from "$/utils/jwt";
 import { prisma } from "@repo/database";
@@ -25,7 +25,7 @@ export const authenticate = async (
 
   const user = await prisma.user.findUnique({
     where: { id: decoded.userId },
-    select: PUBLIC_USER_SELECT,
+    select: AUTHENTICATED_USER_SELECT,
   });
   if (!user) {
     throw new ApiError(401, "ACCESS_TOKEN_INVALID");

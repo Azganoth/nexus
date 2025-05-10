@@ -1,7 +1,7 @@
 import { createRandomUser } from "$/__tests__/factories";
 import { selectData } from "$/__tests__/helpers";
 import { mockPrisma } from "$/__tests__/mocks";
-import { PUBLIC_USER_SELECT } from "$/constants";
+import { AUTHENTICATED_USER_SELECT } from "$/constants";
 import { deleteUser, updateUser } from "$/services/user.service";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import type { User } from "@repo/database";
@@ -13,7 +13,6 @@ const mockBcrypt = jest.mocked(bcrypt);
 
 describe("User Service", () => {
   const mockUser = createRandomUser();
-  const mockPublicUser = selectData(mockUser, PUBLIC_USER_SELECT);
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -22,7 +21,10 @@ describe("User Service", () => {
   describe("updateUser", () => {
     it("should successfully update an user's name", async () => {
       const updateData = { name: "Novo nome" };
-      const updatedUser = { ...mockPublicUser, ...updateData };
+      const updatedUser = {
+        ...selectData(mockUser, AUTHENTICATED_USER_SELECT),
+        ...updateData,
+      };
       mockPrisma.user.update.mockResolvedValue(updatedUser as User);
 
       const result = await updateUser(mockUser.id, updateData);
@@ -39,9 +41,10 @@ describe("User Service", () => {
 
   describe("deleteUser", () => {
     it("should successfully delete the user if the password is correct", async () => {
-      mockPrisma.user.findUnique.mockResolvedValue(mockUser);
+      mockPrisma.user.findUnique.mockResolvedValue(
+        selectData(mockUser, { password: true }) as User,
+      );
       mockBcrypt.compare.mockImplementation(async () => true);
-      mockPrisma.user.delete.mockResolvedValue(mockUser);
 
       await expect(
         deleteUser(mockUser.id, "correct_password"),
@@ -52,7 +55,9 @@ describe("User Service", () => {
     });
 
     it("should throw ApiError if the password is incorrect", async () => {
-      mockPrisma.user.findUnique.mockResolvedValue(mockUser);
+      mockPrisma.user.findUnique.mockResolvedValue(
+        selectData(mockUser, { password: true }) as User,
+      );
       mockBcrypt.compare.mockImplementation(async () => false);
 
       await expect(

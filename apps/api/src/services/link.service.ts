@@ -1,14 +1,21 @@
-import { ID_SELECT, PUBLIC_LINK_SELECT } from "$/constants";
+import { AUTHENTICATED_LINK_SELECT, UNUSED_SELECT } from "$/constants";
 import { ApiError } from "$/utils/errors";
 import { prisma, Prisma } from "@repo/database";
+import type { AuthenticatedLink } from "@repo/shared/contracts";
 import type { CREATE_LINK_SCHEMA } from "@repo/shared/schemas";
 import type { z } from "zod/v4";
 
-export const getLinksForUser = async (userId: string) => {
+export const getLinksForUser = async (
+  userId: string,
+): Promise<AuthenticatedLink[]> => {
   const links = await prisma.link.findMany({
-    where: { profile: { userId } },
-    orderBy: { displayOrder: "asc" },
-    select: PUBLIC_LINK_SELECT,
+    where: {
+      profile: { userId },
+    },
+    orderBy: {
+      displayOrder: "asc",
+    },
+    select: AUTHENTICATED_LINK_SELECT,
   });
   return links;
 };
@@ -16,7 +23,7 @@ export const getLinksForUser = async (userId: string) => {
 export const createLinkForUser = async (
   userId: string,
   data: z.infer<typeof CREATE_LINK_SCHEMA>,
-) => {
+): Promise<AuthenticatedLink> => {
   const profile = await prisma.profile.findUniqueOrThrow({
     where: { userId },
     select: { id: true, _count: { select: { links: true } } },
@@ -32,7 +39,7 @@ export const createLinkForUser = async (
       profileId: profile.id,
       displayOrder: profile._count.links,
     },
-    select: PUBLIC_LINK_SELECT,
+    select: AUTHENTICATED_LINK_SELECT,
   });
 
   return newLink;
@@ -42,7 +49,7 @@ export const updateUserLink = async (
   userId: string,
   linkId: number,
   data: Partial<z.infer<typeof CREATE_LINK_SCHEMA>>,
-) => {
+): Promise<AuthenticatedLink> => {
   try {
     const updatedLink = await prisma.link.update({
       where: {
@@ -50,7 +57,7 @@ export const updateUserLink = async (
         profile: { userId },
       },
       data,
-      select: PUBLIC_LINK_SELECT,
+      select: AUTHENTICATED_LINK_SELECT,
     });
 
     return updatedLink;
@@ -65,14 +72,17 @@ export const updateUserLink = async (
   }
 };
 
-export const deleteUserLink = async (userId: string, linkId: number) => {
+export const deleteUserLink = async (
+  userId: string,
+  linkId: number,
+): Promise<void> => {
   try {
     await prisma.link.delete({
       where: {
         id: linkId,
         profile: { userId },
       },
-      select: ID_SELECT,
+      select: UNUSED_SELECT,
     });
   } catch (error) {
     if (
@@ -88,7 +98,7 @@ export const deleteUserLink = async (userId: string, linkId: number) => {
 export const updateLinkOrderForUser = async (
   userId: string,
   orderedIds: number[],
-) => {
+): Promise<void> => {
   const userLinks = await prisma.link.findMany({
     where: { profile: { userId } },
     select: { id: true },

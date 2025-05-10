@@ -1,8 +1,8 @@
 import {
-  ID_SELECT,
+  AUTHENTICATED_USER_SELECT,
   JWT_REFRESH_EXPIRES_IN,
   PASSWORD_RESET_EXPIRES_IN,
-  PUBLIC_USER_SELECT,
+  UNUSED_SELECT,
 } from "$/constants";
 import { sendPasswordResetEmail } from "$/services/notification.service";
 import { ApiError, ValidationError } from "$/utils/errors";
@@ -13,9 +13,14 @@ import {
 } from "$/utils/jwt";
 import type { PrismaTx } from "$/utils/types";
 import { Prisma, prisma } from "@repo/database";
-import type { UserRole } from "@repo/shared/contracts";
+import type { Session, UserRole } from "@repo/shared/contracts";
 import bcrypt from "bcrypt";
 import { randomBytes } from "node:crypto";
+
+export interface FullSession extends Session {
+  refreshToken: string;
+  refreshTokenExpires: Date;
+}
 
 const createTokens = async (
   userId: string,
@@ -32,39 +37,38 @@ const createTokens = async (
       userId: userId,
       expiresAt: refreshTokenExpires,
     },
-    select: ID_SELECT,
+    select: UNUSED_SELECT,
   });
 
   return { accessToken, refreshToken, refreshTokenExpires };
 };
 
-export const loginUser = async (email: string, password: string) => {
-  const user = await prisma.user.findUnique({
+export const loginUser = async (
+  email: string,
+  password: string,
+): Promise<FullSession> => {
+  const storedUser = await prisma.user.findUnique({
     where: { email },
-    select: { ...PUBLIC_USER_SELECT, password: true },
+    select: { ...AUTHENTICATED_USER_SELECT, password: true },
   });
-
-  if (!user || !(await bcrypt.compare(password, user.password))) {
+  if (!storedUser) {
     throw new ApiError(401, "INCORRECT_CREDENTIALS");
   }
 
-  const { accessToken, refreshToken, refreshTokenExpires } = await createTokens(
-    user.id,
-    user.role,
-  );
-  return {
-    accessToken,
-    refreshToken,
-    refreshTokenExpires,
-    user: { id: user.id, email: user.email, name: user.name, role: user.role },
-  };
+  const { password: storedPassword, ...user } = storedUser;
+  if (!(await bcrypt.compare(password, storedPassword))) {
+    throw new ApiError(401, "INCORRECT_CREDENTIALS");
+  }
+
+  const tokens = await createTokens(user.id, user.role);
+  return { ...tokens, user };
 };
 
 export const signupUser = async (
   email: string,
   password: string,
   name: string,
-) => {
+): Promise<FullSession> => {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   try {
@@ -82,12 +86,11 @@ export const signupUser = async (
           },
         },
       },
-      select: PUBLIC_USER_SELECT,
+      select: AUTHENTICATED_USER_SELECT,
     });
 
-    const { accessToken, refreshToken, refreshTokenExpires } =
-      await createTokens(user.id, user.role);
-    return { accessToken, refreshToken, refreshTokenExpires, user };
+    const tokens = await createTokens(user.id, user.role);
+    return { ...tokens, user };
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === "P2002") {
@@ -101,7 +104,9 @@ export const signupUser = async (
   }
 };
 
-export const refreshAccessToken = async (refreshToken: string) => {
+export const refreshAccessToken = async (
+  refreshToken: string,
+): Promise<FullSession> => {
   if (!refreshToken) {
     throw new ApiError(401, "REFRESH_TOKEN_MISSING");
   }
@@ -131,14 +136,14 @@ export const refreshAccessToken = async (refreshToken: string) => {
   if (storedToken.expiresAt < new Date()) {
     await prisma.refreshToken.delete({
       where: { id: storedToken.id },
-      select: ID_SELECT,
+      select: UNUSED_SELECT,
     });
     throw new ApiError(401, "REFRESH_TOKEN_EXPIRED");
   }
 
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: PUBLIC_USER_SELECT,
+    select: AUTHENTICATED_USER_SELECT,
   });
   if (!user) {
     throw new ApiError(401, "REFRESH_TOKEN_INVALID");
@@ -153,7 +158,7 @@ export const refreshAccessToken = async (refreshToken: string) => {
   return { ...tokens, user };
 };
 
-export const logoutUser = async (refreshToken: string) => {
+export const logoutUser = async (refreshToken: string): Promise<void> => {
   if (!refreshToken) return;
 
   await prisma.refreshToken.deleteMany({
@@ -161,7 +166,9 @@ export const logoutUser = async (refreshToken: string) => {
   });
 };
 
-export const revalidateUser = async (refreshToken: string) => {
+export const revalidateUser = async (
+  refreshToken: string,
+): Promise<Session | null> => {
   if (!refreshToken) {
     return null;
   }
@@ -185,7 +192,7 @@ export const revalidateUser = async (refreshToken: string) => {
 
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: PUBLIC_USER_SELECT,
+    select: AUTHENTICATED_USER_SELECT,
   });
   if (!user) {
     return null;
@@ -195,7 +202,7 @@ export const revalidateUser = async (refreshToken: string) => {
   return { accessToken, user };
 };
 
-export const requestPasswordReset = async (email: string) => {
+export const requestPasswordReset = async (email: string): Promise<void> => {
   const user = await prisma.user.findUnique({
     where: { email },
     select: { id: true, email: true },
@@ -210,13 +217,16 @@ export const requestPasswordReset = async (email: string) => {
     where: { userId: user.id },
     update: { token, expiresAt },
     create: { userId: user.id, token, expiresAt },
-    select: ID_SELECT,
+    select: UNUSED_SELECT,
   });
 
   sendPasswordResetEmail(user.email, token);
 };
 
-export const changePassword = async (token: string, newPassword: string) => {
+export const changePassword = async (
+  token: string,
+  newPassword: string,
+): Promise<void> => {
   const resetToken = await prisma.passwordResetToken.findUnique({
     where: { token },
     select: { id: true, expiresAt: true, userId: true },
@@ -231,17 +241,19 @@ export const changePassword = async (token: string, newPassword: string) => {
     prisma.user.update({
       where: { id: resetToken.userId },
       data: { password: newHashedPassword },
-      select: ID_SELECT,
+      select: UNUSED_SELECT,
     }),
     // Enforce single use
     prisma.passwordResetToken.delete({
       where: { id: resetToken.id },
-      select: ID_SELECT,
+      select: UNUSED_SELECT,
     }),
   ]);
 };
 
-export const verifyPasswordResetToken = async (token: string) => {
+export const verifyPasswordResetToken = async (
+  token: string,
+): Promise<void> => {
   const resetToken = await prisma.passwordResetToken.findUnique({
     where: { token },
     select: { expiresAt: true },
@@ -250,6 +262,4 @@ export const verifyPasswordResetToken = async (token: string) => {
   if (!resetToken || resetToken.expiresAt < new Date()) {
     throw new ApiError(400, "PASSWORD_RESET_TOKEN_INVALID");
   }
-
-  return;
 };

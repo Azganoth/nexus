@@ -1,19 +1,30 @@
-import { PUBLIC_LINK_SELECT, PUBLIC_PROFILE_SELECT } from "$/constants";
+import {
+  AUTHENTICATED_LINK_SELECT,
+  AUTHENTICATED_PROFILE_SELECT,
+  PUBLIC_LINK_SELECT,
+  PUBLIC_PROFILE_SELECT,
+} from "$/constants";
 import { ApiError } from "$/utils/errors";
 import { prisma } from "@repo/database";
+import type {
+  AuthenticatedProfile,
+  PublicProfile,
+} from "@repo/shared/contracts";
 import type { UPDATE_PROFILE_SCHEMA } from "@repo/shared/schemas";
 import type { z } from "zod/v4";
 
-export const getProfileByUserId = async (userId: string) => {
+export const getProfileByUserId = async (
+  userId: string,
+): Promise<AuthenticatedProfile> => {
   const profile = await prisma.profile.findUnique({
     where: { userId },
     select: {
-      ...PUBLIC_PROFILE_SELECT,
+      ...AUTHENTICATED_PROFILE_SELECT,
       links: {
         orderBy: {
           displayOrder: "asc",
         },
-        select: PUBLIC_LINK_SELECT,
+        select: AUTHENTICATED_LINK_SELECT,
       },
     },
   });
@@ -25,11 +36,14 @@ export const getProfileByUserId = async (userId: string) => {
   return profile;
 };
 
-export const getProfileByUsername = async (username: string) => {
+export const getProfileByUsername = async (
+  username: string,
+): Promise<PublicProfile & { isPublic: boolean }> => {
   const profile = await prisma.profile.findFirst({
     where: { username },
     select: {
       ...PUBLIC_PROFILE_SELECT,
+      isPublic: true,
       links: {
         where: {
           isPublic: true,
@@ -41,7 +55,6 @@ export const getProfileByUsername = async (username: string) => {
       },
     },
   });
-
   if (!profile) {
     throw new ApiError(404, "NOT_FOUND", "Este perfil público não existe.");
   }
@@ -52,17 +65,17 @@ export const getProfileByUsername = async (username: string) => {
 export const updateProfile = async (
   userId: string,
   data: z.infer<typeof UPDATE_PROFILE_SCHEMA>,
-) => {
+): Promise<AuthenticatedProfile> => {
   const updatedProfile = await prisma.profile.update({
     where: { userId },
     data,
     select: {
-      ...PUBLIC_PROFILE_SELECT,
+      ...AUTHENTICATED_PROFILE_SELECT,
       links: {
         orderBy: {
           displayOrder: "asc",
         },
-        select: PUBLIC_LINK_SELECT,
+        select: AUTHENTICATED_LINK_SELECT,
       },
     },
   });

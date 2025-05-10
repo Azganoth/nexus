@@ -5,7 +5,10 @@ import {
 } from "$/__tests__/factories";
 import { selectData } from "$/__tests__/helpers";
 import { mockPrisma } from "$/__tests__/mocks";
-import { PUBLIC_LINK_SELECT, PUBLIC_USER_SELECT } from "$/constants";
+import {
+  AUTHENTICATED_LINK_SELECT,
+  AUTHENTICATED_USER_SELECT,
+} from "$/constants";
 import { createServer } from "$/server";
 import {
   createLinkForUser,
@@ -32,10 +35,13 @@ const mockUpdateLinkOrderForUser = jest.mocked(updateLinkOrderForUser);
 describe("Link Controller", () => {
   let app: Express;
   const mockUser = createRandomUser();
-  const mockPublicUser = selectData(mockUser, PUBLIC_USER_SELECT);
+  const mockAuthenticatedUser = selectData(mockUser, AUTHENTICATED_USER_SELECT);
   const mockProfile = createRandomProfileWithLinks(mockUser.id);
+  const mockLinks = mockProfile.links.map((link) =>
+    selectData(link, AUTHENTICATED_LINK_SELECT),
+  );
   const mockLink = createRandomLink(mockProfile.id);
-  const mockPublicLink = selectData(mockLink, PUBLIC_LINK_SELECT);
+  const mockAuthenticatedLink = selectData(mockLink, AUTHENTICATED_LINK_SELECT);
   const mockAccessToken = signAccessToken(mockUser.id, mockUser.role);
 
   beforeEach(() => {
@@ -45,20 +51,24 @@ describe("Link Controller", () => {
 
   describe("GET /links", () => {
     it("should successfully return an array of links for an authenticated user", async () => {
-      mockPrisma.user.findUnique.mockResolvedValue(mockPublicUser as User);
-      mockGetLinksForUser.mockResolvedValue(mockProfile.links);
+      mockPrisma.user.findUnique.mockResolvedValue(
+        mockAuthenticatedUser as User,
+      );
+      mockGetLinksForUser.mockResolvedValue(mockLinks);
 
       const response = await supertest(app)
         .get("/links")
         .set("Authorization", `Bearer ${mockAccessToken}`);
 
       expect(response.status).toBe(200);
-      expect(response.body.data).toHaveLength(mockProfile.links.length);
+      expect(response.body.data).toHaveLength(mockLinks.length);
       expect(mockGetLinksForUser).toHaveBeenCalledWith(mockUser.id);
     });
 
     it("should successfully return an empty array if the user has no links", async () => {
-      mockPrisma.user.findUnique.mockResolvedValue(mockPublicUser as User);
+      mockPrisma.user.findUnique.mockResolvedValue(
+        mockAuthenticatedUser as User,
+      );
       mockGetLinksForUser.mockResolvedValue([]);
 
       const response = await supertest(app)
@@ -77,12 +87,14 @@ describe("Link Controller", () => {
 
   describe("POST /links", () => {
     it("should successfully create a new link", async () => {
-      const newData = selectData(mockPublicLink, {
+      const newData = selectData(mockAuthenticatedLink, {
         title: true,
         url: true,
       });
-      mockPrisma.user.findUnique.mockResolvedValue(mockPublicUser as User);
-      mockCreateLinkForUser.mockResolvedValue(mockPublicLink as Link);
+      mockPrisma.user.findUnique.mockResolvedValue(
+        mockAuthenticatedUser as User,
+      );
+      mockCreateLinkForUser.mockResolvedValue(mockAuthenticatedLink as Link);
 
       const response = await supertest(app)
         .post("/links")
@@ -90,8 +102,8 @@ describe("Link Controller", () => {
         .send(newData);
 
       expect(response.status).toBe(201);
-      expect(response.body.data.title).toEqual(mockPublicLink.title);
-      expect(response.body.data.url).toEqual(mockPublicLink.url);
+      expect(response.body.data.title).toEqual(mockAuthenticatedLink.title);
+      expect(response.body.data.url).toEqual(mockAuthenticatedLink.url);
       expect(mockCreateLinkForUser).toHaveBeenCalledWith(mockUser.id, newData);
     });
 
@@ -101,7 +113,9 @@ describe("Link Controller", () => {
     });
 
     it("should return 422 for invalid data", async () => {
-      mockPrisma.user.findUnique.mockResolvedValue(mockPublicUser as User);
+      mockPrisma.user.findUnique.mockResolvedValue(
+        mockAuthenticatedUser as User,
+      );
 
       const response = await supertest(app)
         .post("/links")
@@ -113,7 +127,9 @@ describe("Link Controller", () => {
     });
 
     it("should return 403 if the link limit is reached", async () => {
-      mockPrisma.user.findUnique.mockResolvedValue(mockPublicUser as User);
+      mockPrisma.user.findUnique.mockResolvedValue(
+        mockAuthenticatedUser as User,
+      );
       const error = new ApiError(403, "TOO_MANY_LINKS");
       mockCreateLinkForUser.mockRejectedValue(error);
       const response = await supertest(app)
@@ -128,22 +144,24 @@ describe("Link Controller", () => {
 
   describe("PATCH /links/:id", () => {
     it("should successfully update and return the updated link", async () => {
-      const updatedData = selectData(mockPublicLink, {
+      const updatedData = selectData(mockAuthenticatedLink, {
         title: true,
       });
-      mockPrisma.user.findUnique.mockResolvedValue(mockPublicUser as User);
-      mockUpdateUserLink.mockResolvedValue(mockPublicLink);
+      mockPrisma.user.findUnique.mockResolvedValue(
+        mockAuthenticatedUser as User,
+      );
+      mockUpdateUserLink.mockResolvedValue(mockAuthenticatedLink);
 
       const response = await supertest(app)
-        .patch(`/links/${mockPublicLink.id}`)
+        .patch(`/links/${mockAuthenticatedLink.id}`)
         .set("Authorization", `Bearer ${mockAccessToken}`)
         .send(updatedData);
 
       expect(response.status).toBe(200);
-      expect(response.body.data.title).toEqual(mockPublicLink.title);
+      expect(response.body.data.title).toEqual(mockAuthenticatedLink.title);
       expect(mockUpdateUserLink).toHaveBeenCalledWith(
         mockUser.id,
-        mockPublicLink.id,
+        mockAuthenticatedLink.id,
         updatedData,
       );
     });
@@ -151,7 +169,9 @@ describe("Link Controller", () => {
     it("should return 404 if the link is not found or not owned by the user", async () => {
       const error = new ApiError(404, "NOT_FOUND");
       mockUpdateUserLink.mockRejectedValue(error);
-      mockPrisma.user.findUnique.mockResolvedValue(mockPublicUser as User);
+      mockPrisma.user.findUnique.mockResolvedValue(
+        mockAuthenticatedUser as User,
+      );
 
       const response = await supertest(app)
         .patch("/links/999")
@@ -165,7 +185,9 @@ describe("Link Controller", () => {
 
   describe("DELETE /links/:id", () => {
     it("should successfully delete the link", async () => {
-      mockPrisma.user.findUnique.mockResolvedValue(mockPublicUser as User);
+      mockPrisma.user.findUnique.mockResolvedValue(
+        mockAuthenticatedUser as User,
+      );
       mockDeleteUserLink.mockResolvedValue(undefined);
 
       const response = await supertest(app)
@@ -175,7 +197,7 @@ describe("Link Controller", () => {
       expect(response.status).toBe(204);
       expect(mockDeleteUserLink).toHaveBeenCalledWith(
         mockUser.id,
-        mockPublicLink.id,
+        mockAuthenticatedLink.id,
       );
     });
 
@@ -189,7 +211,9 @@ describe("Link Controller", () => {
     const mockLinks = [3, 1, 2];
 
     it("should successfully reorder links", async () => {
-      mockPrisma.user.findUnique.mockResolvedValue(mockPublicUser as User);
+      mockPrisma.user.findUnique.mockResolvedValue(
+        mockAuthenticatedUser as User,
+      );
       mockUpdateLinkOrderForUser.mockResolvedValue();
 
       const response = await supertest(app)
@@ -213,7 +237,9 @@ describe("Link Controller", () => {
     });
 
     it("should return 422 for invalid request body", async () => {
-      mockPrisma.user.findUnique.mockResolvedValue(mockPublicUser as User);
+      mockPrisma.user.findUnique.mockResolvedValue(
+        mockAuthenticatedUser as User,
+      );
 
       const response = await supertest(app)
         .patch("/links/order")
@@ -224,7 +250,9 @@ describe("Link Controller", () => {
     });
 
     it("should return 400 if the service rejects the ID list", async () => {
-      mockPrisma.user.findUnique.mockResolvedValue(mockPublicUser as User);
+      mockPrisma.user.findUnique.mockResolvedValue(
+        mockAuthenticatedUser as User,
+      );
       const error = new ApiError(400, "BAD_REQUEST");
       mockUpdateLinkOrderForUser.mockRejectedValue(error);
 

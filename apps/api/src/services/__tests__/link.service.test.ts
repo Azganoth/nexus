@@ -5,7 +5,7 @@ import {
 } from "$/__tests__/factories";
 import { mockTransaction, selectData } from "$/__tests__/helpers";
 import { mockPrisma } from "$/__tests__/mocks";
-import { PUBLIC_LINK_SELECT } from "$/constants";
+import { AUTHENTICATED_LINK_SELECT } from "$/constants";
 import {
   createLinkForUser,
   deleteUserLink,
@@ -19,6 +19,7 @@ import { Prisma, type Link, type Profile } from "@repo/database";
 describe("Link Service", () => {
   const mockUser = createRandomUser();
   const mockProfile = createRandomProfileWithLinks(mockUser.id);
+  const mockLinks = mockProfile.links;
   const mockLink = createRandomLink(mockProfile.id);
 
   beforeEach(() => {
@@ -27,7 +28,10 @@ describe("Link Service", () => {
 
   describe("getLinksForUser", () => {
     it("should return an array of links for a given user", async () => {
-      mockPrisma.link.findMany.mockResolvedValue(mockProfile.links);
+      const foundLinks = mockLinks.map(
+        (link) => selectData(link, AUTHENTICATED_LINK_SELECT) as Link,
+      );
+      mockPrisma.link.findMany.mockResolvedValue(foundLinks);
 
       const result = await getLinksForUser(mockUser.id);
 
@@ -37,8 +41,8 @@ describe("Link Service", () => {
           orderBy: { displayOrder: "asc" },
         }),
       );
-      expect(result).toHaveLength(mockProfile.links.length);
-      expect(result).toEqual(mockProfile.links);
+      expect(result).toHaveLength(foundLinks.length);
+      expect(result).toEqual(foundLinks);
     });
 
     it("should return an empty array if the user has no links", async () => {
@@ -52,16 +56,21 @@ describe("Link Service", () => {
 
   describe("createLinkForUser", () => {
     const mockNewLink = { title: "Novo Link", url: "https://example.com" };
+    const mockProfileLinksExceed = createRandomProfileWithLinks(
+      mockUser.id,
+      11,
+    );
 
     it("should successfully create a link if the user is under the limit", async () => {
-      const profile = {
+      const foundProfile = {
         ...selectData(mockProfile, { id: true }),
         _count: { links: mockProfile.links.length },
       };
-      mockPrisma.link.create.mockResolvedValue(mockLink);
+      const link = selectData(mockLink, AUTHENTICATED_LINK_SELECT);
       mockPrisma.profile.findUniqueOrThrow.mockResolvedValue(
-        profile as unknown as Profile,
+        foundProfile as unknown as Profile,
       );
+      mockPrisma.link.create.mockResolvedValue(link as Link);
 
       const result = await createLinkForUser(mockUser.id, mockNewLink);
 
@@ -70,20 +79,20 @@ describe("Link Service", () => {
           data: {
             ...mockNewLink,
             profileId: mockProfile.id,
-            displayOrder: profile._count.links,
+            displayOrder: foundProfile._count.links,
           },
         }),
       );
-      expect(result).toEqual(mockLink);
+      expect(result).toEqual(link);
     });
 
     it("should throw ApiError if the user has reached the link limit", async () => {
-      const profile = {
-        ...selectData(mockProfile, { id: true }),
-        _count: { links: 10 },
+      const foundProfile = {
+        ...selectData(mockProfileLinksExceed, { id: true }),
+        _count: { links: mockProfileLinksExceed.links.length },
       };
       mockPrisma.profile.findUniqueOrThrow.mockResolvedValue(
-        profile as unknown as Profile,
+        foundProfile as unknown as Profile,
       );
 
       await expect(
@@ -97,7 +106,7 @@ describe("Link Service", () => {
 
     it("should successfully update a link", async () => {
       const updatedLink = {
-        ...selectData(mockLink, PUBLIC_LINK_SELECT),
+        ...selectData(mockLink, AUTHENTICATED_LINK_SELECT),
         ...mockUpdateData,
       };
       mockPrisma.link.update.mockResolvedValue(updatedLink as Link);
@@ -132,10 +141,6 @@ describe("Link Service", () => {
 
   describe("deleteUserLink", () => {
     it("should successfully delete a link", async () => {
-      mockPrisma.link.delete.mockResolvedValue(
-        selectData(mockLink, { id: true }) as Link,
-      );
-
       await expect(
         deleteUserLink(mockUser.id, mockLink.id),
       ).resolves.not.toThrow();

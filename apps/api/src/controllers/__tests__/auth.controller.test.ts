@@ -3,7 +3,7 @@ import {
   createRandomUser,
 } from "$/__tests__/factories";
 import { selectData } from "$/__tests__/helpers";
-import { PUBLIC_USER_SELECT } from "$/constants";
+import { AUTHENTICATED_USER_SELECT } from "$/constants";
 import { createServer } from "$/server";
 import {
   changePassword,
@@ -14,9 +14,11 @@ import {
   revalidateUser,
   signupUser,
   verifyPasswordResetToken,
+  type FullSession,
 } from "$/services/auth.service";
 import { ApiError } from "$/utils/errors";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
+import type { Session } from "@repo/shared/contracts";
 import { randomBytes } from "crypto";
 import type { Express } from "express";
 import supertest from "supertest";
@@ -37,16 +39,19 @@ describe("Auth Controller", () => {
   const mockUser = createRandomUser();
   const mockAccessToken = "this-is-a-valid-access-token";
   const mockRefreshToken = "this-is-a-valid-refresh-token";
-  const mockPublicUser = selectData(mockUser, PUBLIC_USER_SELECT);
-  const mockOutput = {
+  const mockAuthenticatedUser = selectData(mockUser, AUTHENTICATED_USER_SELECT);
+  const mockSession: Session = {
     accessToken: mockAccessToken,
-    user: mockPublicUser,
+    user: mockAuthenticatedUser,
   };
-  const mockInput = {
-    ...mockOutput,
+  const mockFullSession: FullSession = {
+    accessToken: mockAccessToken,
     refreshToken: mockRefreshToken,
     refreshTokenExpires: new Date(),
+    user: mockAuthenticatedUser,
   };
+
+  const mockSessionJSON = JSON.parse(JSON.stringify(mockSession));
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -55,7 +60,7 @@ describe("Auth Controller", () => {
 
   describe("POST /auth/signup", () => {
     it("should successfully create a user and return 201", async () => {
-      mockSignupUser.mockResolvedValue(mockInput);
+      mockSignupUser.mockResolvedValue(mockFullSession);
 
       const password = "Password123";
       const response = await supertest(app).post("/auth/signup").send({
@@ -65,7 +70,7 @@ describe("Auth Controller", () => {
       });
 
       expect(response.status).toBe(201);
-      expect(response.body.data).toEqual(mockOutput);
+      expect(response.body.data).toEqual(mockSessionJSON);
       expect(response.headers["set-cookie"][0]).toMatch(
         new RegExp(`^refreshToken=${mockRefreshToken}`),
       );
@@ -91,14 +96,14 @@ describe("Auth Controller", () => {
 
   describe("POST /auth/login", () => {
     it("should successfully log in, return accessToken and set refreshToken cookie", async () => {
-      mockLoginUser.mockResolvedValue(mockInput);
+      mockLoginUser.mockResolvedValue(mockFullSession);
 
       const response = await supertest(app)
         .post("/auth/login")
         .send({ email: mockUser.email, password: mockUser.password });
 
       expect(response.status).toBe(200);
-      expect(response.body.data).toEqual(mockOutput);
+      expect(response.body.data).toEqual(mockSessionJSON);
       expect(response.headers["set-cookie"][0]).toMatch(
         new RegExp(`^refreshToken=${mockRefreshToken}`),
       );
@@ -141,23 +146,15 @@ describe("Auth Controller", () => {
   describe("POST /auth/refresh", () => {
     it("should successfully refresh tokens and set a new refresh token cookie", async () => {
       const newRefreshToken = "this-is-a-new-valid-refresh-token";
-      const returnData = {
-        accessToken: mockAccessToken,
-        refreshToken: newRefreshToken,
-        refreshTokenExpires: mockInput.refreshTokenExpires,
-        user: mockPublicUser,
-      };
-      mockRefreshAccessToken.mockResolvedValue(returnData);
+      const fullSession = { ...mockFullSession, refreshToken: newRefreshToken };
+      mockRefreshAccessToken.mockResolvedValue(fullSession);
 
       const response = await supertest(app)
         .post("/auth/refresh")
         .set("Cookie", `refreshToken=${mockRefreshToken}`);
 
       expect(response.status).toBe(200);
-      expect(response.body.data).toEqual({
-        accessToken: mockAccessToken,
-        user: mockPublicUser,
-      });
+      expect(response.body.data).toEqual(mockSessionJSON);
       expect(response.headers["set-cookie"][0]).toMatch(
         new RegExp(`^refreshToken=${newRefreshToken}`),
       );
@@ -180,13 +177,13 @@ describe("Auth Controller", () => {
 
   describe("GET /auth/session", () => {
     it("should sucessfully return the user data and a new access token if the session is valid", async () => {
-      mockRevalidateUser.mockResolvedValue(mockOutput);
+      mockRevalidateUser.mockResolvedValue(mockSession);
       const response = await supertest(app)
         .get("/auth/session")
         .set("Cookie", `refreshToken=${mockRefreshToken}`);
 
       expect(response.status).toBe(200);
-      expect(response.body.data).toEqual(mockOutput);
+      expect(response.body.data).toEqual(mockSessionJSON);
     });
 
     it("should return 401 if no valid refresh token is provided", async () => {

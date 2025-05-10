@@ -1,10 +1,10 @@
-import { createTestPublicProfile } from "$/__tests__/factories";
+import { createRandomPublicProfile } from "$/__tests__/factories";
 import { Profile } from "$/components/features/Profile";
 import { describe, expect, it } from "@jest/globals";
 import { render, screen } from "@testing-library/react";
 
 describe("Profile", () => {
-  const mockProfile = createTestPublicProfile();
+  const mockProfile = createRandomPublicProfile(2);
 
   it("should render all profile details correctly", () => {
     render(<Profile profile={mockProfile} />);
@@ -14,21 +14,19 @@ describe("Profile", () => {
     expect(avatar).toHaveAttribute("alt", "");
 
     expect(
-      screen.getByRole("heading", { name: "Alice Ferreira" }),
+      screen.getByRole("heading", { name: mockProfile.displayName }),
     ).toBeInTheDocument();
 
-    expect(
-      screen.getByText("Professional cosplayer and content creator."),
-    ).toBeInTheDocument();
+    expect(screen.getByText(mockProfile.bio)).toBeInTheDocument();
 
     const links = screen.getAllByRole("link");
-    expect(links).toHaveLength(2);
-    expect(links[0]).toHaveTextContent("Instagram");
-    expect(links[0]).toHaveAttribute("href", "https://instagram.com/alice");
+    expect(links).toHaveLength(mockProfile.links.length);
+    expect(links[0]).toHaveTextContent(mockProfile.links[0].title);
+    expect(links[0]).toHaveAttribute("href", mockProfile.links[0].url);
     expect(links[0]).toHaveAttribute("target", "_blank");
 
-    expect(links[1]).toHaveTextContent("Patreon");
-    expect(links[1]).toHaveAttribute("href", "https://patreon.com/alice");
+    expect(links[1]).toHaveTextContent(mockProfile.links[1].title);
+    expect(links[1]).toHaveAttribute("href", mockProfile.links[1].url);
   });
 
   it("should not render the bio paragraph if the bio is null or empty", () => {

@@ -1,5 +1,5 @@
 import { API_URL } from "$/lib/constants";
-import type { AuthPayload } from "@repo/shared/contracts";
+import type { ApiResponse, Session } from "@repo/shared/contracts";
 import { cookies } from "next/headers";
 import { cache } from "react";
 
@@ -19,5 +19,10 @@ export const getAuth = cache(async () => {
     return null;
   }
 
-  return (await response.json()).data as AuthPayload;
+  const payload = (await response.json()) as ApiResponse<Session>;
+  if (payload.status !== "success") {
+    return null;
+  }
+
+  return payload.data;
 });
