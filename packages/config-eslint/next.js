@@ -1,29 +1,32 @@
-import js from "@eslint/js";
 import pluginNext from "@next/eslint-plugin-next";
-import eslintConfigPrettier from "eslint-config-prettier";
 import pluginReact from "eslint-plugin-react";
 import pluginReactHooks from "eslint-plugin-react-hooks";
 import globals from "globals";
-import tseslint from "typescript-eslint";
-import { config as baseConfig } from "./index.js";
+import { baseConfig } from "./base.js";
 
-/**
- * A custom ESLint configuration for Next.js.
- *
- * @type {import("eslint").Linter.Config}
- * */
-export const config = [
+/** @type {import("eslint").Linter.Config} */
+export const nextConfig = [
   ...baseConfig,
-  js.configs.recommended,
-  eslintConfigPrettier,
-  ...tseslint.configs.recommended,
   {
-    ...pluginReact.configs.flat.recommended,
     languageOptions: {
       ...pluginReact.configs.flat.recommended.languageOptions,
       globals: {
         ...globals.serviceworker,
       },
+    },
+  },
+  {
+    ...pluginReact.configs.flat.recommended,
+    plugins: {
+      ...pluginReact.configs.flat.recommended.plugins,
+      "react-hooks": pluginReactHooks,
+    },
+    settings: { react: { version: "detect" } },
+    rules: {
+      ...pluginReact.configs.flat.recommended.rules,
+      ...pluginReactHooks.configs.recommended.rules,
+      // React scope no longer necessary with new JSX transform.
+      "react/react-in-jsx-scope": "off",
     },
   },
   {
@@ -33,17 +36,6 @@ export const config = [
     rules: {
       ...pluginNext.configs.recommended.rules,
       ...pluginNext.configs["core-web-vitals"].rules,
-    },
-  },
-  {
-    plugins: {
-      "react-hooks": pluginReactHooks,
-    },
-    settings: { react: { version: "detect" } },
-    rules: {
-      ...pluginReactHooks.configs.recommended.rules,
-      // React scope no longer necessary with new JSX transform.
-      "react/react-in-jsx-scope": "off",
     },
   },
 ];
