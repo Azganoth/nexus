@@ -4,8 +4,12 @@ import { ERRORS } from "@repo/shared/constants";
 export const composeTitle = (title: string) => `${title} | Nexus`;
 
 export const unknownError = (error: unknown) => {
-  console.error(error);
-  toast.error(`${ERRORS.UNEXPECTED_ERROR} Tente novamente mais tarde.`, {
+  console.error("Unexpected error:", error);
+
+  const errorMessage =
+    error instanceof Error ? error.message : ERRORS.UNEXPECTED_ERROR;
+
+  toast.error(`${errorMessage} Tente novamente mais tarde.`, {
     duration: 5000,
   });
 };

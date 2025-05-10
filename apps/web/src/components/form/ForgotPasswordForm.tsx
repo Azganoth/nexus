@@ -6,6 +6,7 @@ import { Input } from "$/components/ui/Input";
 import { LoadingButton } from "$/components/ui/LoadingButton";
 import { toast } from "$/components/ui/Toast";
 import { useApiForm } from "$/hooks/useApiForm";
+import { unknownError } from "$/lib/utils";
 import { apiClient } from "$/services/apiClient";
 import { FORGOT_PASSWORD_SCHEMA } from "@repo/shared/schemas";
 import { useEffect, useState } from "react";
@@ -42,7 +43,7 @@ export function ForgotPasswordForm() {
       toast.success("Email de redefinição enviado!");
     },
     onUnexpectedError: (error) => {
-      console.log(error);
+      unknownError(error);
     },
   });
 

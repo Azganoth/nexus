@@ -13,7 +13,7 @@ export default {
             value: `
               default-src 'self';
               base-uri 'self';
-              font-src 'self';
+              font-src 'self' data:;
               form-action 'self';
               frame-ancestors 'none';
               img-src 'self' blob: data: ${process.env.NEXT_PUBLIC_API_URL};
@@ -73,11 +73,5 @@ export default {
         pathname: "/**",
       },
     ],
-  },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-  eslint: {
-    ignoreDuringBuilds: true,
   },
 } satisfies NextConfig;
