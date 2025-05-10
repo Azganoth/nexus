@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function NotFound() {
   return (
-    <div className="view tablet:pb-44 pb-32">
+    <div className="view tablet:pb-44 items-center pb-32">
       <header>
         <Logo variant="icon-and-name" />
       </header>

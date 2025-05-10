@@ -68,7 +68,7 @@ export default async function Page({ params }: Props) {
 
   if (result instanceof ApiError) {
     return (
-      <div className="view">
+      <div className="view items-center">
         <header>
           <Logo variant="icon-and-name" />
         </header>

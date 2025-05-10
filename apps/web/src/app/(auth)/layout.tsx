@@ -7,7 +7,7 @@ export default function Layout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="view">
+    <div className="view items-center">
       <header>
         <Logo variant="icon-and-name" />
       </header>
