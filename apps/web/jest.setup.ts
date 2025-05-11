@@ -17,3 +17,10 @@ jest.mock("next/image", () => ({
     return createElement("img", props);
   }),
 }));
+
+HTMLDialogElement.prototype.showModal = function () {
+  this.open = true;
+};
+HTMLDialogElement.prototype.close = function () {
+  this.open = false;
+};
