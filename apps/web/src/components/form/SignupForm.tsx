@@ -4,10 +4,12 @@ import { ErrorHint } from "$/components/ui/ErrorHint";
 import { Input } from "$/components/ui/Input";
 import { LoadingButton } from "$/components/ui/LoadingButton";
 import { useApiForm } from "$/hooks/useApiForm";
+import { useAuth } from "$/hooks/useAuth";
 import { unknownError } from "$/lib/utils";
 import { apiClient } from "$/services/apiClient";
 import type { Session } from "@repo/shared/contracts";
 import { SIGNUP_SCHEMA } from "@repo/shared/schemas";
+import { useRouter } from "next/navigation";
 import { z } from "zod/v4";
 
 const schema = SIGNUP_SCHEMA.extend({
@@ -18,6 +20,9 @@ const schema = SIGNUP_SCHEMA.extend({
 });
 
 export function SignupForm() {
+  const router = useRouter();
+  const { login } = useAuth();
+
   const {
     register,
     handleSubmit,
@@ -32,9 +37,9 @@ export function SignupForm() {
         password,
       });
     },
-    onSuccess: (payload) => {
-      console.log("Signed up: ", payload);
-      // router.push("/dashboard");
+    onSuccess: async (session) => {
+      await login(session);
+      router.push("/dashboard");
     },
     onUnexpectedError: unknownError,
   });

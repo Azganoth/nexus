@@ -4,14 +4,19 @@ import { ErrorHint } from "$/components/ui/ErrorHint";
 import { Input } from "$/components/ui/Input";
 import { LoadingButton } from "$/components/ui/LoadingButton";
 import { useApiForm } from "$/hooks/useApiForm";
+import { useAuth } from "$/hooks/useAuth";
 import { unknownError } from "$/lib/utils";
 import { apiClient } from "$/services/apiClient";
 import type { Session } from "@repo/shared/contracts";
 import { LOGIN_SCHEMA } from "@repo/shared/schemas";
+import { useRouter } from "next/navigation";
 
 const schema = LOGIN_SCHEMA;
 
 export function LoginForm() {
+  const router = useRouter();
+  const { login } = useAuth();
+
   const {
     register,
     handleSubmit,
@@ -19,9 +24,9 @@ export function LoginForm() {
   } = useApiForm({
     schema,
     mutationFn: (data) => apiClient.post<Session>("/auth/login", data),
-    onSuccess: (payload) => {
-      console.log("Logged in: ", payload);
-      // router.push("/dashboard");
+    onSuccess: async (session) => {
+      await login(session);
+      router.push("/dashboard");
     },
     expectedErrors: ["INCORRECT_CREDENTIALS"],
     onUnexpectedError: unknownError,
