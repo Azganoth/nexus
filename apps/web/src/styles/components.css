@@ -3,6 +3,10 @@
     @apply tablet:p-12 flex min-h-dvh flex-col p-8;
   }
 
+  .focus-ring {
+    @apply focus-visible:ring-3 focus-visible:ring-offset-3 rounded-sm focus:outline-none focus-visible:outline-none focus-visible:ring-black focus-visible:ring-offset-white;
+  }
+
   .btn {
     @apply rounded-full px-6 py-4 font-bold tracking-wide;
   }
