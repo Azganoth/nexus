@@ -31,7 +31,6 @@ export function LoginForm() {
     <form onSubmit={handleSubmit}>
       <div className="grid gap-4">
         <Input
-          id="login-email"
           label="Email"
           type="email"
           autoComplete="email"
@@ -40,7 +39,6 @@ export function LoginForm() {
           {...register("email")}
         />
         <Input
-          id="login-password"
           label="Senha"
           type="password"
           autoComplete="current-password"

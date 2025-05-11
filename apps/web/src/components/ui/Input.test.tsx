@@ -1,158 +1,169 @@
 import { Input } from "$/components/ui/Input";
 import { describe, expect, it, jest } from "@jest/globals";
 import { render, screen } from "@testing-library/react";
-import { userEvent } from "@testing-library/user-event";
+import userEvent from "@testing-library/user-event";
 
 describe("Input", () => {
-  const user = userEvent.setup();
-
-  it("renders with default props", () => {
-    render(<Input id="test-input" label="Test Label" />);
-    expect(screen.getByText("Test Label")).toBeInTheDocument();
+  it("renders with label", () => {
+    render(<Input label="Label" />);
+    expect(screen.getByText("Label")).toBeInTheDocument();
   });
 
-  it("renders with custom props", () => {
-    render(<Input id="test-input" label="Test Label" />);
-    expect(screen.getByText("Test Label")).toBeInTheDocument();
+  it("renders without label", () => {
+    render(<Input />);
+
+    const input = screen.getByRole("textbox");
+    expect(input).toBeInTheDocument();
+    expect(screen.queryByLabelText(/./)).not.toBeInTheDocument();
+  });
+
+  it("applies custom className to root", () => {
+    render(<Input label="Label" className="custom-class" />);
+
+    const root = screen.getByRole("group");
+    expect(root).toHaveClass("custom-class");
+  });
+
+  it("forwards props to input", () => {
+    render(<Input label="Label" required disabled />);
+
+    const input = screen.getByLabelText("Label");
+    expect(input).toBeRequired();
+    expect(input).toBeDisabled();
   });
 
   it("calls onChange when value changes", async () => {
-    const handleChange = jest.fn();
-    render(
-      <Input id="test-input" label="Email" value="" onChange={handleChange} />,
-    );
+    const user = userEvent.setup();
 
-    const inputElement = screen.getByLabelText("Email");
-    await user.type(inputElement, "hello");
+    const handleChange = jest.fn();
+    render(<Input label="Label" value="" onChange={handleChange} />);
+
+    const input = screen.getByLabelText("Label");
+    await user.type(input, "hello");
 
     expect(handleChange).toHaveBeenCalledTimes(5);
   });
 
   it("calls onBlur when input loses focus", async () => {
-    render(<Input id="test-input" label="My Input" />);
+    const user = userEvent.setup();
+
+    const handleBlur = jest.fn();
+    render(<Input label="Label" onBlur={handleBlur} />);
+    const container = screen.getByTestId("input-container");
+
+    const input = screen.getByLabelText("Label");
+    expect(input).not.toHaveFocus();
+
+    await user.click(container);
+    expect(input).toHaveFocus();
+    await user.click(document.body);
+
+    expect(handleBlur).toHaveBeenCalled();
+    expect(input).not.toHaveFocus();
+  });
+
+  it("calls onFocus when input receives focus", async () => {
+    const user = userEvent.setup();
+
+    const handleFocus = jest.fn();
+    render(<Input label="Label" onFocus={handleFocus} />);
+
+    const input = screen.getByLabelText("Label");
+    await user.click(input);
+
+    expect(input).toHaveFocus();
+    expect(handleFocus).toHaveBeenCalled();
+  });
+
+  it("calls onFocus when user clicks the container", async () => {
+    const user = userEvent.setup();
+
+    const handleFocus = jest.fn();
+    render(<Input label="Label" onFocus={handleFocus} />);
 
     const container = screen.getByTestId("input-container");
-    const inputElement = screen.getByLabelText("My Input");
+    const input = screen.getByLabelText("Label");
+    expect(input).not.toHaveFocus();
 
-    expect(inputElement).not.toHaveFocus();
     await user.click(container);
-    expect(inputElement).toHaveFocus();
+
+    expect(handleFocus).toHaveBeenCalled();
+    expect(input).toHaveFocus();
   });
 
-  it("calls onFocus when input gains focus", async () => {
-    render(<Input id="test-input" label="My Input" />);
+  describe("Id Handling", () => {
+    it("generates a unique id if none is provided", () => {
+      render(<Input label="Label" />);
 
-    const container = screen.getByTestId("input-container");
-    const inputElement = screen.getByLabelText("My Input");
+      const input = screen.getByLabelText("Label");
+      expect(input).toHaveAttribute("id");
+      const label = screen.getByText("Label");
+      expect(label).toHaveAttribute("for", input.id);
+    });
 
-    expect(inputElement).not.toHaveFocus();
-    await user.click(container);
-    expect(inputElement).toHaveFocus();
-  });
+    it("uses provided id", () => {
+      render(<Input id="custom-id" label="Label" />);
 
-  it("applies custom class names", () => {
-    render(<Input id="test-input" label="Test Label" />);
-    expect(screen.getByText("Test Label")).toBeInTheDocument();
-  });
+      const input = screen.getByLabelText("Label");
+      expect(input).toHaveAttribute("id", "custom-id");
+      const label = screen.getByText("Label");
+      expect(label).toHaveAttribute("for", "custom-id");
+    });
 
-  describe("Floating Label Behavior", () => {
-    it("shows floating label when input has value", () => {
+    it("multiple inputs without id have unique ids", () => {
       render(
-        <Input id="test-input" label="Test Label" defaultValue="has value" />,
-      );
-      const label = screen.getByText("Test Label");
-      expect(label).not.toHaveClass(
-        "peer-not-focus:peer-not-placeholder-shown:translate-y-4",
-      );
-    });
-
-    it("shows floating label when input is focused", () => {
-      render(<Input id="test-input" label="Test Label" />);
-      const label = screen.getByText("Test Label");
-
-      expect(label).toHaveClass(
-        "peer-not-focus:peer-not-placeholder-shown:translate-y-4",
-      );
-    });
-
-    it("hides floating label when input is empty and not focused", () => {
-      render(<Input id="test-input" label="Test Label" defaultValue="" />);
-      const label = screen.getByText("Test Label");
-
-      expect(label).toHaveClass(
-        "peer-not-focus:peer-not-placeholder-shown:translate-y-4",
-      );
-    });
-
-    it("maintains floating label state during typing", async () => {
-      render(<Input id="test-input" label="Test Label" />);
-      const label = screen.getByText("Test Label");
-      const input = screen.getByLabelText("Test Label");
-
-      expect(label).toHaveClass(
-        "peer-not-focus:peer-not-placeholder-shown:translate-y-4",
+        <>
+          <Input label="First" />
+          <Input label="Second" />
+        </>,
       );
 
-      await user.type(input, "a");
-      expect(label).not.toHaveClass(
-        "peer-not-focus:peer-not-placeholder-shown:translate-y-4",
-      );
-
-      await user.clear(input);
-      expect(label).toHaveClass(
-        "peer-not-focus:peer-not-placeholder-shown:translate-y-4",
-      );
+      const inputs = screen.getAllByRole("textbox");
+      expect(inputs[0].id).not.toBe(inputs[1].id);
     });
   });
 
   describe("Error Handling and Accessibility", () => {
     it("displays error message when provided", () => {
-      render(<Input id="pw" label="Password" error="Password is too short" />);
+      render(<Input label="Label" error="Error message" />);
 
       const container = screen.getByTestId("input-container");
       expect(container).toHaveClass("outline-red");
 
-      const errorMessage = screen.getByText("Password is too short");
-      expect(errorMessage).toBeInTheDocument();
-      expect(errorMessage).toHaveAttribute("role", "alert");
+      const error = screen.getByText("Error message");
+      expect(error).toBeInTheDocument();
+      expect(error).toHaveAttribute("role", "alert");
     });
 
     it("sets aria-invalid when error is present", () => {
-      render(
-        <Input id="test-input-id" label="Test" error="An error occurred" />,
-      );
+      render(<Input label="Label" error="Error" />);
 
-      const inputElement = screen.getByLabelText("Test");
-      expect(inputElement.id).toBe("test-input-id");
+      const input = screen.getByLabelText("Label");
+      const error = screen.getByText("Error");
 
-      const errorMessage = screen.getByText("An error occurred");
-      expect(inputElement).toHaveAttribute("aria-describedby", errorMessage.id);
-      expect(inputElement).toHaveAttribute("aria-invalid", "true");
+      expect(input).toHaveAttribute("aria-describedby", error.id);
+      expect(input).toHaveAttribute("aria-invalid", "true");
     });
 
     it("associates error message with input via aria-describedby", () => {
-      render(
-        <Input id="test-input-id" label="Test" error="An error occurred" />,
-      );
+      render(<Input label="Label" error="Error" />);
 
-      const inputElement = screen.getByLabelText("Test");
-      expect(inputElement.id).toBe("test-input-id");
+      const input = screen.getByLabelText("Label");
+      const error = screen.getByText("Error");
 
-      const errorMessage = screen.getByText("An error occurred");
-      expect(inputElement).toHaveAttribute("aria-describedby", errorMessage.id);
-      expect(inputElement).toHaveAttribute("aria-invalid", "true");
+      expect(input).toHaveAttribute("aria-describedby", error.id);
+      expect(input).toHaveAttribute("aria-invalid", "true");
     });
 
     it("does not set aria-invalid when no error is present", () => {
-      render(<Input id="test-id" label="Test" />);
+      render(<Input label="Label" />);
 
       expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+      const container = screen.getByTestId("input-container");
+      expect(container).not.toHaveClass("outline-red");
 
-      const inputContainer = screen.getByTestId("input-container");
-      expect(inputContainer).not.toHaveClass("outline-red");
-
-      const inputElement = screen.getByLabelText("Test");
-      expect(inputElement).toHaveAttribute("aria-invalid", "false");
+      const input = screen.getByLabelText("Label");
+      expect(input).toHaveAttribute("aria-invalid", "false");
     });
   });
 });

@@ -70,7 +70,6 @@ export function ForgotPasswordForm() {
         onSubmit={handleSubmit}
       >
         <Input
-          id="reset-email"
           label="Email"
           type="email"
           autoComplete="email"

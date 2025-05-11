@@ -43,7 +43,6 @@ export function SignupForm() {
     <form onSubmit={handleSubmit}>
       <div className="grid gap-4">
         <Input
-          id="signup-name"
           type="text"
           label="Nome"
           autoComplete="name"
@@ -52,7 +51,6 @@ export function SignupForm() {
           {...register("name")}
         />
         <Input
-          id="signup-email"
           type="email"
           label="Email"
           autoComplete="email"
@@ -60,7 +58,6 @@ export function SignupForm() {
           {...register("email")}
         />
         <Input
-          id="signup-password"
           type="password"
           label="Senha"
           autoComplete="new-password"
@@ -68,7 +65,6 @@ export function SignupForm() {
           {...register("password")}
         />
         <Input
-          id="signup-confirmPassword"
           type="password"
           label="Confirme a senha"
           autoComplete="new-password"

@@ -5,38 +5,26 @@ import clsx from "clsx";
 import {
   forwardRef,
   useCallback,
+  useId,
   useRef,
-  useState,
-  type ChangeEvent,
   type InputHTMLAttributes,
 } from "react";
 
 interface Props extends InputHTMLAttributes<HTMLInputElement> {
-  id: string;
   label?: string;
   error?: string;
 }
 
 export const Input = forwardRef<HTMLInputElement, Props>(
-  ({ id, className, label, error, onChange, ...props }, ref) => {
+  ({ id, className, label, error, ...props }, ref) => {
+    const autoId = useId();
+    const inputId = id ?? autoId;
+
     const internalRef = useRef<HTMLInputElement | null>(null);
 
     const focus = useCallback(() => {
       internalRef.current?.focus();
     }, []);
-
-    // Keep track of value emptiness for label positioning
-    const [isEmpty, setIsEmpty] = useState(
-      !(props.value ?? props.defaultValue),
-    );
-
-    const handleChange = useCallback(
-      (e: ChangeEvent<HTMLInputElement>) => {
-        setIsEmpty(!e.target.value);
-        onChange?.(e);
-      },
-      [onChange],
-    );
 
     return (
       <div className={className} role="group">
@@ -59,27 +47,27 @@ export const Input = forwardRef<HTMLInputElement, Props>(
               }
               internalRef.current = node;
             }}
-            id={id}
+            id={inputId}
             className="text-md placeholder:text-medium-grey peer mt-[var(--text-xxs--line-height)] w-full outline-none"
+            placeholder=" " // NOTE: :placeholder-shown only works if theres a non-empty placeholder
             aria-invalid={!!error}
-            aria-describedby={`${id}-error`}
-            onChange={handleChange}
+            aria-describedby={`${inputId}-error`}
             {...props}
           />
           {label && (
             <label
               className={clsx(
-                "text-medium-grey text-xxs absolute left-4 top-0 origin-top translate-y-2 cursor-text font-bold transition-[translate,font-size]",
-                isEmpty &&
-                  "peer-not-focus:peer-not-placeholder-shown:text-md peer-not-focus:peer-not-placeholder-shown:translate-y-4",
+                "text-medium-grey text-md absolute left-4 top-0 origin-top-left translate-y-4 cursor-text font-bold transition-[font-size,translate]",
+                // Smaller label when the input is focused or has value.
+                "peer-not-placeholder-shown:text-xxs peer-not-placeholder-shown:translate-y-2 peer-focus:text-xxs peer-focus:translate-y-2",
               )}
-              htmlFor={id}
+              htmlFor={inputId}
             >
               {label}
             </label>
           )}
         </div>
-        <ErrorHint className="mt-1 px-2" id={id} message={error} />
+        <ErrorHint className="mt-1 px-2" id={inputId} message={error} />
       </div>
     );
   },

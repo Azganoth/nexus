@@ -46,7 +46,6 @@ export function ResetPasswordForm({ token }: Props) {
     <form onSubmit={handleSubmit}>
       <div className="grid gap-4">
         <Input
-          id="reset-password"
           label="Password"
           type="password"
           autoComplete="new-password"
@@ -54,7 +53,6 @@ export function ResetPasswordForm({ token }: Props) {
           {...register("password")}
         />
         <Input
-          id="reset-confirmPassword"
           label="Confirm Password"
           type="password"
           autoComplete="new-password"
