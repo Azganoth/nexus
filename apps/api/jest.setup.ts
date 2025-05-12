@@ -1,4 +1,3 @@
-import { resetAllDeepMocks } from "$/__tests__/helpers";
 import "$/__tests__/matchers";
 import {
   mockEnv,
@@ -7,6 +6,7 @@ import {
   resetMockEnv,
 } from "$/__tests__/mocks";
 import { beforeEach, jest } from "@jest/globals";
+import { resetAllDeepMocks } from "@repo/shared/testUtils";
 
 jest.mock("$/config/env", () => ({
   env: mockEnv,

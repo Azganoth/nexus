@@ -16,10 +16,6 @@ import type { ReactNode } from "react";
 jest.mock("$/services/apiClient");
 jest.mock("$/components/ui/Toast");
 
-jest.mock("next/navigation", () => ({
-  useRouter: () => ({ push: jest.fn() }),
-}));
-
 jest.mock("$/components/layout/SlidingView", () => ({
   SlidingView: ({
     views,

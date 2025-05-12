@@ -1,9 +1,9 @@
 import { createRandomAuthenticatedUser } from "$/__tests__/factories";
-import { spyConsole } from "$/__tests__/helpers";
 import { useAuth } from "$/hooks/useAuth";
 import { storeAccessToken } from "$/lib/auth/client";
 import { apiClient } from "$/services/apiClient";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
+import { spyConsole } from "@repo/shared/testUtils";
 import { act, renderHook } from "@testing-library/react";
 
 jest.mock("$/services/apiClient");

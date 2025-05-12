@@ -1,8 +1,9 @@
 import { createRandomAuthenticatedUser } from "$/__tests__/factories";
+import { renderHookWithSWR } from "$/__tests__/helpers";
 import { useUser } from "$/hooks/useUser";
 import { apiClient } from "$/services/apiClient";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
-import { renderHook, waitFor } from "@testing-library/react";
+import { act, waitFor } from "@testing-library/react";
 
 jest.mock("$/services/apiClient");
 
@@ -19,7 +20,7 @@ describe("useUser", () => {
   it("fetches user data successfully", async () => {
     mockApiClient.get.mockResolvedValue(mockUser);
 
-    const { result } = renderHook(() => useUser());
+    const { result } = renderHookWithSWR(() => useUser());
 
     await waitFor(() => {
       expect(result.current.user).toEqual(mockUser);
@@ -33,7 +34,7 @@ describe("useUser", () => {
   it("handles loading state correctly", () => {
     mockApiClient.get.mockImplementation(() => new Promise(() => {})); // Never resolves
 
-    const { result } = renderHook(() => useUser());
+    const { result } = renderHookWithSWR(() => useUser());
 
     expect(result.current.isUserLoading).toBe(true);
     expect(result.current.user).toBeUndefined();
@@ -43,7 +44,7 @@ describe("useUser", () => {
     const error = new Error("Failed to fetch user");
     mockApiClient.get.mockRejectedValue(error);
 
-    const { result } = renderHook(() => useUser());
+    const { result } = renderHookWithSWR(() => useUser());
 
     await waitFor(() => {
       expect(result.current.userError).toBeDefined();
@@ -58,13 +59,15 @@ describe("useUser", () => {
     mockApiClient.get.mockResolvedValue(mockUser);
     mockApiClient.patch.mockResolvedValue(updatedUser);
 
-    const { result } = renderHook(() => useUser());
+    const { result } = renderHookWithSWR(() => useUser());
 
     await waitFor(() => {
       expect(result.current.user).toEqual(mockUser);
     });
 
-    await result.current.updateUser({ name: "Updated Name" });
+    await act(async () => {
+      await result.current.updateUser({ name: "Updated Name" });
+    });
 
     expect(mockApiClient.patch).toHaveBeenCalledWith("/users/me", {
       name: "Updated Name",
@@ -74,13 +77,15 @@ describe("useUser", () => {
   it("does not update if no user data exists", async () => {
     mockApiClient.get.mockResolvedValue(undefined);
 
-    const { result } = renderHook(() => useUser());
+    const { result } = renderHookWithSWR(() => useUser());
 
     await waitFor(() => {
       expect(result.current.user).toBeUndefined();
     });
 
-    await result.current.updateUser({ name: "Updated Name" });
+    await act(async () => {
+      await result.current.updateUser({ name: "Updated Name" });
+    });
 
     expect(mockApiClient.patch).not.toHaveBeenCalled();
   });
@@ -90,21 +95,23 @@ describe("useUser", () => {
     mockApiClient.get.mockResolvedValue(mockUser);
     mockApiClient.patch.mockRejectedValue(error);
 
-    const { result } = renderHook(() => useUser());
+    const { result } = renderHookWithSWR(() => useUser());
 
     await waitFor(() => {
       expect(result.current.user).toEqual(mockUser);
     });
 
     await expect(
-      result.current.updateUser({ name: "Updated Name" }),
+      act(async () => {
+        await result.current.updateUser({ name: "Updated Name" });
+      }),
     ).rejects.toThrow("Update failed");
   });
 
   it("revalidates user data when called", async () => {
     mockApiClient.get.mockResolvedValue(mockUser);
 
-    const { result } = renderHook(() => useUser());
+    const { result } = renderHookWithSWR(() => useUser());
 
     await waitFor(() => {
       expect(result.current.user).toEqual(mockUser);
@@ -113,7 +120,9 @@ describe("useUser", () => {
     // Clear the mock to verify revalidation
     mockApiClient.get.mockClear();
 
-    await result.current.revalidateUser();
+    await act(async () => {
+      await result.current.revalidateUser();
+    });
 
     expect(mockApiClient.get).toHaveBeenCalledWith("/users/me");
   });
@@ -121,7 +130,7 @@ describe("useUser", () => {
   it("returns correct initial state", () => {
     mockApiClient.get.mockImplementation(() => new Promise(() => {})); // Never resolves
 
-    const { result } = renderHook(() => useUser());
+    const { result } = renderHookWithSWR(() => useUser());
 
     expect(result.current.user).toBeUndefined();
     expect(result.current.isUserLoading).toBe(true);

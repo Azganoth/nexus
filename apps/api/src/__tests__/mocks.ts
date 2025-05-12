@@ -1,4 +1,4 @@
-import { mockDeep } from "$/__tests__/helpers";
+import { mockDeep } from "@repo/shared/testUtils";
 import type { Env } from "$/config/env";
 import { jest } from "@jest/globals";
 import type { PrismaClient } from "@repo/database";

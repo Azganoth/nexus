@@ -1,31 +1,34 @@
+import { mockedHook } from "$/__tests__/helpers";
 import { ResetPasswordForm } from "$/components/form/ResetPasswordForm";
 import { toast } from "$/components/ui/Toast";
 import { apiClient } from "$/services/apiClient";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
+import { useRouter } from "next/navigation";
 
+jest.mock("next/navigation");
 jest.mock("$/services/apiClient");
 jest.mock("$/components/ui/Toast");
 
-const mockRouterPush = jest.fn();
-jest.mock("next/navigation", () => ({
-  useRouter: () => ({ push: mockRouterPush }),
-}));
+const mockUseRouter = mockedHook(useRouter);
 
 const mockApiClient = jest.mocked(apiClient);
 const mockToast = jest.mocked(toast);
 
 describe("ResetPasswordForm", () => {
   const mockToken = "this-is-a-valid-reset-token";
+  const mockPush = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
     jest.restoreAllMocks();
+    mockUseRouter.mockReturnValue({ push: mockPush });
   });
 
   it("resets the password with valid token and password", async () => {
     const user = userEvent.setup();
+
     mockApiClient.post.mockResolvedValue(undefined);
     render(<ResetPasswordForm token={mockToken} />);
 
@@ -46,7 +49,7 @@ describe("ResetPasswordForm", () => {
     expect(mockToast.success).toHaveBeenCalledWith(
       "Senha alterada com sucesso.",
     );
-    expect(mockRouterPush).toHaveBeenCalledWith("/login");
+    expect(mockPush).toHaveBeenCalledWith("/login");
   });
 
   describe("UI State and Feedback", () => {
@@ -93,7 +96,7 @@ describe("ResetPasswordForm", () => {
       expect(mockToast.success).toHaveBeenCalledWith(
         "Senha alterada com sucesso.",
       );
-      expect(mockRouterPush).toHaveBeenCalledWith("/login");
+      expect(mockPush).toHaveBeenCalledWith("/login");
     });
   });
 

@@ -1,20 +1,27 @@
-import { spyConsole } from "$/__tests__/helpers";
+import { mockedHook } from "$/__tests__/helpers";
 import { LoginForm } from "$/components/form/LoginForm";
 import { apiClient } from "$/services/apiClient";
 import { ApiError } from "$/services/errors";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { ERRORS } from "@repo/shared/constants";
+import { spyConsole } from "@repo/shared/testUtils";
 import { render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
+import { useRouter } from "next/navigation";
 
+jest.mock("next/navigation");
 jest.mock("$/services/apiClient");
 
+const mockUseRouter = mockedHook(useRouter);
 const mockApiClient = jest.mocked(apiClient);
 
 describe("LoginForm", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jest.restoreAllMocks();
+    mockUseRouter.mockReturnValue({
+      push: jest.fn(),
+    });
   });
 
   it("logs in a user with valid credentials", async () => {
