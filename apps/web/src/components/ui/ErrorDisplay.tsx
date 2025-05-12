@@ -1,14 +1,16 @@
 import { Link } from "$/components/ui/Link";
 import clsx from "clsx";
+import type { ReactNode } from "react";
 
 const normalizeText = (text: string) => text.replaceAll("\\n", "\n");
 
 interface Props {
   title: string;
   message?: string;
+  action?: ReactNode;
 }
 
-export function ErrorDisplay({ title, message }: Props) {
+export function ErrorDisplay({ title, message, action }: Props) {
   return (
     <div className="flex flex-col items-center">
       <h1
@@ -25,9 +27,11 @@ export function ErrorDisplay({ title, message }: Props) {
           {normalizeText(message)}
         </p>
       )}
-      <Link className="mt-8 font-bold" href="/">
-        Voltar a página inicial
-      </Link>
+      {action ?? (
+        <Link className="mt-8 font-bold" href="/">
+          Voltar a página inicial
+        </Link>
+      )}
     </div>
   );
 }

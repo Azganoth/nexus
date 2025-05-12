@@ -25,6 +25,7 @@ export function Link({
       rel={newTab ? "noreferrer" : undefined}
       target={newTab ? "_blank" : undefined}
       className={clsx(
+        "focus-ring",
         variant === "default" && "text-dark-grey hover:text-purple underline",
         className,
       )}
