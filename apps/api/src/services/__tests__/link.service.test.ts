@@ -79,7 +79,7 @@ describe("Link Service", () => {
           data: {
             ...mockNewLink,
             profileId: mockProfile.id,
-            displayOrder: foundProfile._count.links,
+            displayOrder: foundProfile._count.links + 1,
           },
         }),
       );
@@ -141,6 +141,13 @@ describe("Link Service", () => {
 
   describe("deleteUserLink", () => {
     it("deletes a link", async () => {
+      const foundProfile = selectData(mockProfile, { id: true });
+      mockPrisma.profile.findUniqueOrThrow.mockResolvedValue(
+        foundProfile as unknown as Profile,
+      );
+      mockPrisma.link.findMany.mockResolvedValue(mockProfile.links as Link[]);
+      mockTransaction(mockPrisma);
+
       await expect(
         deleteUserLink(mockUser.id, mockLink.id),
       ).resolves.not.toThrow();
@@ -148,6 +155,13 @@ describe("Link Service", () => {
       expect(mockPrisma.link.delete).toHaveBeenCalledWith(
         expect.objectContaining({
           where: { id: mockLink.id, profile: { userId: mockUser.id } },
+        }),
+      );
+      expect(mockPrisma.link.update).toHaveBeenCalledTimes(3);
+      expect(mockPrisma.link.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: expect.any(Number) },
+          data: { displayOrder: expect.any(Number) },
         }),
       );
     });

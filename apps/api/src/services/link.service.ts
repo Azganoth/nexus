@@ -37,7 +37,7 @@ export const createLinkForUser = async (
     data: {
       ...data,
       profileId: profile.id,
-      displayOrder: profile._count.links,
+      displayOrder: profile._count.links + 1,
     },
     select: AUTHENTICATED_LINK_SELECT,
   });
@@ -72,11 +72,34 @@ export const updateUserLink = async (
   }
 };
 
+async function reindexProfileLinks(profileId: string) {
+  const links = await prisma.link.findMany({
+    where: { profileId },
+    orderBy: { displayOrder: "asc" },
+    select: { id: true },
+  });
+
+  await prisma.$transaction(
+    links.map((link, idx) =>
+      prisma.link.update({
+        where: { id: link.id },
+        data: { displayOrder: idx },
+        select: { id: true },
+      }),
+    ),
+  );
+}
+
 export const deleteUserLink = async (
   userId: string,
   linkId: number,
 ): Promise<void> => {
   try {
+    const profile = await prisma.profile.findUniqueOrThrow({
+      where: { userId },
+      select: { id: true },
+    });
+
     await prisma.link.delete({
       where: {
         id: linkId,
@@ -84,6 +107,8 @@ export const deleteUserLink = async (
       },
       select: UNUSED_SELECT,
     });
+
+    await reindexProfileLinks(profile.id);
   } catch (error) {
     if (
       error instanceof Prisma.PrismaClientKnownRequestError &&
