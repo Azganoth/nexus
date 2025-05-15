@@ -1,6 +1,7 @@
 import { ApiError, ValidationError } from "$/services/errors";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ERRORS, type ErrorCode } from "@repo/shared/constants";
+import { useCallback } from "react";
 import {
   useForm,
   type Path,
@@ -34,10 +35,10 @@ export function useApiForm<Schema extends z.ZodObject, Output>({
     resolver: zodResolver(schema) as Resolver<Data>,
   });
 
-  const { setError } = form;
+  const { clearErrors, setError } = form;
 
-  const handleSubmit: SubmitHandler<Data> = async (data) => {
-    form.clearErrors();
+  const handleDataSubmit = useCallback<SubmitHandler<Data>>(async (data) => {
+    clearErrors();
     try {
       const response = await mutationFn(data);
       onSuccess?.(response);
@@ -68,10 +69,12 @@ export function useApiForm<Schema extends z.ZodObject, Output>({
       });
       onUnexpectedError?.(error);
     }
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return {
     ...form,
-    handleSubmit: form.handleSubmit(handleSubmit),
+    submitData: handleDataSubmit,
+    handleSubmit: form.handleSubmit(handleDataSubmit),
   };
 }

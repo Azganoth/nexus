@@ -36,6 +36,11 @@ export const RESET_PASSWORD_SCHEMA = z.object({
 });
 
 export const UPDATE_PROFILE_SCHEMA = z.object({
+  username: z
+    .string()
+    .min(3, "O nome de usuário deve ter pelo menos 3 caracteres.")
+    .max(40, "O nome de usuário não pode exceder 40 caracteres.")
+    .optional(),
   displayName: displayName.optional(),
   bio: z.string().max(255, "A bio não pode exceder 255 caracteres.").optional(),
   isPublic: z.boolean().optional(),

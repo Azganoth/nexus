@@ -14,7 +14,7 @@ export function LoadingButton({
 }: Props) {
   return (
     <button
-      className={clsx("btn", className)}
+      className={clsx("btn focus-ring", className)}
       type="submit"
       disabled={isPending || disabled}
       {...props}
