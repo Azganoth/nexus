@@ -1,13 +1,18 @@
 import { ProfileShare } from "$/components/ui/ProfileShare";
 import type { AuthenticatedProfile } from "@repo/shared/contracts";
+import { useState } from "react";
 import { ProfileHeader } from "./ProfileHeader";
 import { ProfileLinkList } from "./ProfileLinkList";
+import { ProfileModalAddLink } from "./ProfileModalAddLink";
 
 interface Props {
   profile: AuthenticatedProfile;
+  revalidateProfile: () => void;
 }
 
-export function ProfileDashboard({ profile }: Props) {
+export function ProfileDashboard({ profile, revalidateProfile }: Props) {
+  const [isAddLinkModalOpen, setIsAddLinkModalOpen] = useState(false);
+
   return (
     <section className="flex w-full flex-col items-center">
       <ProfileShare
@@ -19,10 +24,24 @@ export function ProfileDashboard({ profile }: Props) {
         className="btn bg-purple focus-ring mt-12 text-white"
         type="button"
         aria-label="Adicionar novo link ao perfil"
+        onClick={() => {
+          setIsAddLinkModalOpen(true);
+        }}
       >
         Adicionar link
       </button>
-      <ProfileLinkList links={profile.links} />
+      <ProfileLinkList
+        links={profile.links}
+        onDelete={revalidateProfile}
+        onEdit={revalidateProfile}
+      />
+      <ProfileModalAddLink
+        isOpen={isAddLinkModalOpen}
+        onClose={() => {
+          setIsAddLinkModalOpen(false);
+        }}
+        onAdd={revalidateProfile}
+      />
     </section>
   );
 }

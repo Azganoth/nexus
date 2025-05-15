@@ -36,7 +36,7 @@ export function Modal({ title, children, isOpen, onClose }: Props) {
       ref={dialogRef}
       onClose={onClose}
       onClick={handleBackdropClick}
-      className="rounded-4xl m-auto max-w-[min(400px,calc(100%-4rem))] bg-white shadow-lg backdrop:bg-black/80"
+      className="rounded-4xl m-auto w-full max-w-[min(400px,calc(100%-4rem))] bg-white shadow-lg backdrop:bg-black/80"
       aria-modal="true"
       aria-labelledby={titleId}
       aria-describedby={descId}

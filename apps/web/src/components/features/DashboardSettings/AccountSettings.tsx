@@ -118,7 +118,7 @@ export function AccountSettings({ user, update }: Props) {
         onClose={() => setShowDeleteModal(false)}
       >
         <form onSubmit={handleDeleteSubmit}>
-          <p className="mb-4 text-gray-600">
+          <p className="mb-4">
             Tem certeza que você deseja excluir a conta? Todos os dados serão
             excluídos permanentemente. Digite sua senha para confirmar:
           </p>

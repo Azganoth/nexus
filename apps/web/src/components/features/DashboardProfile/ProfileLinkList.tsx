@@ -1,11 +1,13 @@
-import type { AuthenticatedProfile } from "@repo/shared/contracts";
+import type { AuthenticatedLink } from "@repo/shared/contracts";
 import { ProfileLink } from "./ProfileLink";
 
 interface Props {
-  links: AuthenticatedProfile["links"];
+  links: AuthenticatedLink[];
+  onDelete: () => void;
+  onEdit: () => void;
 }
 
-export function ProfileLinkList({ links }: Props) {
+export function ProfileLinkList({ links, onDelete, onEdit }: Props) {
   if (links.length === 0) {
     return (
       <div
@@ -29,7 +31,12 @@ export function ProfileLinkList({ links }: Props) {
       aria-label="Lista de links do perfil"
     >
       {links.map((link) => (
-        <ProfileLink key={link.id} link={link} />
+        <ProfileLink
+          key={link.id}
+          link={link}
+          onDelete={onDelete}
+          onEdit={onEdit}
+        />
       ))}
     </ul>
   );

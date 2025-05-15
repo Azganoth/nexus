@@ -1,12 +1,20 @@
 import { Link } from "$/components/ui/Link";
-import type { AuthenticatedProfile } from "@repo/shared/contracts";
+import type { AuthenticatedLink } from "@repo/shared/contracts";
 import clsx from "clsx";
+import { useState } from "react";
+import { ProfileModalDeleteLink } from "./ProfileModalDeleteLink";
+import { ProfileModalEditLink } from "./ProfileModalEditLink";
 
 interface Props {
-  link: AuthenticatedProfile["links"][number];
+  link: AuthenticatedLink;
+  onDelete: () => void;
+  onEdit: () => void;
 }
 
-export function ProfileLink({ link }: Props) {
+export function ProfileLink({ link, onDelete, onEdit }: Props) {
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
   return (
     <li
       key={link.url}
@@ -26,6 +34,7 @@ export function ProfileLink({ link }: Props) {
             className="text-dark-grey desktop:block focus-ring hidden hover:text-black"
             type="button"
             aria-label={`Editar título do link: ${link.title}`}
+            onClick={() => setIsEditModalOpen(true)}
           >
             <span className="icon-[fa6-solid--pen] block"></span>
           </button>
@@ -43,6 +52,7 @@ export function ProfileLink({ link }: Props) {
             className="text-dark-grey desktop:block focus-ring hidden hover:text-black"
             type="button"
             aria-label={`Editar URL do link: ${link.title}`}
+            onClick={() => setIsEditModalOpen(true)}
           >
             <span className="icon-[fa6-solid--pen] block"></span>
           </button>
@@ -57,6 +67,7 @@ export function ProfileLink({ link }: Props) {
           className="text-dark-grey focus-ring desktop:hidden hover:text-black"
           type="button"
           aria-label={`Editar link: ${link.title}`}
+          onClick={() => setIsEditModalOpen(true)}
         >
           <span className="icon-[fa6-solid--pen] block text-lg"></span>
         </button>
@@ -82,10 +93,25 @@ export function ProfileLink({ link }: Props) {
           className="text-dark-grey focus-ring hover:text-black"
           type="button"
           aria-label={`Excluir link: ${link.title}`}
+          onClick={() => setIsDeleteModalOpen(true)}
         >
           <span className="icon-[fa6-solid--trash] block text-lg"></span>
         </button>
       </div>
+      <ProfileModalEditLink
+        link={link}
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        onEdit={onEdit}
+      />
+      <ProfileModalDeleteLink
+        link={link}
+        isOpen={isDeleteModalOpen}
+        onClose={() => {
+          setIsDeleteModalOpen(false);
+        }}
+        onDelete={onDelete}
+      />
     </li>
   );
 }

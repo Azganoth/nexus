@@ -26,7 +26,10 @@ export function DashboardProfile() {
 
   return (
     <div className="flex">
-      <ProfileDashboard profile={profile} />
+      <ProfileDashboard
+        profile={profile}
+        revalidateProfile={revalidateProfile}
+      />
       <div className="max-desktop:hidden flex flex-col">
         <ProfileShare className="mt-8" username={profile.username} />
         <div
