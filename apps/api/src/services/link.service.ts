@@ -144,13 +144,27 @@ export const updateLinkOrderForUser = async (
     );
   }
 
-  await prisma.$transaction(
-    orderedIds.map((id, index) =>
-      prisma.link.update({
-        where: { id },
-        data: { displayOrder: index },
-        select: { id: true },
-      }),
-    ),
-  );
+  await prisma.$transaction(async (tx) => {
+    // Set all displayOrder values to negative values to
+    // workaround unique contraint crashes
+    await Promise.all(
+      orderedIds.map((id, index) =>
+        tx.link.update({
+          where: { id },
+          data: { displayOrder: -(index + 1) },
+          select: { id: true },
+        }),
+      ),
+    );
+
+    await Promise.all(
+      orderedIds.map((id, index) =>
+        tx.link.update({
+          where: { id },
+          data: { displayOrder: index },
+          select: { id: true },
+        }),
+      ),
+    );
+  });
 };

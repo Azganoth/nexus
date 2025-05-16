@@ -185,12 +185,13 @@ describe("Link Service", () => {
     it("updates the order of links", async () => {
       const newOrder = [2, 3, 1];
       mockPrisma.link.findMany.mockResolvedValue(mockLinks as Link[]);
-      mockTransaction(mockPrisma);
+      const mockPrismaTx = mockTransaction(mockPrisma);
 
       await updateLinkOrderForUser(mockUser.id, newOrder);
 
-      expect(mockPrisma.link.update).toHaveBeenCalledTimes(3);
-      expect(mockPrisma.link.update).toHaveBeenCalledWith(
+      // We now make 6 calls: 3 for temporary negative values + 3 for final values
+      expect(mockPrismaTx.link.update).toHaveBeenCalledTimes(6);
+      expect(mockPrismaTx.link.update).toHaveBeenCalledWith(
         expect.objectContaining({
           where: { id: expect.any(Number) },
           data: { displayOrder: expect.any(Number) },
