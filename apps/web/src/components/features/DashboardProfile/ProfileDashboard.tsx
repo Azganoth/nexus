@@ -4,13 +4,15 @@ import { useState } from "react";
 import { ProfileHeader } from "./ProfileHeader";
 import { ProfileLinkList } from "./ProfileLinkList";
 import { ProfileModalAddLink } from "./ProfileModalAddLink";
+import type { UpdateProfileData } from "$/hooks/useProfile";
 
 interface Props {
   profile: AuthenticatedProfile;
   revalidateProfile: () => void;
+  updateProfile: (updateData: UpdateProfileData) => Promise<void>;
 }
 
-export function ProfileDashboard({ profile, revalidateProfile }: Props) {
+export function ProfileDashboard({ profile, revalidateProfile, updateProfile }: Props) {
   const [isAddLinkModalOpen, setIsAddLinkModalOpen] = useState(false);
 
   return (
@@ -19,7 +21,7 @@ export function ProfileDashboard({ profile, revalidateProfile }: Props) {
         className="desktop:hidden mt-8"
         username={profile.username}
       />
-      <ProfileHeader profile={profile} />
+      <ProfileHeader profile={profile} updateProfile={updateProfile} />
       <button
         className="btn bg-purple focus-ring mt-12 text-white"
         type="button"

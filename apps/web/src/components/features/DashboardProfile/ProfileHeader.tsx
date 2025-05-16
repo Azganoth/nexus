@@ -1,11 +1,17 @@
 import type { AuthenticatedProfile } from "@repo/shared/contracts";
 import Image from "next/image";
+import { useState } from "react";
+import { ProfileModalEditProfile } from "./ProfileModalEditProfile";
+import type { UpdateProfileData } from "$/hooks/useProfile";
 
 interface Props {
   profile: AuthenticatedProfile;
+  updateProfile: (updateData: UpdateProfileData) => Promise<void>;
 }
 
-export function ProfileHeader({ profile }: Props) {
+export function ProfileHeader({ profile, updateProfile }: Props) {
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
   const changePicture = () => {
     // TODO: Implement file upload logic
   };
@@ -35,6 +41,7 @@ export function ProfileHeader({ profile }: Props) {
             className="text-dark-grey desktop:block focus-ring hidden hover:text-black"
             type="button"
             aria-label={`Editar nome de exibição: ${profile.displayName}`}
+            onClick={() => setIsEditModalOpen(true)}
           >
             <span className="icon-[fa6-solid--pen] block"></span>
           </button>
@@ -48,6 +55,7 @@ export function ProfileHeader({ profile }: Props) {
               className="desktop:block text-dark-grey focus-ring hidden hover:text-black"
               type="button"
               aria-label="Editar biografia"
+              onClick={() => setIsEditModalOpen(true)}
             >
               <span className="icon-[fa6-solid--pen] block text-sm"></span>
             </button>
@@ -58,9 +66,16 @@ export function ProfileHeader({ profile }: Props) {
         className="text-dark-grey focus-ring desktop:hidden hover:text-black"
         type="button"
         aria-label="Editar detalhes do perfil"
+        onClick={() => setIsEditModalOpen(true)}
       >
         <span className="icon-[fa6-solid--pen] block text-lg"></span>
       </button>
+      <ProfileModalEditProfile
+        profile={profile}
+        updateProfile={updateProfile}
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+      />
     </div>
   );
 }

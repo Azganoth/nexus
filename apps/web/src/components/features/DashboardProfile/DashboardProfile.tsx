@@ -7,7 +7,7 @@ import { Profile } from "../Profile";
 import { ProfileDashboard } from "./ProfileDashboard";
 
 export function DashboardProfile() {
-  const { profile, isProfileLoading, profileError, revalidateProfile } =
+  const { profile, isProfileLoading, profileError, revalidateProfile, updateProfile } =
     useProfile();
 
   if (isProfileLoading) {
@@ -29,6 +29,7 @@ export function DashboardProfile() {
       <ProfileDashboard
         profile={profile}
         revalidateProfile={revalidateProfile}
+        updateProfile={updateProfile}
       />
       <div className="max-desktop:hidden flex flex-col">
         <ProfileShare className="mt-8" username={profile.username} />
