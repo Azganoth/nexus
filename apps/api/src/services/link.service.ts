@@ -2,7 +2,10 @@ import { AUTHENTICATED_LINK_SELECT, UNUSED_SELECT } from "$/constants";
 import { ApiError } from "$/utils/errors";
 import { prisma, Prisma } from "@repo/database";
 import type { AuthenticatedLink } from "@repo/shared/contracts";
-import type { CREATE_LINK_SCHEMA } from "@repo/shared/schemas";
+import type {
+  CREATE_LINK_SCHEMA,
+  UPDATE_LINK_SCHEMA,
+} from "@repo/shared/schemas";
 import type { z } from "zod/v4";
 
 export const getLinksForUser = async (
@@ -48,7 +51,7 @@ export const createLinkForUser = async (
 export const updateUserLink = async (
   userId: string,
   linkId: number,
-  data: Partial<z.infer<typeof CREATE_LINK_SCHEMA>>,
+  data: Partial<z.infer<typeof UPDATE_LINK_SCHEMA>>,
 ): Promise<AuthenticatedLink> => {
   try {
     const updatedLink = await prisma.link.update({
