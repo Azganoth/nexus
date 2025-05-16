@@ -1,4 +1,6 @@
 import { Link } from "$/components/ui/Link";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import type { AuthenticatedLink } from "@repo/shared/contracts";
 import clsx from "clsx";
 import { useState } from "react";
@@ -15,15 +17,37 @@ export function ProfileLink({ link, onDelete, onEdit }: Props) {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
+  // dnd
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: link.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
   return (
     <li
-      key={link.url}
-      className="rounded-4xl flex items-center gap-4 bg-white p-4 shadow-lg"
+      ref={setNodeRef}
+      className={clsx(
+        "rounded-4xl flex items-center gap-4 bg-white p-4 shadow-lg transition-all duration-200 ease-in-out",
+        isDragging && "z-50",
+      )}
+      style={style}
     >
       <button
-        className="text-medium-grey focus-ring cursor-move py-1"
+        className="text-medium-grey focus-ring cursor-grab py-1 active:cursor-grabbing"
         type="button"
         aria-label="Reordenar link"
+        {...attributes}
+        {...listeners}
       >
         <span className="icon-[ph--dots-six-vertical-bold] block text-2xl"></span>
       </button>

@@ -1,19 +1,35 @@
 import { ProfileShare } from "$/components/ui/ProfileShare";
+import { toast } from "$/components/ui/Toast";
+import type { UpdateProfileData } from "$/hooks/useProfile";
 import type { AuthenticatedProfile } from "@repo/shared/contracts";
 import { useState } from "react";
 import { ProfileHeader } from "./ProfileHeader";
 import { ProfileLinkList } from "./ProfileLinkList";
 import { ProfileModalAddLink } from "./ProfileModalAddLink";
-import type { UpdateProfileData } from "$/hooks/useProfile";
 
 interface Props {
   profile: AuthenticatedProfile;
   revalidateProfile: () => void;
   updateProfile: (updateData: UpdateProfileData) => Promise<void>;
+  updateLinkOrder: (orderedIds: number[]) => Promise<void>;
 }
 
-export function ProfileDashboard({ profile, revalidateProfile, updateProfile }: Props) {
+export function ProfileDashboard({
+  profile,
+  revalidateProfile,
+  updateProfile,
+  updateLinkOrder,
+}: Props) {
   const [isAddLinkModalOpen, setIsAddLinkModalOpen] = useState(false);
+
+  const handleReorderLinks = async (orderedIds: number[]) => {
+    try {
+      await updateLinkOrder(orderedIds);
+    } catch (error) {
+      console.error("Failed to reorder links:", error);
+      toast.error("Failed to reorder links.");
+    }
+  };
 
   return (
     <section className="flex w-full flex-col items-center">
@@ -36,6 +52,7 @@ export function ProfileDashboard({ profile, revalidateProfile, updateProfile }: 
         links={profile.links}
         onDelete={revalidateProfile}
         onEdit={revalidateProfile}
+        onReorder={handleReorderLinks}
       />
       <ProfileModalAddLink
         isOpen={isAddLinkModalOpen}

@@ -25,9 +25,30 @@ export const useProfile = () => {
     );
   };
 
+  const updateLinkOrder = async (orderedIds: number[]) => {
+    if (!data) return;
+
+    await mutate(
+      async () => {
+        await apiClient.patch<void>("/links/order", { orderedIds });
+        return mutate();
+      },
+      {
+        optimisticData: {
+          ...data,
+          links: orderedIds.map(
+            (id) => data.links.find((link) => link.id === id)!,
+          ),
+        },
+        revalidate: false,
+      },
+    );
+  };
+
   return {
     profile: data,
     updateProfile,
+    updateLinkOrder,
     revalidateProfile: mutate,
     isProfileLoading: isLoading,
     profileError: error,

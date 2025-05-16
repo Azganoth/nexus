@@ -7,8 +7,14 @@ import { Profile } from "../Profile";
 import { ProfileDashboard } from "./ProfileDashboard";
 
 export function DashboardProfile() {
-  const { profile, isProfileLoading, profileError, revalidateProfile, updateProfile } =
-    useProfile();
+  const {
+    profile,
+    isProfileLoading,
+    profileError,
+    revalidateProfile,
+    updateProfile,
+    updateLinkOrder,
+  } = useProfile();
 
   if (isProfileLoading) {
     return <ProfileSkeleton />;
@@ -30,6 +36,7 @@ export function DashboardProfile() {
         profile={profile}
         revalidateProfile={revalidateProfile}
         updateProfile={updateProfile}
+        updateLinkOrder={updateLinkOrder}
       />
       <div className="max-desktop:hidden flex flex-col">
         <ProfileShare className="mt-8" username={profile.username} />
