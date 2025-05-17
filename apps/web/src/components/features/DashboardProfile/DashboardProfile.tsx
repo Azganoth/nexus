@@ -35,7 +35,7 @@ export function DashboardProfile() {
   }
 
   return (
-    <div className="flex">
+    <div className="flex gap-16">
       <ProfileDashboard
         profile={profile}
         revalidateProfile={revalidateProfile}
@@ -46,7 +46,7 @@ export function DashboardProfile() {
       <div className="max-desktop:hidden flex flex-col">
         <ProfileShare className="mt-8" username={profile.username} />
         <div
-          className="mt-8 rounded-[3rem] p-8 shadow-xl ring-4 ring-black"
+          className="mt-8 min-w-[400px] rounded-[3rem] p-8 shadow-xl ring-4 ring-black"
           inert
         >
           <Profile profile={getFromAuthenticatedProfile(profile)} />

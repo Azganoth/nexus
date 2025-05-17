@@ -1,8 +1,8 @@
+import type { UpdateProfileData } from "$/hooks/useProfile";
 import type { AuthenticatedProfile } from "@repo/shared/contracts";
 import Image from "next/image";
 import { useState } from "react";
 import { ProfileModalEditProfile } from "./ProfileModalEditProfile";
-import type { UpdateProfileData } from "$/hooks/useProfile";
 
 interface Props {
   profile: AuthenticatedProfile;
@@ -35,35 +35,15 @@ export function ProfileHeader({ profile, updateProfile }: Props) {
         </div>
       </button>
       <div className="min-w-0">
-        <div className="flex items-center gap-4">
-          <h2 className="truncate font-bold">{profile.displayName}</h2>
-          <button
-            className="text-dark-grey desktop:block focus-ring hidden hover:text-black"
-            type="button"
-            aria-label={`Editar nome de exibição: ${profile.displayName}`}
-            onClick={() => setIsEditModalOpen(true)}
-          >
-            <span className="icon-[fa6-solid--pen] block"></span>
-          </button>
-        </div>
+        <h2 className="truncate font-bold">{profile.displayName}</h2>
         {profile.bio && (
-          <div className="flex items-center gap-4">
-            <p className="text-dark-grey line-clamp-2 text-xs font-bold">
-              {profile.bio}
-            </p>
-            <button
-              className="desktop:block text-dark-grey focus-ring hidden hover:text-black"
-              type="button"
-              aria-label="Editar biografia"
-              onClick={() => setIsEditModalOpen(true)}
-            >
-              <span className="icon-[fa6-solid--pen] block text-sm"></span>
-            </button>
-          </div>
+          <p className="text-dark-grey line-clamp-2 text-xs font-bold">
+            {profile.bio}
+          </p>
         )}
       </div>
       <button
-        className="text-dark-grey focus-ring desktop:hidden hover:text-black"
+        className="text-dark-grey focus-ring hover:text-black"
         type="button"
         aria-label="Editar detalhes do perfil"
         onClick={() => setIsEditModalOpen(true)}

@@ -58,35 +58,15 @@ export function ProfileLink({
         <span className="icon-[ph--dots-six-vertical-bold] block text-2xl"></span>
       </button>
       <div className="min-w-0 grow">
-        <div className="flex items-center gap-2">
-          <h3 className="font-bold">{link.title}</h3>
-          <button
-            className="text-dark-grey desktop:block focus-ring hidden hover:text-black"
-            type="button"
-            aria-label={`Editar título do link: ${link.title}`}
-            onClick={() => setIsEditModalOpen(true)}
-          >
-            <span className="icon-[fa6-solid--pen] block"></span>
-          </button>
-        </div>
-        <div className="flex items-center gap-2">
-          <Link
-            className="text-dark-grey hover:text-purple focus-ring truncate !no-underline"
-            href={link.url}
-            newTab
-            aria-label={`Visitar ${link.title} (abre em nova aba)`}
-          >
-            {link.url.replace(/^https?:\/\//, "")}
-          </Link>
-          <button
-            className="text-dark-grey desktop:block focus-ring hidden hover:text-black"
-            type="button"
-            aria-label={`Editar URL do link: ${link.title}`}
-            onClick={() => setIsEditModalOpen(true)}
-          >
-            <span className="icon-[fa6-solid--pen] block"></span>
-          </button>
-        </div>
+        <h3 className="font-bold">{link.title}</h3>
+        <Link
+          className="text-dark-grey hover:text-purple focus-ring truncate !no-underline"
+          href={link.url}
+          newTab
+          aria-label={`Visitar ${link.title} (abre em nova aba)`}
+        >
+          {link.url.replace(/^https?:\/\//, "")}
+        </Link>
       </div>
       <div
         className="flex items-center gap-4"
@@ -94,7 +74,7 @@ export function ProfileLink({
         aria-label="Ações do link"
       >
         <button
-          className="text-dark-grey focus-ring desktop:hidden hover:text-black"
+          className="text-dark-grey focus-ring hover:text-black"
           type="button"
           aria-label={`Editar link: ${link.title}`}
           onClick={() => setIsEditModalOpen(true)}
