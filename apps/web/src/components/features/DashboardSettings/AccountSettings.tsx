@@ -30,12 +30,14 @@ export function AccountSettings({ user, update }: Props) {
     control: userControl,
     trigger: triggerUser,
     submitData: submitUserData,
+    reset: resetUser,
     formState: { errors: userErrors },
   } = useApiForm({
     schema: UPDATE_USER_SCHEMA,
     mutationFn: (data) => update(data),
     onSuccess: () => {
       toast.success("Conta atualizada com sucesso!");
+      resetUser();
     },
     onUnexpectedError: unknownError,
     defaultValues: {

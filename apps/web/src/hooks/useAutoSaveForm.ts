@@ -24,7 +24,6 @@ export function useAutoSaveForm<T extends FieldValues>({
   const debouncedValues = useDebounceValue(watchedValues, delay);
 
   useEffect(() => {
-    console.log("a");
     const autoSave = async () => {
       const hasChanges = fields.some(
         (field, i) => debouncedValues?.[i] !== currentValues[field],

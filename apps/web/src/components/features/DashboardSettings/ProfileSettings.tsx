@@ -24,12 +24,14 @@ export function ProfileSettings({ profile, update }: Props) {
     handleSubmit,
     trigger,
     control,
+    reset,
     formState: { errors },
   } = useApiForm({
     schema: UPDATE_PROFILE_SCHEMA,
     mutationFn: (data) => update(data),
     onSuccess: () => {
       toast.success("Perfil atualizado com sucesso!");
+      reset();
     },
     onUnexpectedError: unknownError,
     defaultValues: {

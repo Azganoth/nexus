@@ -25,7 +25,6 @@ export function ProfileModalAddLink({ isOpen, onAdd, onClose }: Props) {
     mutationFn: (data) => apiClient.post<AuthenticatedLink>("/links", data),
     onSuccess: () => {
       onAdd();
-      reset();
       onClose();
     },
     defaultValues: {
