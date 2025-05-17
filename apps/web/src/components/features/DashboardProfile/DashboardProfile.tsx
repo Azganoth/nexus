@@ -14,6 +14,7 @@ export function DashboardProfile() {
     revalidateProfile,
     updateProfile,
     updateLinkOrder,
+    updateLinkVisibility,
   } = useProfile();
 
   if (isProfileLoading) {
@@ -37,6 +38,7 @@ export function DashboardProfile() {
         revalidateProfile={revalidateProfile}
         updateProfile={updateProfile}
         updateLinkOrder={updateLinkOrder}
+        updateLinkVisibility={updateLinkVisibility}
       />
       <div className="max-desktop:hidden flex flex-col">
         <ProfileShare className="mt-8" username={profile.username} />

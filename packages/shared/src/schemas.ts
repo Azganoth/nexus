@@ -62,7 +62,9 @@ export const CREATE_LINK_SCHEMA = z.object({
   url: z.url("A URL deve ser um endereço válido."),
 });
 
-export const UPDATE_LINK_SCHEMA = CREATE_LINK_SCHEMA.partial();
+export const UPDATE_LINK_SCHEMA = CREATE_LINK_SCHEMA.partial().extend({
+  isPublic: z.boolean(),
+});
 
 export const UPDATE_LINK_ORDER_SCHEMA = z.object({
   orderedIds: z

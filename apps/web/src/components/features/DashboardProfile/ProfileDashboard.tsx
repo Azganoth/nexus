@@ -12,6 +12,7 @@ interface Props {
   revalidateProfile: () => void;
   updateProfile: (updateData: UpdateProfileData) => Promise<void>;
   updateLinkOrder: (orderedIds: number[]) => Promise<void>;
+  updateLinkVisibility: (linkId: number, isPublic: boolean) => Promise<void>;
 }
 
 export function ProfileDashboard({
@@ -19,6 +20,7 @@ export function ProfileDashboard({
   revalidateProfile,
   updateProfile,
   updateLinkOrder,
+  updateLinkVisibility,
 }: Props) {
   const [isAddLinkModalOpen, setIsAddLinkModalOpen] = useState(false);
 
@@ -27,7 +29,21 @@ export function ProfileDashboard({
       await updateLinkOrder(orderedIds);
     } catch (error) {
       console.error("Failed to reorder links:", error);
-      toast.error("Failed to reorder links.");
+      toast.error("Reordenação dos links falhou, tente novamente.");
+    }
+  };
+
+  const handleToggleVisibility = async (
+    linkId: number,
+    currentVisibility: boolean,
+  ) => {
+    try {
+      await updateLinkVisibility(linkId, !currentVisibility);
+    } catch (error) {
+      console.error("Failed to toggle link visibility:", error);
+      toast.error(
+        "Alteração de visibilidade para o link falhou, tente novamente.",
+      );
     }
   };
 
@@ -52,6 +68,7 @@ export function ProfileDashboard({
         links={profile.links}
         onDelete={revalidateProfile}
         onEdit={revalidateProfile}
+        onToggleVisibility={handleToggleVisibility}
         onReorder={handleReorderLinks}
       />
       <ProfileModalAddLink

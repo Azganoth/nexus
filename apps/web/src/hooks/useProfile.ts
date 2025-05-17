@@ -1,6 +1,9 @@
 import { apiClient } from "$/services/apiClient";
 import type { ApiError } from "$/services/errors";
-import type { AuthenticatedProfile } from "@repo/shared/contracts";
+import type {
+  AuthenticatedLink,
+  AuthenticatedProfile,
+} from "@repo/shared/contracts";
 import type { UPDATE_PROFILE_SCHEMA } from "@repo/shared/schemas";
 import useSWR from "swr";
 import type { z } from "zod/v4";
@@ -45,10 +48,33 @@ export const useProfile = () => {
     );
   };
 
+  const updateLinkVisibility = async (linkId: number, isPublic: boolean) => {
+    if (!data) return;
+
+    await mutate(
+      async () => {
+        await apiClient.patch<AuthenticatedLink>(`/links/${linkId}`, {
+          isPublic,
+        });
+        return mutate();
+      },
+      {
+        optimisticData: {
+          ...data,
+          links: data.links.map((link) =>
+            link.id === linkId ? { ...link, isPublic } : link,
+          ),
+        },
+        revalidate: false,
+      },
+    );
+  };
+
   return {
     profile: data,
     updateProfile,
     updateLinkOrder,
+    updateLinkVisibility,
     revalidateProfile: mutate,
     isProfileLoading: isLoading,
     profileError: error,

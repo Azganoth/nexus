@@ -22,10 +22,17 @@ interface Props {
   links: AuthenticatedLink[];
   onDelete: () => void;
   onEdit: () => void;
+  onToggleVisibility: (linkId: number, currentVisibility: boolean) => void;
   onReorder: (orderedIds: number[]) => void;
 }
 
-export function ProfileLinkList({ links, onDelete, onEdit, onReorder }: Props) {
+export function ProfileLinkList({
+  links,
+  onDelete,
+  onEdit,
+  onToggleVisibility,
+  onReorder,
+}: Props) {
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -91,6 +98,7 @@ export function ProfileLinkList({ links, onDelete, onEdit, onReorder }: Props) {
               link={link}
               onDelete={onDelete}
               onEdit={onEdit}
+              onToggleVisibility={onToggleVisibility}
             />
           ))}
         </ul>

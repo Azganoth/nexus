@@ -11,9 +11,15 @@ interface Props {
   link: AuthenticatedLink;
   onDelete: () => void;
   onEdit: () => void;
+  onToggleVisibility: (linkId: number, currentVisibility: boolean) => void;
 }
 
-export function ProfileLink({ link, onDelete, onEdit }: Props) {
+export function ProfileLink({
+  link,
+  onDelete,
+  onEdit,
+  onToggleVisibility,
+}: Props) {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
@@ -103,10 +109,11 @@ export function ProfileLink({ link, onDelete, onEdit }: Props) {
               ? `Esconder link: ${link.title}`
               : `Mostrar link: ${link.title}`
           }
+          onClick={() => onToggleVisibility(link.id, link.isPublic)}
         >
           <span
             className={clsx(
-              "block text-xl",
+              "block min-w-[30px] text-xl",
               link.isPublic
                 ? "icon-[fa6-solid--eye]"
                 : "icon-[fa6-solid--eye-slash]",
