@@ -1,9 +1,12 @@
 "use client";
 
+import {
+  getFromAuthenticatedProfile,
+  Profile,
+} from "$/components/features/Profile";
 import { ErrorDisplay } from "$/components/ui/ErrorDisplay";
 import { ProfileShare } from "$/components/ui/ProfileShare";
 import { useProfile } from "$/hooks/useProfile";
-import { Profile } from "../Profile";
 import { ProfileDashboard } from "./ProfileDashboard";
 
 export function DashboardProfile() {
@@ -46,7 +49,7 @@ export function DashboardProfile() {
           className="mt-8 rounded-[3rem] p-8 shadow-xl ring-4 ring-black"
           inert
         >
-          <Profile profile={profile} />
+          <Profile profile={getFromAuthenticatedProfile(profile)} />
         </div>
       </div>
     </div>

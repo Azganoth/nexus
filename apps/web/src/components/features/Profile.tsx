@@ -1,5 +1,9 @@
 import { Link } from "$/components/ui/Link";
-import type { PublicProfile } from "@repo/shared/contracts";
+import type {
+  AuthenticatedProfile,
+  PublicLink,
+  PublicProfile,
+} from "@repo/shared/contracts";
 import Image from "next/image";
 
 interface Props {
@@ -42,3 +46,30 @@ export function Profile({ profile }: Props) {
     </section>
   );
 }
+
+export const getFromAuthenticatedProfile = ({
+  id,
+  username,
+  avatarUrl,
+  displayName,
+  bio,
+  seoDescription,
+  seoTitle,
+  links,
+}: AuthenticatedProfile): PublicProfile => ({
+  id,
+  username,
+  avatarUrl,
+  displayName,
+  bio,
+  seoDescription,
+  seoTitle,
+  links: links
+    .filter((link) => link.isPublic)
+    .map<PublicLink>(({ id, title, url, displayOrder }) => ({
+      id,
+      title,
+      url,
+      displayOrder,
+    })),
+});
