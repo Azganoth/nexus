@@ -72,3 +72,8 @@ export interface Timestamps {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface AvatarUploadUrls {
+  uploadUrl: string;
+  publicUrl: string;
+}

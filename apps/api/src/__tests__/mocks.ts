@@ -1,7 +1,7 @@
-import { mockDeep } from "@repo/shared/testUtils";
 import type { Env } from "$/config/env";
 import { jest } from "@jest/globals";
 import type { PrismaClient } from "@repo/database";
+import { mockDeep } from "@repo/shared/testUtils";
 import type { Resend } from "resend";
 
 // Env
@@ -13,6 +13,10 @@ const mockDefaultEnv: Env = {
   JWT_REFRESH_SECRET: "mock-refresh-secret",
   APP_URL: "http://localhost:3000",
   RESEND_API_KEY: "mock-resend-secret",
+  R2_ACCOUNT_ID: "test-account",
+  R2_ACCESS_KEY_ID: "test-access-key",
+  R2_SECRET_ACCESS_KEY: "test-secret-key",
+  R2_BUCKET_NAME: "test-bucket",
 };
 
 export const mockEnv = { ...mockDefaultEnv };

@@ -61,6 +61,7 @@ export const UPDATE_PROFILE_SCHEMA = z.object({
     .trim()
     .max(255, "A descrição de SEO não pode exceder 255 caracteres.")
     .optional(),
+  avatarUrl: z.url().optional(),
 });
 
 export const CREATE_LINK_SCHEMA = z.object({
@@ -92,4 +93,12 @@ export const UPDATE_USER_SCHEMA = z.object({
 
 export const DELETE_USER_SCHEMA = z.object({
   password: z.string().trim().min(1, "A senha é obrigatória."),
+});
+
+export const AVATAR_UPLOAD_SCHEMA = z.object({
+  fileType: z.enum(["image/png", "image/jpeg", "image/webp"]),
+  fileSize: z
+    .number()
+    .max(5 * 1024 * 1024, "O arquivo deve ter no máximo 5MB."),
+  fileExt: z.enum(["png", "jpg", "jpeg", "webp"]),
 });

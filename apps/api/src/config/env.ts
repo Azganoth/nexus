@@ -7,14 +7,19 @@ const envSchema = z.object({
     .enum(["development", "production", "test"])
     .default("development"),
   PORT: z.coerce.number().optional().default(3001),
-  DATABASE_URL: z.string().url(),
+  DATABASE_URL: z.url(),
 
   JWT_ACCESS_SECRET: z.string(),
   JWT_REFRESH_SECRET: z.string(),
 
-  APP_URL: z.string().url(),
+  APP_URL: z.url(),
 
   RESEND_API_KEY: z.string(),
+
+  R2_ACCOUNT_ID: z.string(),
+  R2_ACCESS_KEY_ID: z.string(),
+  R2_SECRET_ACCESS_KEY: z.string(),
+  R2_BUCKET_NAME: z.string(),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);

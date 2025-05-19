@@ -21,7 +21,7 @@ export default {
               script-src 'self' 'unsafe-eval' 'unsafe-inline';
               script-src-attr 'none';
               style-src 'self' 'unsafe-inline';
-              connect-src 'self' ${process.env.NEXT_PUBLIC_API_URL};
+              connect-src 'self' ${process.env.NEXT_PUBLIC_API_URL} https://*.r2.cloudflarestorage.com;
               upgrade-insecure-requests
             `.replace(/\s{2,}/g, ""),
           },
