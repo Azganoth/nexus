@@ -74,7 +74,7 @@ export const CREATE_LINK_SCHEMA = z.object({
 });
 
 export const UPDATE_LINK_SCHEMA = CREATE_LINK_SCHEMA.partial().extend({
-  isPublic: z.boolean(),
+  isPublic: z.boolean().optional(),
 });
 
 export const UPDATE_LINK_ORDER_SCHEMA = z.object({
