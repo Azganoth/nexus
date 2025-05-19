@@ -89,7 +89,10 @@ function ErrorState({ onRetry }: { onRetry: () => void }) {
       <ErrorDisplay
         title="Não foi possível carregar suas configurações."
         action={
-          <button className="btn bg-purple mt-8 text-white" onClick={onRetry}>
+          <button
+            className="btn bg-purple focus-ring mt-8 text-white"
+            onClick={onRetry}
+          >
             Tentar Novamente
           </button>
         }

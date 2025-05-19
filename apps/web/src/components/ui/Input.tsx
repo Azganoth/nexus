@@ -7,6 +7,7 @@ import {
   useCallback,
   useId,
   useRef,
+  useState,
   type InputHTMLAttributes,
 } from "react";
 
@@ -16,7 +17,7 @@ interface Props extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 export const Input = forwardRef<HTMLInputElement, Props>(
-  ({ id, className, label, error, ...props }, ref) => {
+  ({ id, className, label, error, type, ...props }, ref) => {
     const autoId = useId();
     const inputId = id ?? autoId;
 
@@ -25,6 +26,10 @@ export const Input = forwardRef<HTMLInputElement, Props>(
     const focus = useCallback(() => {
       internalRef.current?.focus();
     }, []);
+
+    const [showPassword, setShowPassword] = useState(false);
+    const isPasswordField = type === "password";
+    const inputType = isPasswordField && showPassword ? "text" : type;
 
     return (
       <div className={className} role="group">
@@ -49,6 +54,7 @@ export const Input = forwardRef<HTMLInputElement, Props>(
             }}
             id={inputId}
             className="text-md placeholder:text-medium-grey peer mt-[var(--text-xxs--line-height)] w-full outline-none"
+            type={inputType}
             placeholder=" " // NOTE: :placeholder-shown only works if theres a non-empty placeholder
             aria-invalid={!!error}
             aria-describedby={`${inputId}-error`}
@@ -65,6 +71,23 @@ export const Input = forwardRef<HTMLInputElement, Props>(
             >
               {label}
             </label>
+          )}
+          {isPasswordField && (
+            <button
+              type="button"
+              className="text-medium-grey focus-ring min-w-7.5 absolute right-3 top-1/2 -translate-y-1/2 hover:text-black"
+              onClick={() => setShowPassword((p) => !p)}
+              aria-label={showPassword ? "Esconder senha" : "Mostrar senha"}
+            >
+              <span
+                className={clsx(
+                  "mx-auto block",
+                  showPassword
+                    ? "icon-[fa6-solid--eye]"
+                    : "icon-[fa6-solid--eye-slash]",
+                )}
+              ></span>
+            </button>
           )}
         </div>
         <ErrorHint className="mt-1 px-2" id={inputId} message={error} />

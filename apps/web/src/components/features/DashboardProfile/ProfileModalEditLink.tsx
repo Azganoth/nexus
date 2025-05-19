@@ -48,13 +48,11 @@ export function ProfileModalEditLink({ link, isOpen, onClose }: Props) {
       <form onSubmit={handleSubmit}>
         <div className="space-y-4">
           <Input
-            id="title"
             label="Título"
             error={errors.title?.message}
             {...register("title")}
           />
           <Input
-            id="url"
             label="URL"
             type="url"
             error={errors.url?.message}

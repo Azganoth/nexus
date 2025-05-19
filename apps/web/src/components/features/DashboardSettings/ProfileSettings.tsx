@@ -91,21 +91,18 @@ export function ProfileSettings({ profile, update }: Props) {
           </div>
 
           <Input
-            id="settings-username"
             label="Nome de usuário"
             error={errors.username?.message}
             {...register("username")}
           />
 
           <Input
-            id="profile-seoTitle"
             label="Título SEO"
             error={errors.seoTitle?.message}
             {...register("seoTitle")}
           />
 
           <Textarea
-            id="profile-seoDescription"
             label="Descrição SEO"
             rows={3}
             error={errors.seoDescription?.message}

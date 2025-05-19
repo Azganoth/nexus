@@ -55,7 +55,7 @@ function Toast({ id, message, variant }: Props) {
       <div role="status" className="font-semibold">
         {message}
       </div>
-      <button className="text-light-grey ml-auto text-lg" onClick={dismiss}>
+      <button className="text-light-grey ml-auto text-lg" onClick={dismiss} aria-label="Fechar notificação">
         <span className="icon-[fa6-solid--xmark] block"></span>
       </button>
     </div>
