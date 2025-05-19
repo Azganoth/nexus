@@ -94,7 +94,6 @@ function ErrorState({ onRetry }: { onRetry: () => void }) {
           <button
             className="btn bg-purple focus-ring mt-8 text-white"
             onClick={onRetry}
-            aria-label="Tentar carregar perfil novamente"
           >
             Tentar Novamente
           </button>
