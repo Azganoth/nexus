@@ -9,7 +9,7 @@ import { useAutoSaveForm } from "$/hooks/useAutoSaveForm";
 import type { UpdateUserData } from "$/hooks/useUser";
 import { unknownError } from "$/lib/utils";
 import { apiClient } from "$/services/apiClient";
-import type { AuthenticatedUser } from "@repo/shared/contracts";
+import type { AuthenticatedUser, UserDataExport } from "@repo/shared/contracts";
 import { DELETE_USER_SCHEMA, UPDATE_USER_SCHEMA } from "@repo/shared/schemas";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -69,6 +69,33 @@ export function AccountSettings({ user, update }: Props) {
     onUnexpectedError: unknownError,
   });
 
+  const exportUserData = async () => {
+    try {
+      const data = await apiClient.raw<UserDataExport>("/users/me/export", {
+        method: "GET",
+      });
+
+      const blob = new Blob([JSON.stringify(data, null, 2)], {
+        type: "application/json",
+      });
+
+      // Create a download link
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `nexus-data-export-${new Date().toISOString().split("T")[0]}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      toast.success("Dados exportados com sucesso!");
+    } catch (error) {
+      console.error("Error exporting data:", error);
+      toast.error("Erro ao exportar dados.");
+    }
+  };
+
   return (
     <div className="max-w-[500px]">
       <div className="w-full">
@@ -91,7 +118,7 @@ export function AccountSettings({ user, update }: Props) {
           <button
             className="btn focus-ring bg-black text-white"
             type="button"
-            onClick={() => setShowDeleteModal(true)}
+            onClick={exportUserData}
           >
             Exportar dados
           </button>

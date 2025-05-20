@@ -2,7 +2,11 @@ import { createRandomUser } from "$/__tests__/factories";
 import { selectData } from "$/__tests__/helpers";
 import { mockPrisma } from "$/__tests__/mocks";
 import { AUTHENTICATED_USER_SELECT } from "$/constants";
-import { deleteUser, updateUser } from "$/services/user.service";
+import {
+  deleteUser,
+  exportUserData,
+  updateUser,
+} from "$/services/user.service";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import type { User } from "@repo/database";
 import bcrypt from "bcrypt";
@@ -73,6 +77,29 @@ describe("User Service", () => {
       await expect(
         deleteUser("non_existent_id", "any_password"),
       ).rejects.toThrowApiError(404, "NOT_FOUND");
+    });
+  });
+
+  describe("exportUserData", () => {
+    it("deletes the user if the password is correct", async () => {
+      const user = selectData(mockUser, AUTHENTICATED_USER_SELECT);
+      mockPrisma.user.findUnique.mockResolvedValue(user as User);
+      mockBcrypt.compare.mockImplementation(async () => true);
+
+      const result = await exportUserData(mockUser.id);
+
+      expect(result.exportDate).toBeInstanceOf(Date);
+      expect(result.user).toEqual(user);
+      expect(result.profile).toBeNull();
+      expect(result.links).toBeNull();
+    });
+
+    it("should throw ApiError if the user is not found", async () => {
+      mockPrisma.user.findUnique.mockResolvedValue(null);
+      await expect(exportUserData("non_existent_id")).rejects.toThrowApiError(
+        404,
+        "NOT_FOUND",
+      );
     });
   });
 });

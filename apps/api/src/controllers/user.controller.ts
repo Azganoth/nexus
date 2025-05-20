@@ -1,6 +1,10 @@
-import { deleteUser, updateUser } from "$/services/user.service";
+import {
+  deleteUser,
+  exportUserData,
+  updateUser,
+} from "$/services/user.service";
 import { composeResponse, validateSchema } from "$/utils/helpers";
-import type { AuthenticatedUser } from "@repo/shared/contracts";
+import type { AuthenticatedUser, UserDataExport } from "@repo/shared/contracts";
 import { DELETE_USER_SCHEMA, UPDATE_USER_SCHEMA } from "@repo/shared/schemas";
 import type { Request, Response } from "express";
 
@@ -21,4 +25,16 @@ export const deleteMe = async (req: Request, res: Response) => {
   await deleteUser(req.user!.id, password);
 
   res.status(204).end();
+};
+
+export const exportMyData = async (req: Request, res: Response) => {
+  const userId = req.user!.id;
+  const userData = await exportUserData(userId);
+
+  res.setHeader(
+    "Content-Disposition",
+    `attachment; filename="nexus-data-export-${new Date().toISOString().split("T")[0]}.json"`,
+  );
+
+  res.status(200).json(composeResponse<UserDataExport>(userData));
 };

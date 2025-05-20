@@ -3,7 +3,11 @@ import { selectData } from "$/__tests__/helpers";
 import { mockPrisma } from "$/__tests__/mocks";
 import { AUTHENTICATED_USER_SELECT } from "$/constants";
 import { createServer } from "$/server";
-import { deleteUser, updateUser } from "$/services/user.service";
+import {
+  deleteUser,
+  exportUserData,
+  updateUser,
+} from "$/services/user.service";
 import { ValidationError } from "$/utils/errors";
 import { signAccessToken } from "$/utils/jwt";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
@@ -15,6 +19,7 @@ jest.mock("$/services/user.service");
 
 const mockUpdateUser = jest.mocked(updateUser);
 const mockDeleteUser = jest.mocked(deleteUser);
+const mockExportUserData = jest.mocked(exportUserData);
 
 describe("User Controller", () => {
   let app: Express;
@@ -132,6 +137,46 @@ describe("User Controller", () => {
         mockUser.id,
         "correct_password",
       );
+    });
+  });
+
+  describe("GET /users/me/export", () => {
+    it("returns 200 and user data export", async () => {
+      mockPrisma.user.findUnique.mockResolvedValue(
+        mockAuthenticatedUser as User,
+      );
+      const mockExportData = {
+        user: selectData(mockUser, AUTHENTICATED_USER_SELECT),
+        profile: null,
+        links: null,
+        exportDate: new Date(),
+      };
+
+      mockExportUserData.mockResolvedValue(mockExportData);
+
+      const response = await supertest(app)
+        .get("/users/me/export")
+        .set("Authorization", `Bearer ${mockAccessToken}`);
+
+      expect(response.status).toBe(200);
+      expect(response.headers["content-type"]).toMatch(/application\/json/);
+      expect(response.headers["content-disposition"]).toMatch(
+        /attachment; filename="nexus-data-export-.*\.json"/,
+      );
+
+      expect(response.body.data).toHaveProperty("user");
+      expect(response.body.data).toHaveProperty("profile");
+      expect(response.body.data).toHaveProperty("links");
+      expect(response.body.data).toHaveProperty("exportDate");
+      expect(response.body.data.user).toHaveProperty("email", mockUser.email);
+      expect(response.body.data.user).toHaveProperty("name", mockUser.name);
+      expect(mockExportUserData).toHaveBeenCalledWith(mockUser.id);
+    });
+
+    it("returns 401 when not authenticated", async () => {
+      const response = await supertest(app).get("/users/me/export");
+
+      expect(response.status).toBe(401);
     });
   });
 });

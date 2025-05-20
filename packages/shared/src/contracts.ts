@@ -77,3 +77,10 @@ export interface AvatarUploadUrls {
   uploadUrl?: string;
   publicUrl: string;
 }
+
+export interface UserDataExport {
+  user: AuthenticatedUser;
+  profile: Omit<AuthenticatedProfile, "links"> | null;
+  links: AuthenticatedLink[] | null;
+  exportDate: Date;
+}
