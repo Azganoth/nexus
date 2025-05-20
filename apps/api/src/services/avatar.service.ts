@@ -34,7 +34,7 @@ export const createAvatarUploadUrlsByUserId = async (
       }),
     );
 
-    const publicUrl = `https://pub-f4942703ba94414ab97ca08e29bff222.r2.dev/${key}`;
+    const publicUrl = `${env.R2_PUBLIC_URL}/${key}`;
     return { publicUrl };
   } catch {
     // Skip deduplication if any error occurs
@@ -47,7 +47,7 @@ export const createAvatarUploadUrlsByUserId = async (
   });
 
   const uploadUrl = await getSignedUrl(s3, command, { expiresIn: 3600 });
-  const publicUrl = `https://pub-f4942703ba94414ab97ca08e29bff222.r2.dev/${key}`;
+  const publicUrl = `${env.R2_PUBLIC_URL}/${key}`;
 
   return { uploadUrl, publicUrl };
 };
