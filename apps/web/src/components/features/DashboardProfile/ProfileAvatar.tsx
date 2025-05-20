@@ -1,5 +1,6 @@
 import { toast } from "$/components/ui/Toast";
 import type { UpdateProfileData } from "$/hooks/useProfile";
+import { hashFileSHA256 } from "$/lib/utils";
 import { apiClient } from "$/services/apiClient";
 import type { AvatarUploadUrls } from "@repo/shared/contracts";
 import { AVATAR_UPLOAD_SCHEMA } from "@repo/shared/schemas";
@@ -7,8 +8,10 @@ import Image from "next/image";
 import { useRef, useState } from "react";
 import { ProfileModalCropAvatar } from "./ProfileModalCropAvatar";
 
+const avatarMetadataSchema = AVATAR_UPLOAD_SCHEMA.omit({ fileHash: true });
+
 const validateImage = async (file: File) => {
-  const result = await AVATAR_UPLOAD_SCHEMA.safeParseAsync({
+  const result = await avatarMetadataSchema.safeParseAsync({
     fileType: file.type,
     fileSize: file.size,
     fileExt: file.name.split(".").pop()?.toLowerCase() || "",
@@ -61,23 +64,28 @@ export function ProfileAvatar({ currentUrl, updateProfile }: Props) {
         type: "image/webp",
       });
 
+      // Compute SHA-256 hash of the file for deduplication
+      const fileHash = await hashFileSHA256(file);
+
       const { uploadUrl, publicUrl } = await apiClient.post<AvatarUploadUrls>(
         "/avatars/upload-url",
         {
           fileType: file.type,
           fileSize: file.size,
           fileExt: "webp",
+          fileHash,
         },
       );
 
-      await fetch(uploadUrl, {
-        method: "PUT",
-        body: file,
-        headers: {
-          "Content-Type": file.type,
-        },
-      });
-
+      if (uploadUrl) {
+        await fetch(uploadUrl, {
+          method: "PUT",
+          body: file,
+          headers: {
+            "Content-Type": file.type,
+          },
+        });
+      }
       await updateProfile({ avatarUrl: publicUrl });
     } catch (error) {
       console.error("Error on avatar upload:", error);

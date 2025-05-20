@@ -101,4 +101,8 @@ export const AVATAR_UPLOAD_SCHEMA = z.object({
     .number()
     .max(5 * 1024 * 1024, "O arquivo deve ter no máximo 5MB."),
   fileExt: z.enum(["png", "jpg", "jpeg", "webp"]),
+  fileHash: z
+    .string()
+    .length(64, "Hash inválido.")
+    .regex(/^[a-f0-9]{64}$/, "Hash inválido."),
 });

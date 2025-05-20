@@ -21,3 +21,12 @@ export const delayFor = async (ms: number) =>
 
 export const hangFor = async <T>(target: Promise<T>, ms: number) =>
   (await Promise.all([target, delayFor(ms)]))[0];
+
+export const hashFileSHA256 = async (file: File | Blob): Promise<string> => {
+  const arrayBuffer = await file.arrayBuffer();
+  const hashBuffer = await crypto.subtle.digest("SHA-256", arrayBuffer);
+
+  return Array.from(new Uint8Array(hashBuffer))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+};

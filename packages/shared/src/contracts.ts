@@ -74,6 +74,6 @@ export interface Timestamps {
 }
 
 export interface AvatarUploadUrls {
-  uploadUrl: string;
+  uploadUrl?: string;
   publicUrl: string;
 }
