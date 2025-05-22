@@ -5,9 +5,10 @@ import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { useRouter } from "next/navigation";
+import { ResetPassword } from "./ResetPassword";
 
 jest.mock("next/navigation");
-jest.mock("$/services/apiClient");
+jest.mock("$/lib/apiClient");
 jest.mock("$/components/ui/Toast");
 
 const mockUseRouter = mockedHook(useRouter);
@@ -29,7 +30,7 @@ describe("ResetPasswordForm", () => {
     const user = userEvent.setup();
 
     mockApiClient.post.mockResolvedValue(undefined);
-    render(<ResetPasswordForm token={mockToken} />);
+    render(<ResetPassword token={mockToken} />);
 
     await user.type(screen.getByLabelText("Password"), "NewPassword123");
     await user.type(
@@ -54,7 +55,7 @@ describe("ResetPasswordForm", () => {
   describe("UI State and Feedback", () => {
     it("disables the submit button during submission", async () => {
       const user = userEvent.setup();
-      render(<ResetPasswordForm token={mockToken} />);
+      render(<ResetPassword token={mockToken} />);
 
       await user.type(screen.getByLabelText("Password"), "Password123");
       await user.type(screen.getByLabelText("Confirm Password"), "Password456");
@@ -71,7 +72,7 @@ describe("ResetPasswordForm", () => {
     it("shows success message and redirects after successful reset", async () => {
       const user = userEvent.setup();
       mockApiClient.post.mockResolvedValue(undefined);
-      render(<ResetPasswordForm token={mockToken} />);
+      render(<ResetPassword token={mockToken} />);
 
       await user.type(screen.getByLabelText("Password"), "NewPassword123");
       await user.type(

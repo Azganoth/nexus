@@ -6,7 +6,7 @@ import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { spyConsole } from "@repo/shared/testUtils";
 import { act, renderHook } from "@testing-library/react";
 
-jest.mock("$/services/apiClient");
+jest.mock("$/lib/apiClient");
 jest.mock("$/lib/auth/client");
 
 const mockApiClient = jest.mocked(apiClient);

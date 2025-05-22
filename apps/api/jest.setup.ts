@@ -2,7 +2,8 @@ import "$/__tests__/matchers";
 import {
   mockEnv,
   mockPrisma,
-  mockResendClass,
+  mockResend,
+  mockS3Client,
   resetMockEnv,
 } from "$/__tests__/mocks";
 import { beforeEach, jest } from "@jest/globals";
@@ -17,7 +18,11 @@ jest.mock("@repo/database", () => ({
 }));
 jest.mock("resend", () => ({
   ...(jest.requireActual("resend") as object),
-  Resend: mockResendClass,
+  Resend: jest.fn(() => mockResend),
+}));
+jest.mock("@aws-sdk/client-s3", () => ({
+  ...(jest.requireActual("@aws-sdk/client-s3") as object),
+  S3Client: jest.fn(() => mockS3Client),
 }));
 
 beforeEach(() => {

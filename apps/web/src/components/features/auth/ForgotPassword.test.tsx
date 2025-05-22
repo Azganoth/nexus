@@ -13,7 +13,7 @@ import { act, render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import type { ReactNode } from "react";
 
-jest.mock("$/services/apiClient");
+jest.mock("$/lib/apiClient");
 jest.mock("$/components/ui/Toast");
 
 jest.mock("$/components/ui/layout/SlidingView", () => ({

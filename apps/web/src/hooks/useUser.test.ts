@@ -5,7 +5,7 @@ import { apiClient } from "$/lib/apiClient";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { act, waitFor } from "@testing-library/react";
 
-jest.mock("$/services/apiClient");
+jest.mock("$/lib/apiClient");
 
 const mockApiClient = jest.mocked(apiClient);
 

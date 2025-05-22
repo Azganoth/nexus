@@ -10,7 +10,7 @@ import { userEvent } from "@testing-library/user-event";
 import { useRouter } from "next/navigation";
 
 jest.mock("next/navigation");
-jest.mock("$/services/apiClient");
+jest.mock("$/lib/apiClient");
 
 const mockUseRouter = mockedHook(useRouter);
 const mockApiClient = jest.mocked(apiClient);

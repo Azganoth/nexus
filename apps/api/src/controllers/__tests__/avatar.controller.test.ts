@@ -27,7 +27,12 @@ describe("Avatar Controller", () => {
   });
 
   describe("POST /avatars/upload-url", () => {
-    const validBody = { fileExt: "png", fileSize: 1024, fileType: "image/png" };
+    const validBody = { 
+      fileExt: "png", 
+      fileSize: 1024, 
+      fileType: "image/png",
+      fileHash: "a".repeat(64)
+    };
     const mockResult: AvatarUploadUrls = {
       uploadUrl: "https://upload.url",
       publicUrl: "https://public.url/avatar.png",

@@ -1,5 +1,5 @@
 import type { Env } from "$/config/env";
-import { jest } from "@jest/globals";
+import type { S3Client } from "@aws-sdk/client-s3";
 import type { PrismaClient } from "@repo/database";
 import { mockDeep } from "@repo/shared/testUtils";
 import type { Resend } from "resend";
@@ -17,6 +17,7 @@ const mockDefaultEnv: Env = {
   R2_ACCESS_KEY_ID: "test-access-key",
   R2_SECRET_ACCESS_KEY: "test-secret-key",
   R2_BUCKET_NAME: "test-bucket",
+  R2_PUBLIC_URL: "https://test-bucket.r2.dev",
 };
 
 export const mockEnv = { ...mockDefaultEnv };
@@ -28,4 +29,4 @@ export const resetMockEnv = () => {
 // Dependencies
 export const mockPrisma = mockDeep<PrismaClient>();
 export const mockResend = mockDeep<Resend>();
-export const mockResendClass = jest.fn().mockImplementation(() => mockResend);
+export const mockS3Client = mockDeep<S3Client>();
