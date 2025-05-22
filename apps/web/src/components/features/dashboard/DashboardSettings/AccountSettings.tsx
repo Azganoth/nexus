@@ -10,6 +10,8 @@ import { unknownError } from "$/lib/utils";
 import type { AuthenticatedUser } from "@repo/shared/contracts";
 import { UPDATE_USER_SCHEMA } from "@repo/shared/schemas";
 
+const getUserFormData = ({ name }: AuthenticatedUser) => ({ name });
+
 interface AccountSettingsProps {
   user: AuthenticatedUser;
   update: (user: UpdateUserData) => Promise<void>;
@@ -29,20 +31,18 @@ export function AccountSettings({ user, update }: AccountSettingsProps) {
     mutationFn: (data) => update(data),
     onSuccess: () => {
       toast.success("Conta atualizada com sucesso!");
+    },
+    onUnexpectedError: (error) => {
       reset();
+      unknownError(error);
     },
-    onUnexpectedError: unknownError,
-    defaultValues: {
-      name: user.name,
-    },
+    defaultValues: getUserFormData(user),
   });
 
   useAutoSaveForm({
     control,
     fields: ["name"],
-    currentValues: {
-      name: user.name,
-    },
+    currentValues: getUserFormData(user),
     trigger,
     submitData,
   });

@@ -10,7 +10,20 @@ import type { UpdateProfileData } from "$/hooks/useProfile";
 import { unknownError } from "$/lib/utils";
 import type { AuthenticatedProfile } from "@repo/shared/contracts";
 import { UPDATE_PROFILE_SCHEMA } from "@repo/shared/schemas";
+import { useEffect } from "react";
 import { Controller } from "react-hook-form";
+
+const getProfileFormData = ({
+  username,
+  seoTitle,
+  seoDescription,
+  isPublic,
+}: AuthenticatedProfile) => ({
+  username,
+  seoTitle: seoTitle ?? undefined,
+  seoDescription: seoDescription ?? undefined,
+  isPublic,
+});
 
 interface ProfileSettingsProps {
   profile: AuthenticatedProfile;
@@ -31,26 +44,22 @@ export function ProfileSettings({ profile, update }: ProfileSettingsProps) {
     mutationFn: (data) => update(data),
     onSuccess: () => {
       toast.success("Perfil atualizado com sucesso!");
+    },
+    onUnexpectedError: (error) => {
       reset();
+      unknownError(error);
     },
-    onUnexpectedError: unknownError,
-    defaultValues: {
-      username: profile.username,
-      seoTitle: profile.seoTitle ?? undefined,
-      seoDescription: profile.seoDescription ?? undefined,
-      isPublic: profile.isPublic,
-    },
+    defaultValues: getProfileFormData(profile),
   });
+
+  useEffect(() => {
+    reset(getProfileFormData(profile));
+  }, [profile, reset]);
 
   useAutoSaveForm({
     control,
     fields: ["username", "seoTitle", "seoDescription", "isPublic"],
-    currentValues: {
-      username: profile.username,
-      seoTitle: profile.seoTitle ?? undefined,
-      seoDescription: profile.seoDescription ?? undefined,
-      isPublic: profile.isPublic,
-    },
+    currentValues: getProfileFormData(profile),
     trigger,
     submitData,
   });

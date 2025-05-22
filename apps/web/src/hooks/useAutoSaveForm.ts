@@ -26,13 +26,13 @@ export function useAutoSaveForm<T extends FieldValues>({
   useEffect(() => {
     const autoSave = async () => {
       const hasChanges = fields.some(
-        (field, i) => debouncedValues?.[i] !== currentValues[field],
+        (field, i) => debouncedValues[i] !== currentValues[field],
       );
       if (hasChanges) {
         const isValid = await trigger(fields);
         if (isValid) {
           const data = fields.reduce((acc, field, i) => {
-            acc[field] = debouncedValues?.[i];
+            acc[field] = debouncedValues[i];
             return acc;
           }, {} as Partial<T>);
           submitData(data);

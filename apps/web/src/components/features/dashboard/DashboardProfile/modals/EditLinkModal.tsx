@@ -15,7 +15,12 @@ interface EditLinkModalProps {
   onEdit: () => void;
 }
 
-export function EditLinkModal({ link, isOpen, onClose }: EditLinkModalProps) {
+export function EditLinkModal({
+  link,
+  isOpen,
+  onClose,
+  onEdit,
+}: EditLinkModalProps) {
   const {
     register,
     handleSubmit,
@@ -26,6 +31,7 @@ export function EditLinkModal({ link, isOpen, onClose }: EditLinkModalProps) {
     mutationFn: (data) =>
       apiClient.patch<AuthenticatedLink>(`/links/${link.id}`, data),
     onSuccess: () => {
+      onEdit();
       onClose();
     },
     defaultValues: {
