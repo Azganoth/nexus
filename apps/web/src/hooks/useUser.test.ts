@@ -1,7 +1,7 @@
 import { createRandomAuthenticatedUser } from "$/__tests__/factories";
 import { renderHookWithSWR } from "$/__tests__/helpers";
 import { useUser } from "$/hooks/useUser";
-import { apiClient } from "$/services/apiClient";
+import { apiClient } from "$/lib/apiClient";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { act, waitFor } from "@testing-library/react";
 

@@ -14,9 +14,9 @@ export default async function Layout({
   }
 
   return (
-    <div className="view items-center">
+    <div className="view">
       <header>
-        <Logo variant="icon-and-name" />
+        <Logo className="mx-auto" variant="icon-and-name" />
       </header>
       {children}
     </div>

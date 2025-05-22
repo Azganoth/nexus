@@ -11,9 +11,9 @@ export default function Error({
   reset: () => void;
 }) {
   return (
-    <div className="view tablet:pb-44 pb-32">
+    <div className="view">
       <header>
-        <Logo variant="icon-and-name" />
+        <Logo className="mx-auto" variant="icon-and-name" />
       </header>
       <main className="my-auto">
         <ErrorDisplay title={error.message} />

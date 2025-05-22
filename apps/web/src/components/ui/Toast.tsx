@@ -3,11 +3,12 @@
 import clsx from "clsx";
 import type { ReactNode } from "react";
 import { toast as sonnerToast } from "sonner";
+import { Icon } from "./Icon";
 
-type ToastOptions = { duration?: number } & Omit<Props, "id" | "message">;
+type ToastOptions = { duration?: number } & Omit<ToastProps, "id" | "message">;
 
 export const toast = (
-  message: Props["message"],
+  message: ToastProps["message"],
   options: ToastOptions = {},
 ) => {
   const { duration, ...props } = options;
@@ -17,7 +18,7 @@ export const toast = (
 };
 
 type ToastShortcut = (
-  message: Props["message"],
+  message: ToastProps["message"],
   options?: Omit<ToastOptions, "variant">,
 ) => void;
 toast.success = ((message, options) =>
@@ -27,13 +28,13 @@ toast.warning = ((message, options) =>
 toast.error = ((message, options) =>
   toast(message, { ...options, variant: "error" })) as ToastShortcut;
 
-interface Props {
+interface ToastProps {
   id: string | number;
   message: ReactNode;
   variant?: "success" | "warning" | "error";
 }
 
-function Toast({ id, message, variant }: Props) {
+function Toast({ id, message, variant }: ToastProps) {
   const dismiss = () => {
     sonnerToast.dismiss(id);
   };
@@ -41,22 +42,26 @@ function Toast({ id, message, variant }: Props) {
   return (
     <div className="ring-light-grey flex items-center gap-3 rounded-lg bg-white p-4 shadow-2xl ring-1">
       {variant && (
-        <span
+        <Icon
           className={clsx(
-            "block text-xl",
+            "text-xl",
             variant === "success" &&
               "icon-[fa6-solid--circle-chevron-down] text-green",
             variant === "warning" &&
               "icon-[fa6-solid--circle-exclamation] text-yellow",
             variant === "error" && "icon-[fa6-solid--circle-xmark] text-red",
           )}
-        ></span>
+        />
       )}
       <div role="status" className="font-semibold">
         {message}
       </div>
-      <button className="text-light-grey ml-auto text-lg" onClick={dismiss} aria-label="Fechar notificação">
-        <span className="icon-[fa6-solid--xmark] block"></span>
+      <button
+        className="text-light-grey ml-auto text-lg"
+        onClick={dismiss}
+        aria-label="Fechar notificação"
+      >
+        <Icon className="icon-[fa6-solid--xmark]" />
       </button>
     </div>
   );

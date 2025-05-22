@@ -1,7 +1,7 @@
 import { createRandomAuthenticatedUser } from "$/__tests__/factories";
 import { useAuth } from "$/hooks/useAuth";
+import { apiClient } from "$/lib/apiClient";
 import { storeAccessToken } from "$/lib/auth/client";
-import { apiClient } from "$/services/apiClient";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { spyConsole } from "@repo/shared/testUtils";
 import { act, renderHook } from "@testing-library/react";

@@ -4,13 +4,13 @@ import type { ReactNode } from "react";
 
 const normalizeText = (text: string) => text.replaceAll("\\n", "\n");
 
-interface Props {
+interface ErrorDisplayProps {
   title: string;
   message?: string;
   action?: ReactNode;
 }
 
-export function ErrorDisplay({ title, message, action }: Props) {
+export function ErrorDisplay({ title, message, action }: ErrorDisplayProps) {
   return (
     <div className="flex flex-col items-center">
       <h1

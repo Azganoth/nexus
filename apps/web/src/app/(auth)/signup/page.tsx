@@ -1,4 +1,4 @@
-import { SignupForm } from "$/components/form/SignupForm";
+import { Signup } from "$/components/features/auth/Signup";
 import { Link } from "$/components/ui/Link";
 import { composeTitle } from "$/lib/utils";
 import type { Metadata } from "next";
@@ -11,13 +11,13 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <main className="tablet:mt-12 mt-8 w-full max-w-[350px]">
-      <h1 className="tablet:mb-12 mb-8 text-center text-xl font-bold">
+    <main className="my-auto w-full max-w-[350px] py-12">
+      <h1 className="mb-12 text-center text-xl font-semibold">
         Crie uma conta
       </h1>
-      <SignupForm />
-      <div className="mt-8 flex flex-col items-center gap-4">
-        <span className="text-medium-grey mt-8 text-sm font-bold">
+      <Signup />
+      <div className="mt-8 text-center">
+        <span className="text-medium-grey text-sm font-bold">
           Já tem uma conta? <Link href="/login">Faça login!</Link>
         </span>
       </div>

@@ -1,28 +1,22 @@
 import clsx from "clsx";
+import type { HTMLAttributes } from "react";
 
-interface Props {
-  id?: string;
-  className?: string;
-  message?: string;
+interface ErrorHintProps extends HTMLAttributes<HTMLDivElement> {
+  error?: string;
 }
 
-export function ErrorHint({ id, className, message }: Props) {
+export function ErrorHint({ className, error, ...otherProps }: ErrorHintProps) {
+  if (!error) {
+    return null;
+  }
+
   return (
-    <div
-      className={clsx(
-        "text-red min-h-[var(--text-sm--line-height)] whitespace-pre-line text-sm font-bold",
-        className,
-      )}
+    <p
+      className={clsx("text-red whitespace-pre-line font-bold", className)}
+      aria-live="polite"
+      {...otherProps}
     >
-      {message && (
-        <span
-          className="block"
-          id={id ? `${id}-error` : undefined}
-          role="alert"
-        >
-          {message}
-        </span>
-      )}
-    </div>
+      {error}
+    </p>
   );
 }

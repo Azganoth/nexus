@@ -3,36 +3,54 @@ import { describe, expect, it } from "@jest/globals";
 import { render, screen } from "@testing-library/react";
 
 describe("ErrorHint", () => {
-  it("renders nothing visible when no message is provided", () => {
+  it("renders nothing when no error is provided", () => {
     const { container } = render(<ErrorHint />);
-    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
-    expect(container.firstChild).toBeEmptyDOMElement();
+    expect(container.firstChild).toBeNull();
   });
 
-  it("renders the message and applies accessibility roles when a message is provided", () => {
-    render(<ErrorHint message="Error here." />);
+  it("renders the error message when error is provided", () => {
+    render(<ErrorHint error="Error here." />);
 
-    const alertElement = screen.getByText("Error here.");
-    expect(alertElement).toBeInTheDocument();
-    expect(alertElement).toHaveAttribute("role", "alert");
+    const errorElement = screen.getByText("Error here.");
+    expect(errorElement).toBeInTheDocument();
+    expect(errorElement.tagName).toBe("P");
   });
 
-  it("correctly constructs the element id for accessibility", () => {
-    render(<ErrorHint id="test-input" message="Error here." />);
+  it("applies correct accessibility attributes", () => {
+    render(<ErrorHint error="Error here." />);
 
-    const alertElement = screen.getByRole("alert");
-    expect(alertElement).toHaveAttribute("id", "test-input-error");
+    const errorElement = screen.getByText("Error here.");
+    expect(errorElement).toHaveAttribute("aria-live", "polite");
   });
 
-  it("does not have an id if the id prop is not provided", () => {
-    render(<ErrorHint message="Error here." />);
+  it("applies correct CSS classes", () => {
+    render(<ErrorHint error="Error here." />);
 
-    const alertElement = screen.getByRole("alert");
-    expect(alertElement).not.toHaveAttribute("id");
+    const errorElement = screen.getByText("Error here.");
+    expect(errorElement).toHaveClass(
+      "text-red",
+      "whitespace-pre-line",
+      "font-bold",
+    );
   });
 
   it("merges custom class names correctly", () => {
-    const { container } = render(<ErrorHint className="my-custom-class" />);
-    expect(container.firstChild).toHaveClass("my-custom-class");
+    render(<ErrorHint error="Error here." className="my-custom-class" />);
+
+    const errorElement = screen.getByText("Error here.");
+    expect(errorElement).toHaveClass(
+      "text-red",
+      "whitespace-pre-line",
+      "font-bold",
+      "my-custom-class",
+    );
+  });
+
+  it("spreads additional props to the element", () => {
+    render(<ErrorHint error="Error here." data-testid="error-hint" />);
+
+    const errorElement = screen.getByTestId("error-hint");
+    expect(errorElement).toBeInTheDocument();
+    expect(errorElement).toHaveTextContent("Error here.");
   });
 });

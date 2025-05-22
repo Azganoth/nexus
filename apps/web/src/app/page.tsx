@@ -14,7 +14,7 @@ export default function Page() {
   return (
     <div className="view tablet:pb-44 pb-32">
       <header>
-        <Logo variant="icon-and-name" />
+        <Logo className="mx-auto" variant="icon-and-name" />
       </header>
       <main className="max-tablet:flex-col tablet:gap-8 desktop:w-full desktop:justify-around mt-16 flex gap-16">
         <article className="desktop:max-w-[550px] flex flex-col gap-16">
@@ -38,7 +38,7 @@ export default function Page() {
               Logar
             </Link>
           </div>
-          <ul className="flex flex-col gap-6">
+          <ul className="space-y-6">
             <li>
               <h3 className="text-xl font-bold">Crie seu perfil</h3>
               <p>

@@ -2,7 +2,7 @@ import clsx from "clsx";
 import type { ButtonHTMLAttributes } from "react";
 import { useId, useState } from "react";
 
-interface Props
+export interface SwitchProps
   extends Omit<
     ButtonHTMLAttributes<HTMLButtonElement>,
     "onChange" | "checked"
@@ -20,7 +20,7 @@ export function Switch({
   onChange,
   disabled = false,
   ...props
-}: Props) {
+}: SwitchProps) {
   const autoId = useId();
   const toggleId = id ?? autoId;
 
@@ -50,7 +50,7 @@ export function Switch({
   return (
     <button
       className={clsx(
-        "focus-ring inline-flex h-[1.5em] w-[2.75em] min-w-[2.75em] items-center rounded-full",
+        "focus-ring inline-flex h-[1.5em] w-[2.75em] min-w-[2.75em] items-center rounded-full disabled:cursor-not-allowed",
         isChecked ? "bg-purple" : "bg-light-grey",
         className,
       )}

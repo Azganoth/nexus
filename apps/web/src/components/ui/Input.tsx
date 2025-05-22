@@ -1,6 +1,5 @@
 "use client";
 
-import { ErrorHint } from "$/components/ui/ErrorHint";
 import clsx from "clsx";
 import {
   forwardRef,
@@ -10,16 +9,19 @@ import {
   useState,
   type InputHTMLAttributes,
 } from "react";
+import { ErrorHint } from "./ErrorHint";
+import { Icon } from "./Icon";
 
-interface Props extends InputHTMLAttributes<HTMLInputElement> {
+interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: string;
 }
 
-export const Input = forwardRef<HTMLInputElement, Props>(
+export const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ id, className, label, error, type, ...props }, ref) => {
     const autoId = useId();
     const inputId = id ?? autoId;
+    const errorId = error ? `${inputId}-error` : undefined;
 
     const internalRef = useRef<HTMLInputElement | null>(null);
 
@@ -32,7 +34,7 @@ export const Input = forwardRef<HTMLInputElement, Props>(
     const inputType = isPasswordField && showPassword ? "text" : type;
 
     return (
-      <div className={className} role="group">
+      <div className={className} data-testid="input-wrapper">
         <div
           className={clsx(
             "border-light-grey hover:border-medium-grey relative grid cursor-text rounded-lg border bg-white px-4 py-2 -outline-offset-2",
@@ -57,7 +59,7 @@ export const Input = forwardRef<HTMLInputElement, Props>(
             type={inputType}
             placeholder=" " // NOTE: :placeholder-shown only works if theres a non-empty placeholder
             aria-invalid={!!error}
-            aria-describedby={`${inputId}-error`}
+            aria-describedby={errorId}
             {...props}
           />
           {label && (
@@ -79,18 +81,17 @@ export const Input = forwardRef<HTMLInputElement, Props>(
               onClick={() => setShowPassword((p) => !p)}
               aria-label={showPassword ? "Esconder senha" : "Mostrar senha"}
             >
-              <span
-                className={clsx(
-                  "mx-auto block",
+              <Icon
+                className={`mx-auto ${
                   showPassword
                     ? "icon-[fa6-solid--eye]"
-                    : "icon-[fa6-solid--eye-slash]",
-                )}
-              ></span>
+                    : "icon-[fa6-solid--eye-slash]"
+                }`}
+              />
             </button>
           )}
         </div>
-        <ErrorHint className="mt-1 px-2" id={inputId} message={error} />
+        <ErrorHint className="px-2 text-sm" id={errorId} error={error} />
       </div>
     );
   },

@@ -1,7 +1,8 @@
 import clsx from "clsx";
 import type { ButtonHTMLAttributes } from "react";
+import { Icon } from "./Icon";
 
-interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface LoadingProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   isPending?: boolean;
 }
 
@@ -11,7 +12,7 @@ export function LoadingButton({
   disabled,
   isPending,
   ...props
-}: Props) {
+}: LoadingProps) {
   return (
     <button
       className={clsx("btn focus-ring", className)}
@@ -20,7 +21,7 @@ export function LoadingButton({
       {...props}
     >
       {isPending ? (
-        <span className="icon-[svg-spinners--180-ring] mx-auto block text-xl"></span>
+        <Icon className="icon-[svg-spinners--180-ring] mx-auto text-xl" />
       ) : (
         children
       )}

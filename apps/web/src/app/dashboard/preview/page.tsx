@@ -1,8 +1,8 @@
-import { Profile } from "$/components/features/Profile";
-import { ProfileShare } from "$/components/ui/ProfileShare";
+import { Profile } from "$/components/features/profile/Profile";
+import { ProfileShare } from "$/components/features/profile/ProfileShare";
+import { apiClient } from "$/lib/apiClient";
 import { getAuth } from "$/lib/auth/server";
 import { composeTitle } from "$/lib/utils";
-import { apiClient } from "$/services/apiClient";
 import type { AuthenticatedProfile } from "@repo/shared/contracts";
 import type { Metadata } from "next";
 

@@ -1,5 +1,5 @@
-import { TokenVerification } from "$/components/features/ResetPasswordToken";
-import { ResetPasswordForm } from "$/components/form/ResetPasswordForm";
+import { TokenVerification } from "$/components/features/auth/ResetPasswordToken";
+import { Icon } from "$/components/ui/Icon";
 import { composeTitle } from "$/lib/utils";
 import type { Metadata } from "next";
 import { Suspense } from "react";
@@ -20,17 +20,22 @@ export default async function Page({
   }
 
   return (
-    <main className="tablet:mt-12 mt-8 h-full w-full max-w-[350px]">
-      <h1 className="tablet:mb-12 mb-8 text-center text-xl font-bold">
-        Redefina sua senha
-      </h1>
+    <main className="m-auto w-full max-w-[350px] py-12">
       <Suspense
         fallback={
-          <span className="-translate-1/2 text-medium-grey icon-[svg-spinners--3-dots-move] fixed left-1/2 top-1/2 text-2xl"></span>
+          <div className="grid place-items-center gap-4">
+            <p className="text-xl font-bold">Verificando token...</p>
+            <Icon className="text-medium-grey icon-[svg-spinners--3-dots-move] text-2xl" />
+          </div>
         }
       >
         <TokenVerification token={token}>
-          <ResetPasswordForm token={token} />
+          <>
+            <h1 className="mb-12 text-center text-xl font-semibold">
+              Redefina sua senha
+            </h1>
+            <ResetPasswordForm token={token} />
+          </>
         </TokenVerification>
       </Suspense>
     </main>

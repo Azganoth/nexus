@@ -1,4 +1,4 @@
-import { ApiError, ValidationError } from "$/services/errors";
+import { ApiError, ValidationError } from "$/lib/errors";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ERRORS, type ErrorCode } from "@repo/shared/constants";
 import { useCallback } from "react";

@@ -1,17 +1,20 @@
-import { Profile } from "$/components/features/Profile";
+import { Profile } from "$/components/features/profile/Profile";
+import { Icon } from "$/components/ui/Icon";
 import { Link } from "$/components/ui/Link";
 import { Logo } from "$/components/ui/Logo";
+import { apiClient } from "$/lib/apiClient";
+import { ApiError } from "$/lib/errors";
 import { composeTitle } from "$/lib/utils";
-import { apiClient } from "$/services/apiClient";
-import { ApiError } from "$/services/errors";
 import type { PublicProfile } from "@repo/shared/contracts";
+import clsx from "clsx";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { cache } from "react";
 
 const getProfile = cache(async (username: string) => {
   try {
-    return apiClient.get<PublicProfile>(`/profiles/${username}`);
+    const profile = await apiClient.get<PublicProfile>(`/profiles/${username}`);
+    return profile;
   } catch (error) {
     if (error instanceof ApiError) {
       if (error.code === "NOT_FOUND") {
@@ -26,11 +29,13 @@ const getProfile = cache(async (username: string) => {
   }
 });
 
-interface Props {
+interface PageProps {
   params: Promise<{ username: string }>;
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const { username } = await params;
   const result = await getProfile(username);
 
@@ -62,20 +67,26 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function Page({ params }: Props) {
+export default async function Page({ params }: PageProps) {
   const { username } = await params;
   const result = await getProfile(username);
 
   if (result instanceof ApiError) {
     return (
-      <div className="view items-center">
+      <div className="view">
         <header>
-          <Logo variant="icon-and-name" />
+          <Logo className="mx-auto" variant="icon-and-name" />
         </header>
         <main className="my-auto flex flex-col items-center gap-4">
-          <div className="before:bg-medium-grey after:bg-medium-grey flex w-full items-center gap-4 before:h-px before:w-full before:content-[''] after:h-px after:w-full after:content-['']">
+          <div
+            className={clsx(
+              "flex w-full max-w-64 items-center gap-4",
+              "before:bg-medium-grey before:h-px before:w-full before:content-['']",
+              "after:bg-medium-grey after:h-px after:w-full after:content-['']",
+            )}
+          >
             <div className="border-medium-grey rounded-full border p-2">
-              <span className="icon-[fa6-solid--lock] text-md text-medium-grey block"></span>
+              <Icon className="icon-[fa6-solid--lock] text-md text-medium-grey" />
             </div>
           </div>
           <h1 className="text-center font-bold">Este perfil é privado.</h1>

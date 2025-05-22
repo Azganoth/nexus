@@ -11,12 +11,12 @@ import {
   type TextareaHTMLAttributes,
 } from "react";
 
-interface Props extends TextareaHTMLAttributes<HTMLTextAreaElement> {
+interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string;
   error?: string;
 }
 
-export const Textarea = forwardRef<HTMLTextAreaElement, Props>(
+export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   ({ id, className, label, error, ...props }, ref) => {
     const autoId = useId();
     const textareaId = id ?? autoId;
@@ -28,7 +28,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, Props>(
     }, []);
 
     return (
-      <div className={className} role="group">
+      <div className={className} data-testid="textarea-wrapper">
         <div
           className={clsx(
             "border-light-grey hover:border-medium-grey relative rounded-lg border bg-white px-4 py-2 -outline-offset-2",
@@ -66,7 +66,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, Props>(
             </label>
           )}
         </div>
-        <ErrorHint className="mt-1 px-2" id={textareaId} message={error} />
+        <ErrorHint className="mt-1 px-2" id={textareaId} error={error} />
       </div>
     );
   },

@@ -1,4 +1,4 @@
-import "$/lib/envGuard";
+import "$/lib/env";
 
 export const IS_SERVER = typeof window === "undefined";
 

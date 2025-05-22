@@ -1,5 +1,5 @@
-import { apiClient } from "$/services/apiClient";
-import type { ApiError } from "$/services/errors";
+import { apiClient } from "$/lib/apiClient";
+import type { ApiError } from "$/lib/errors";
 import type {
   AuthenticatedLink,
   AuthenticatedProfile,

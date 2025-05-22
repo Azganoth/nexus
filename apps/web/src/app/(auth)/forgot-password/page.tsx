@@ -1,5 +1,4 @@
-import { ForgotPasswordForm } from "$/components/form/ForgotPasswordForm";
-import { Link } from "$/components/ui/Link";
+import { ForgotPassword } from "$/components/features/auth/ForgotPassword";
 import { composeTitle } from "$/lib/utils";
 import type { Metadata } from "next";
 
@@ -10,16 +9,11 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <main className="tablet:mt-12 mt-8 w-full max-w-[350px]">
-      <h1 className="tablet:mb-12 mb-8 text-center text-xl font-bold">
+    <main className="my-auto w-full max-w-[350px] py-12">
+      <h1 className="mb-12 text-center text-xl font-semibold">
         Recupere sua conta
       </h1>
-      <ForgotPasswordForm />
-      <div className="mt-8 flex flex-col items-center gap-4">
-        <span className="text-center text-sm font-bold">
-          Não tem uma conta? <Link href="/signup">Cadastre-se agora!</Link>
-        </span>
-      </div>
+      <ForgotPassword />
     </main>
   );
 }

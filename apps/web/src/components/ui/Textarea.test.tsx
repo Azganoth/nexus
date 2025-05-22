@@ -20,7 +20,7 @@ describe("Textarea", () => {
   it("applies custom className to root", () => {
     render(<Textarea label="Label" className="custom-class" />);
 
-    const root = screen.getByRole("group");
+    const root = screen.getByTestId("textarea-wrapper");
     expect(root).toHaveClass("custom-class");
   });
 
@@ -132,7 +132,7 @@ describe("Textarea", () => {
 
       const error = screen.getByText("Error message");
       expect(error).toBeInTheDocument();
-      expect(error).toHaveAttribute("role", "alert");
+      expect(error).toHaveAttribute("aria-live", "polite");
     });
 
     it("sets aria-invalid when error is present", () => {
@@ -141,7 +141,7 @@ describe("Textarea", () => {
       const textarea = screen.getByLabelText("Label");
       const error = screen.getByText("Error");
 
-      expect(textarea).toHaveAttribute("aria-describedby", error.id);
+      expect(textarea).toHaveAttribute("aria-describedby", `${error.id}-error`);
       expect(textarea).toHaveAttribute("aria-invalid", "true");
     });
 
@@ -151,7 +151,7 @@ describe("Textarea", () => {
       const textarea = screen.getByLabelText("Label");
       const error = screen.getByText("Error");
 
-      expect(textarea).toHaveAttribute("aria-describedby", error.id);
+      expect(textarea).toHaveAttribute("aria-describedby", `${error.id}-error`);
       expect(textarea).toHaveAttribute("aria-invalid", "true");
     });
 

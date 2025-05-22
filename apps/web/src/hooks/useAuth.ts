@@ -1,5 +1,5 @@
+import { apiClient } from "$/lib/apiClient";
 import { storeAccessToken } from "$/lib/auth/client";
-import { apiClient } from "$/services/apiClient";
 import type { Session } from "@repo/shared/contracts";
 import { useState } from "react";
 import { useUser } from "./useUser";

@@ -1,21 +1,33 @@
 "use client";
 
-import { useEffect, useId, useRef, type ReactNode } from "react";
+import {
+  useEffect,
+  useId,
+  useRef,
+  type HTMLAttributes,
+  type ReactNode,
+} from "react";
+import { Icon } from "./Icon";
 
-interface Props {
+interface ModalProps extends HTMLAttributes<HTMLDialogElement> {
   title: string;
   children: ReactNode;
   isOpen: boolean;
   onClose: () => void;
 }
 
-export function Modal({ title, children, isOpen, onClose }: Props) {
+export function Modal({
+  title,
+  children,
+  isOpen,
+  onClose,
+  ...otherProps
+}: ModalProps) {
   const id = useId();
   const titleId = `${id}-modal-title`;
   const descId = `${id}-modal-description`;
 
   const dialogRef = useRef<HTMLDialogElement>(null);
-
   useEffect(() => {
     const dialogElement = dialogRef.current;
     if (isOpen) {
@@ -40,19 +52,20 @@ export function Modal({ title, children, isOpen, onClose }: Props) {
       aria-modal="true"
       aria-labelledby={titleId}
       aria-describedby={descId}
+      {...otherProps}
     >
-      <div className="relative p-8">
-        <header>
-          <h2 id={titleId} className="pr-8 text-xl font-bold">
+      <div className="relative p-8 pt-6">
+        <header className="flex items-center justify-between">
+          <h2 id={titleId} className="text-center text-xl font-semibold">
             {title}
           </h2>
           <button
+            className="text-medium-grey focus-ring hover:text-black"
             type="button"
             onClick={onClose}
             aria-label="Fechar diálogo"
-            className="text-medium-grey focus-ring absolute right-6 top-6 hover:text-black"
           >
-            <span className="icon-[fa6-solid--xmark] block text-2xl"></span>
+            <Icon className="icon-[fa6-solid--xmark] text-2xl" />
           </button>
         </header>
         <div id={descId} className="mt-4">

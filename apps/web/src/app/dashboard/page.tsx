@@ -1,4 +1,4 @@
-import { DashboardProfile } from "$/components/features/DashboardProfile";
+import { DashboardProfile } from "$/components/features/dashboard/DashboardProfile";
 import { composeTitle } from "$/lib/utils";
 import type { Metadata } from "next";
 

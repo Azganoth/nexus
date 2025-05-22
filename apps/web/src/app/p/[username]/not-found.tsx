@@ -9,9 +9,9 @@ export const metadata: Metadata = {
 
 export default function NotFound() {
   return (
-    <div className="view tablet:pb-44 items-center pb-32">
+    <div className="view">
       <header>
-        <Logo variant="icon-and-name" />
+        <Logo className="mx-auto" variant="icon-and-name" />
       </header>
       <main className="my-auto">
         <ErrorDisplay title="Perfil não encontrado" />

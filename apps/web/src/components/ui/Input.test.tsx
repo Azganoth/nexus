@@ -20,7 +20,7 @@ describe("Input", () => {
   it("applies custom className to root", () => {
     render(<Input label="Label" className="custom-class" />);
 
-    const root = screen.getByRole("group");
+    const root = screen.getByTestId("input-wrapper");
     expect(root).toHaveClass("custom-class");
   });
 
@@ -132,7 +132,7 @@ describe("Input", () => {
 
       const error = screen.getByText("Error message");
       expect(error).toBeInTheDocument();
-      expect(error).toHaveAttribute("role", "alert");
+      expect(error).toHaveAttribute("aria-live", "polite");
     });
 
     it("sets aria-invalid when error is present", () => {
