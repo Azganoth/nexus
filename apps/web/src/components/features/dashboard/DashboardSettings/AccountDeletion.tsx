@@ -17,10 +17,10 @@ export function AccountDeletion() {
   const {
     register,
     handleSubmit,
-    formState: { errors: deleteErrors, isSubmitting: isDeleteSubmitting },
+    formState: { errors, isSubmitting },
   } = useApiForm({
     schema: DELETE_USER_SCHEMA,
-    mutationFn: (data) => apiClient.delete("/users/me", { data }),
+    mutationFn: (data) => apiClient.delete("/users/me", data),
     onSuccess: () => {
       toast.success("Conta excluída com sucesso!");
       router.push("/");
@@ -62,14 +62,14 @@ export function AccountDeletion() {
             label="Senha"
             type="password"
             autoComplete="current-password"
-            error={deleteErrors.password?.message}
+            error={errors.password?.message}
             {...register("password")}
           />
           <div className="mt-12 flex gap-4">
             <LoadingButton
               className="bg-red w-full text-white"
               type="submit"
-              isPending={isDeleteSubmitting}
+              isPending={isSubmitting}
             >
               Excluir
             </LoadingButton>
