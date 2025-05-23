@@ -16,6 +16,10 @@ export const useProfile = () => {
     ApiError
   >("/profiles/me", swrFetcher);
 
+  const revalidateProfile = async () => {
+    await mutate();
+  };
+
   const updateProfile = async (updateData: UpdateProfileData) => {
     if (!data) return;
 
@@ -75,7 +79,7 @@ export const useProfile = () => {
     updateProfile,
     updateLinkOrder,
     updateLinkVisibility,
-    revalidateProfile: mutate,
+    revalidateProfile,
     isProfileLoading: isLoading,
     profileError: error,
   };

@@ -1,3 +1,4 @@
+import { ResetPassword } from "$/components/features/auth/ResetPassword";
 import { TokenVerification } from "$/components/features/auth/ResetPasswordToken";
 import { Icon } from "$/components/ui/Icon";
 import { composeTitle } from "$/lib/utils";
@@ -34,7 +35,7 @@ export default async function Page({
             <h1 className="mb-12 text-center text-xl font-semibold">
               Redefina sua senha
             </h1>
-            <ResetPasswordForm token={token} />
+            <ResetPassword token={token} />
           </>
         </TokenVerification>
       </Suspense>

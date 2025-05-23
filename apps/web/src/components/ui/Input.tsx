@@ -1,5 +1,7 @@
 "use client";
 
+import { ErrorHint } from "$/components/ui/ErrorHint";
+import { Icon } from "$/components/ui/Icon";
 import clsx from "clsx";
 import {
   forwardRef,
@@ -9,8 +11,6 @@ import {
   useState,
   type InputHTMLAttributes,
 } from "react";
-import { ErrorHint } from "./ErrorHint";
-import { Icon } from "./Icon";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;

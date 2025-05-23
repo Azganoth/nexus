@@ -1,9 +1,9 @@
 "use client";
 
+import { Icon } from "$/components/ui/Icon";
 import clsx from "clsx";
 import type { ReactNode } from "react";
 import { toast as sonnerToast } from "sonner";
-import { Icon } from "./Icon";
 
 type ToastOptions = { duration?: number } & Omit<ToastProps, "id" | "message">;
 

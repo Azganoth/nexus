@@ -1,6 +1,6 @@
+import { Icon } from "$/components/ui/Icon";
 import clsx from "clsx";
 import type { ButtonHTMLAttributes } from "react";
-import { Icon } from "./Icon";
 
 interface LoadingProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   isPending?: boolean;

@@ -13,7 +13,9 @@ import supertest from "supertest";
 
 jest.mock("$/services/avatar.service");
 
-const mockCreateAvatarUploadUrlsByUserId = jest.mocked(createAvatarUploadUrlsByUserId);
+const mockCreateAvatarUploadUrlsByUserId = jest.mocked(
+  createAvatarUploadUrlsByUserId,
+);
 
 describe("Avatar Controller", () => {
   let app: Express;
@@ -27,11 +29,11 @@ describe("Avatar Controller", () => {
   });
 
   describe("POST /avatars/upload-url", () => {
-    const validBody = { 
-      fileExt: "png", 
-      fileSize: 1024, 
+    const validBody = {
+      fileExt: "png",
+      fileSize: 1024,
       fileType: "image/png",
-      fileHash: "a".repeat(64)
+      fileHash: "a".repeat(64),
     };
     const mockResult: AvatarUploadUrls = {
       uploadUrl: "https://upload.url",

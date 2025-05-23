@@ -1,6 +1,7 @@
 "use client";
 
 import { ErrorHint } from "$/components/ui/ErrorHint";
+import { Icon } from "$/components/ui/Icon";
 import { Input } from "$/components/ui/Input";
 import { SlidingView } from "$/components/ui/layout/SlidingView";
 import { Link } from "$/components/ui/Link";
@@ -10,7 +11,6 @@ import { useApiForm } from "$/hooks/useApiForm";
 import { apiClient } from "$/lib/apiClient";
 import { FORGOT_PASSWORD_SCHEMA } from "@repo/shared/schemas";
 import { useEffect, useState } from "react";
-import { Icon } from "../../ui/Icon";
 
 const TIMEOUT = 60;
 

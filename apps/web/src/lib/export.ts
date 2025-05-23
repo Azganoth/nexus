@@ -1,5 +1,5 @@
+import { apiClient } from "$/lib/apiClient";
 import type { UserDataExport } from "@repo/shared/contracts";
-import { apiClient } from "./apiClient";
 
 export const exportUserData = async () => {
   const data = await apiClient.get<UserDataExport>("/users/me/export");

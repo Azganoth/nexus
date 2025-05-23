@@ -1,4 +1,9 @@
-import { deleteMe, getMe, updateMe, exportMyData } from "$/controllers/user.controller";
+import {
+  deleteMe,
+  getMe,
+  updateMe,
+  exportMyData,
+} from "$/controllers/user.controller";
 import { authenticate } from "$/middlewares/auth.middleware";
 import { Router } from "express";
 

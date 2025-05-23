@@ -1,10 +1,10 @@
 "use client";
 
+import { Icon } from "$/components/ui/Icon";
 import { toast } from "$/components/ui/Toast";
 import { WEB_URL } from "$/lib/constants";
 import clsx from "clsx";
 import { useState } from "react";
-import { Icon } from "../../ui/Icon";
 
 interface ProfileShareProps {
   className?: string;

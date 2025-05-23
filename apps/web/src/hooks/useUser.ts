@@ -13,6 +13,10 @@ export const useUser = () => {
     ApiError
   >("/users/me", swrFetcher);
 
+  const revalidateUser = async () => {
+    await mutate();
+  };
+
   const updateUser = async (updateData: UpdateUserData) => {
     if (!data) return;
 
@@ -25,7 +29,7 @@ export const useUser = () => {
   return {
     user: data,
     updateUser,
-    revalidateUser: mutate,
+    revalidateUser,
     isUserLoading: isLoading,
     userError: error,
   };

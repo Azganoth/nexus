@@ -1,5 +1,6 @@
 "use client";
 
+import { Icon } from "$/components/ui/Icon";
 import {
   useEffect,
   useId,
@@ -7,7 +8,6 @@ import {
   type HTMLAttributes,
   type ReactNode,
 } from "react";
-import { Icon } from "./Icon";
 
 interface ModalProps extends HTMLAttributes<HTMLDialogElement> {
   title: string;
