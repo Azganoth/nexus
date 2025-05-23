@@ -3,8 +3,8 @@
 import { ErrorHint } from "$/components/ui/ErrorHint";
 import { Input } from "$/components/ui/Input";
 import { LoadingButton } from "$/components/ui/LoadingButton";
+import { useAuth } from "$/contexts/AuthContext";
 import { useApiForm } from "$/hooks/useApiForm";
-import { useAuth } from "$/hooks/useAuth";
 import { apiClient } from "$/lib/apiClient";
 import { unknownError } from "$/lib/utils";
 import type { Session } from "@repo/shared/contracts";

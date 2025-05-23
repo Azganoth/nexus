@@ -1,11 +1,11 @@
 "use client";
 
+import { Icon } from "$/components/ui/Icon";
 import { Link } from "$/components/ui/Link";
-import { useAuth } from "$/hooks/useAuth";
+import { useAuth } from "$/contexts/AuthContext";
 import { useProfile } from "$/hooks/useProfile";
 import clsx from "clsx";
 import { usePathname, useRouter } from "next/navigation";
-import { Icon } from "../../ui/Icon";
 
 const DASHBOARD_URL = "/dashboard";
 const SETTINGS_URL = `${DASHBOARD_URL}/settings`;

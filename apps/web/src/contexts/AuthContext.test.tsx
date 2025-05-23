@@ -1,10 +1,11 @@
 import { createRandomAuthenticatedUser } from "$/__tests__/factories";
-import { useAuth } from "$/hooks/useAuth";
+import { AuthProvider, useAuth } from "$/contexts/AuthContext";
 import { apiClient } from "$/lib/apiClient";
 import { storeAccessToken } from "$/lib/auth/client";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { spyConsole } from "@repo/shared/testUtils";
 import { act, renderHook } from "@testing-library/react";
+import React from "react";
 
 jest.mock("$/lib/apiClient");
 jest.mock("$/lib/auth/client");
@@ -12,7 +13,11 @@ jest.mock("$/lib/auth/client");
 const mockApiClient = jest.mocked(apiClient);
 const mockStoreAccessToken = jest.mocked(storeAccessToken);
 
-describe("useAuth", () => {
+const wrapper = ({ children }: { children: React.ReactNode }) => {
+  return <AuthProvider>{children}</AuthProvider>;
+};
+
+describe("AuthContext/useAuth", () => {
   const mockAccessToken = "this-is-an-access-token";
   const mockUser = createRandomAuthenticatedUser();
 
@@ -22,7 +27,7 @@ describe("useAuth", () => {
   });
 
   it("updates the auth state correctly when login is called", async () => {
-    const { result } = renderHook(() => useAuth());
+    const { result } = renderHook(() => useAuth(), { wrapper });
 
     const loginData = {
       accessToken: mockAccessToken,
@@ -37,7 +42,7 @@ describe("useAuth", () => {
   });
 
   it("clears the auth state and calls the API when logout is called", async () => {
-    const { result } = renderHook(() => useAuth());
+    const { result } = renderHook(() => useAuth(), { wrapper });
 
     await act(async () => {
       await result.current.logout();
@@ -52,7 +57,7 @@ describe("useAuth", () => {
     const consoleErrorSpy = spyConsole("error", [networkError]);
     mockApiClient.post.mockRejectedValue(networkError);
 
-    const { result } = renderHook(() => useAuth());
+    const { result } = renderHook(() => useAuth(), { wrapper });
 
     await act(async () => {
       await result.current.logout();
