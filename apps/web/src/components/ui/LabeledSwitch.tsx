@@ -1,7 +1,7 @@
+import { ErrorHint } from "$/components/ui/ErrorHint";
 import { Switch, type SwitchProps } from "$/components/ui/Switch";
 import clsx from "clsx";
-import { useId, type ReactNode } from "react";
-import { ErrorHint } from "./ErrorHint";
+import { isValidElement, useId, type ReactNode } from "react";
 
 interface LabeledSwitchProps extends SwitchProps {
   label: string;
@@ -41,11 +41,14 @@ export function LabeledSwitch({
         <label className="font-medium" htmlFor={switchId}>
           {label}
         </label>
-        {description && (
-          <p className="text-dark-grey text-sm" id={descriptionId}>
-            {description}
-          </p>
-        )}
+        {description &&
+          (isValidElement(description) ? (
+            description
+          ) : (
+            <p className="text-dark-grey text-sm" id={descriptionId}>
+              {description}
+            </p>
+          ))}
         <ErrorHint id={errorId} error={error} />
       </div>
     </div>
