@@ -7,21 +7,28 @@ import {
   DEFAULT_COOKIE_CONSENT_STATUS,
   type LocalConsentStatus,
 } from "$/lib/consent";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+
+const EXCLUDED_ROUTES = ["/about"];
 
 export function ConsentBanner() {
   const { consents, isLoading, updateConsents } = useConsentContext();
   const [showBanner, setShowBanner] = useState(false);
+
+  const pathname = usePathname();
 
   useEffect(() => {
     if (isLoading) {
       return;
     }
 
-    if (!consents) {
+    if (EXCLUDED_ROUTES.some((route) => pathname.startsWith(route))) {
+      setShowBanner(false);
+    } else if (!consents) {
       setShowBanner(true);
     }
-  }, [consents, isLoading]);
+  }, [pathname, consents, isLoading]);
 
   const handleDecision = async (consentStatus: LocalConsentStatus) => {
     setShowBanner(false);

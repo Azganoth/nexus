@@ -86,7 +86,7 @@ export function Signup() {
             label="Termos de uso"
             description={
               <p className="text-dark-grey text-sm">
-                Eu aceito os <Link href="/tos">termos de uso</Link>.
+                Eu aceito os <Link href="/about/tos">termos de uso</Link>.
               </p>
             }
             checked={field.value}
@@ -104,7 +104,8 @@ export function Signup() {
             label="Privacidade"
             description={
               <p className="text-dark-grey text-sm">
-                Eu aceito os <Link href="/privacy">termos de uso</Link>.
+                Eu aceito as{" "}
+                <Link href="/about/privacy">políticas de privacidade</Link>.
               </p>
             }
             checked={field.value}
