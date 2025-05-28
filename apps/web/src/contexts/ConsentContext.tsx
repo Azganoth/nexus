@@ -81,13 +81,14 @@ export const ConsentProvider = ({ children }: { children: ReactNode }) => {
           const { NECESSARY_COOKIES, ANALYTICS_COOKIES, THIRD_PARTY_COOKIES } =
             await apiClient.get<ConsentStatus>("/consents/status");
 
-          // If user has made a decision (NECESSARY_COOKIES is true), use server data
+          // If user has made a decision (NECESSARY_COOKIES is true), use server data and clear local consent cache.
           if (NECESSARY_COOKIES) {
             setConsents({
               NECESSARY_COOKIES,
               ANALYTICS_COOKIES,
               THIRD_PARTY_COOKIES,
             });
+            clearStoredConsents();
           } else {
             // Sync any stored consents to server
             const storedConsents = getStoredConsents();
