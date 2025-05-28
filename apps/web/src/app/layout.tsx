@@ -1,4 +1,6 @@
+import { ConsentBanner } from "$/components/features/ConsentBanner";
 import { AuthProvider } from "$/contexts/AuthContext";
+import { ConsentProvider } from "$/contexts/ConsentContext";
 import "$/styles/globals.css";
 import { Inter } from "next/font/google";
 import { Toaster } from "sonner";
@@ -16,7 +18,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.className}>
       <body className="text-md font-inter bg-white text-black">
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <ConsentProvider>
+            {children}
+            <ConsentBanner />
+          </ConsentProvider>
+        </AuthProvider>
         <Toaster
           position="bottom-right"
           gap={16}

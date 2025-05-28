@@ -4,6 +4,7 @@ import type {
   AuthenticatedLink,
   AuthenticatedProfile,
   AuthenticatedUser,
+  Consent,
   PublicLink,
   PublicProfile,
   Timestamps,
@@ -74,3 +75,13 @@ export const AUTHENTICATED_PROFILE_SELECT = {
   isPublic: true,
   ...TIMESTAMP_SELECT,
 } satisfies StrictQuerySelect<AuthenticatedProfile>;
+
+export const CONSENT_SELECT = {
+  id: true,
+  type: true,
+  action: true,
+  ipAddress: true,
+  userAgent: true,
+  createdAt: true,
+  version: true,
+} satisfies StrictQuerySelect<Consent>;

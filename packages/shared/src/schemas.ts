@@ -26,6 +26,12 @@ export const SIGNUP_SCHEMA = z.object({
   email: unknownEmail,
   password: newPassword,
   name: displayName,
+  acceptTerms: z.boolean().refine((val) => val === true, {
+    message: "Você deve aceitar os Termos de Serviço.",
+  }),
+  acceptPrivacy: z.boolean().refine((val) => val === true, {
+    message: "Você deve aceitar a Política de Privacidade.",
+  }),
 });
 
 export const FORGOT_PASSWORD_SCHEMA = z.object({
@@ -105,4 +111,19 @@ export const AVATAR_UPLOAD_SCHEMA = z.object({
     .string()
     .length(64, "Hash inválido.")
     .regex(/^[a-f0-9]{64}$/, "Hash inválido."),
+});
+
+export const CONSENT_TYPE_SCHEMA = z.enum([
+  "TERMS_OF_SERVICE",
+  "PRIVACY_POLICY",
+  "NECESSARY_COOKIES",
+  "ANALYTICS_COOKIES",
+  "THIRD_PARTY_COOKIES",
+]);
+
+export const CONSENT_SCHEMA = z.object({
+  type: CONSENT_TYPE_SCHEMA,
+  granted: z.boolean(),
+  ipAddress: z.string().optional(),
+  userAgent: z.string().optional(),
 });

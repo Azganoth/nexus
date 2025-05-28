@@ -13,12 +13,26 @@ enum Role {
   ADMIN
 }
 
+enum ConsentType {
+  TERMS_OF_SERVICE
+  PRIVACY_POLICY
+  ANALYTICS_COOKIES
+  NECESSARY_COOKIES
+  THIRD_PARTY_COOKIES
+}
+
+enum ConsentAction {
+  GRANT
+  REVOKE
+}
+
 model User {
   id                 String              @id @default(uuid())
   email              String              @unique
   password           String
   name               String              @db.VarChar(60)
   role               Role                @default(USER)
+  consentLogs        ConsentLog[]
   profile            Profile?
   refreshTokens      RefreshToken[]
   passwordResetToken PasswordResetToken?
@@ -26,6 +40,20 @@ model User {
   updatedAt          DateTime            @updatedAt @map("updated_at")
 
   @@map("users")
+}
+
+model ConsentLog {
+  id        String        @id @default(uuid())
+  userId    String        @map("user_id")
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      ConsentType
+  action    ConsentAction
+  ipAddress String?       @map("ip_address")
+  userAgent String?       @map("user_agent")
+  version   String        @default("1.0")
+  createdAt DateTime      @default(now()) @map("created_at")
+
+  @@map("consent_logs")
 }
 
 model Profile {

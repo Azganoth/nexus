@@ -1,5 +1,6 @@
 import { fakerPT_BR as faker } from "@faker-js/faker";
 import type {
+  ConsentLog,
   Link,
   PasswordResetToken,
   Profile,
@@ -67,6 +68,37 @@ export const createRandomProfileWithLinks = (
     ...profile,
     links,
   };
+};
+
+export const createRandomConsentLog = (
+  userId: string,
+  overrides?: Partial<ConsentLog>,
+): ConsentLog => ({
+  id: faker.string.uuid(),
+  userId: userId,
+  type: faker.helpers.arrayElement([
+    "TERMS_OF_SERVICE",
+    "PRIVACY_POLICY",
+    "ANALYTICS_COOKIES",
+    "NECESSARY_COOKIES",
+    "THIRD_PARTY_COOKIES",
+  ]),
+  action: faker.helpers.arrayElement(["GRANT", "REVOKE"]),
+  ipAddress: faker.internet.ip(),
+  userAgent: faker.internet.userAgent(),
+  version: "1.0",
+  createdAt: faker.date.past(),
+  ...overrides,
+});
+
+export const createRandomConsentLogs = (
+  userId: string,
+  count = 3,
+  overrides?: Partial<ConsentLog>,
+): ConsentLog[] => {
+  return Array.from({ length: count }, () =>
+    createRandomConsentLog(userId, overrides),
+  );
 };
 
 export const createRandomRefreshToken = (

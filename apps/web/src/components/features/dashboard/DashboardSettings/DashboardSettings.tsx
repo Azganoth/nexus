@@ -5,6 +5,7 @@ import { useProfile } from "$/hooks/useProfile";
 import { useUser } from "$/hooks/useUser";
 import { AccountDeletion } from "./AccountDeletion";
 import { AccountSettings } from "./AccountSettings";
+import { ConsentSettings } from "./ConsentSettings";
 import { ProfileSettings } from "./ProfileSettings";
 
 export function DashboardSettings() {
@@ -46,6 +47,7 @@ export function DashboardSettings() {
       <ProfileSettings profile={profile} update={updateProfile} />
       <div className="space-y-12">
         <AccountSettings user={user} update={updateUser} />
+        <ConsentSettings />
         <AccountDeletion />
       </div>
     </section>

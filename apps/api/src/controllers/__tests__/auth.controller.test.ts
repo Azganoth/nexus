@@ -59,7 +59,7 @@ describe("Auth Controller", () => {
   });
 
   describe("POST /auth/signup", () => {
-    it("creates a user and returns 201", async () => {
+    it("creates a user with consent and returns 201", async () => {
       mockSignupUser.mockResolvedValue(mockFullSession);
 
       const password = "Password123";
@@ -67,6 +67,8 @@ describe("Auth Controller", () => {
         email: mockUser.email,
         password,
         name: mockUser.name,
+        acceptTerms: true,
+        acceptPrivacy: true,
       });
 
       expect(response.status).toBe(201);
@@ -78,13 +80,50 @@ describe("Auth Controller", () => {
         mockUser.email,
         password,
         mockUser.name,
+        [
+          { type: "TERMS_OF_SERVICE", granted: true },
+          { type: "PRIVACY_POLICY", granted: true },
+        ],
       );
     });
 
+    it("should return 422 for missing consent fields", async () => {
+      const response = await supertest(app).post("/auth/signup").send({
+        email: mockUser.email,
+        password: "Password123",
+        name: mockUser.name,
+        // Missing acceptTerms and acceptPrivacy
+      });
+
+      expect(response.status).toBe(422);
+      expect(response.body.status).toBe("fail");
+      expect(response.body.data).toHaveProperty("acceptTerms");
+      expect(response.body.data).toHaveProperty("acceptPrivacy");
+    });
+
+    it("should return 422 for false consent values", async () => {
+      const response = await supertest(app).post("/auth/signup").send({
+        email: mockUser.email,
+        password: "Password123",
+        name: mockUser.name,
+        acceptTerms: false,
+        acceptPrivacy: false,
+      });
+
+      expect(response.status).toBe(422);
+      expect(response.body.status).toBe("fail");
+      expect(response.body.data).toHaveProperty("acceptTerms");
+      expect(response.body.data).toHaveProperty("acceptPrivacy");
+    });
+
     it("should return 422 for invalid input data", async () => {
-      const response = await supertest(app)
-        .post("/auth/signup")
-        .send({ email: "not-an-email", password: "short", name: "" });
+      const response = await supertest(app).post("/auth/signup").send({
+        email: "not-an-email",
+        password: "short",
+        name: "",
+        acceptTerms: true,
+        acceptPrivacy: true,
+      });
 
       expect(response.status).toBe(422);
       expect(response.body.status).toBe("fail");
@@ -211,6 +250,8 @@ describe("Auth Controller", () => {
         .send({ email: "not-a-valid-email" });
 
       expect(response.status).toBe(422);
+      expect(response.body.status).toBe("fail");
+      expect(response.body.data).toHaveProperty("email");
     });
   });
 

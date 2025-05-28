@@ -2,6 +2,8 @@
 
 import { ErrorHint } from "$/components/ui/ErrorHint";
 import { Input } from "$/components/ui/Input";
+import { LabeledSwitch } from "$/components/ui/LabeledSwitch";
+import { Link } from "$/components/ui/Link";
 import { LoadingButton } from "$/components/ui/LoadingButton";
 import { useAuth } from "$/contexts/AuthContext";
 import { useApiForm } from "$/hooks/useApiForm";
@@ -9,6 +11,7 @@ import { apiClient } from "$/lib/apiClient";
 import type { Session } from "@repo/shared/contracts";
 import { SIGNUP_SCHEMA } from "@repo/shared/schemas";
 import { useRouter } from "next/navigation";
+import { Controller } from "react-hook-form";
 import { z } from "zod/v4";
 
 const schema = SIGNUP_SCHEMA.extend({
@@ -25,6 +28,7 @@ export function Signup() {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors, isSubmitting },
   } = useApiForm({
     schema,
@@ -72,6 +76,42 @@ export function Signup() {
         autoComplete="new-password"
         error={errors.confirmPassword?.message}
         {...register("confirmPassword")}
+      />
+      <Controller
+        name="acceptTerms"
+        control={control}
+        render={({ field }) => (
+          <LabeledSwitch
+            className="w-full"
+            label="Termos de uso"
+            description={
+              <p className="text-dark-grey text-sm">
+                Eu aceito os <Link href="/tos">termos de uso</Link>.
+              </p>
+            }
+            checked={field.value}
+            onChange={field.onChange}
+            error={errors.acceptTerms?.message}
+          />
+        )}
+      />
+      <Controller
+        name="acceptPrivacy"
+        control={control}
+        render={({ field }) => (
+          <LabeledSwitch
+            className="w-full"
+            label="Privacidade"
+            description={
+              <p className="text-dark-grey text-sm">
+                Eu aceito os <Link href="/privacy">termos de uso</Link>.
+              </p>
+            }
+            checked={field.value}
+            onChange={field.onChange}
+            error={errors.acceptPrivacy?.message}
+          />
+        )}
       />
       <div className="mt-12 space-y-4">
         <ErrorHint className="text-center" error={errors.root?.message} />

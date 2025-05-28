@@ -1,4 +1,5 @@
 import { authRouter } from "$/routes/auth.routes";
+import { consentRouter } from "$/routes/consent.routes";
 import { healthRouter } from "$/routes/health.routes";
 import { linkRouter } from "$/routes/link.routes";
 import { profileRouter } from "$/routes/profile.routes";
@@ -9,6 +10,7 @@ import { Router } from "express";
 const router: Router = Router();
 
 router.use("/auth", authRouter);
+router.use("/consents", consentRouter);
 router.use("/health", healthRouter);
 router.use("/users", userRouter);
 router.use("/profiles", profileRouter);

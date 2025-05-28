@@ -84,3 +84,24 @@ export interface UserDataExport {
   links: AuthenticatedLink[] | null;
   exportDate: Date;
 }
+
+export type ConsentType =
+  | "TERMS_OF_SERVICE"
+  | "PRIVACY_POLICY"
+  | "NECESSARY_COOKIES"
+  | "ANALYTICS_COOKIES"
+  | "THIRD_PARTY_COOKIES";
+
+export type ConsentAction = "GRANT" | "REVOKE";
+
+export interface Consent {
+  id: string;
+  type: ConsentType;
+  action: ConsentAction;
+  ipAddress: string | null;
+  userAgent: string | null;
+  version: string;
+  createdAt: Date;
+}
+
+export type ConsentStatus = Record<ConsentType, boolean>;

@@ -1,10 +1,12 @@
 import bcrypt from "bcrypt";
-import { prisma } from ".";
+import { prisma, type ConsentLog, type Role } from ".";
 
 const users: {
   email: string;
   password: string;
   name: string;
+  role: Role;
+  consents: { type: ConsentLog["type"]; granted: boolean }[];
   profile: {
     username: string;
     displayName: string;
@@ -25,6 +27,14 @@ const users: {
     email: "alice@example.com",
     password: "password123",
     name: "Alice Ferreira",
+    role: "USER",
+    consents: [
+      { type: "TERMS_OF_SERVICE", granted: true },
+      { type: "PRIVACY_POLICY", granted: true },
+      { type: "NECESSARY_COOKIES", granted: true },
+      { type: "ANALYTICS_COOKIES", granted: true },
+      { type: "THIRD_PARTY_COOKIES", granted: true },
+    ],
     profile: {
       username: "alice",
       displayName: "Alice Ferreira",
@@ -67,6 +77,12 @@ const users: {
     email: "sarah@example.com",
     password: "password123",
     name: "Sarah Johnson",
+    role: "USER",
+    consents: [
+      { type: "TERMS_OF_SERVICE", granted: true },
+      { type: "PRIVACY_POLICY", granted: true },
+      { type: "NECESSARY_COOKIES", granted: true },
+    ],
     profile: {
       username: "sarah_creator",
       displayName: "Sarah J",
@@ -98,6 +114,14 @@ const users: {
     email: "mike@example.com",
     password: "mikepass456",
     name: "Mike Chen",
+    role: "USER",
+    consents: [
+      { type: "TERMS_OF_SERVICE", granted: true },
+      { type: "PRIVACY_POLICY", granted: true },
+      { type: "NECESSARY_COOKIES", granted: true },
+      { type: "ANALYTICS_COOKIES", granted: false },
+      { type: "THIRD_PARTY_COOKIES", granted: false },
+    ],
     profile: {
       username: "mike_tech",
       displayName: "Mike C",
@@ -126,6 +150,11 @@ const users: {
     email: "alex@example.com",
     password: "alexpass789",
     name: "Alex Wong",
+    role: "USER",
+    consents: [
+      { type: "TERMS_OF_SERVICE", granted: true },
+      { type: "PRIVACY_POLICY", granted: true },
+    ],
     profile: {
       username: "alex_fitness",
       displayName: "Alex W",
@@ -140,6 +169,8 @@ const users: {
     email: "jasmine@example.com",
     password: "jasminepass",
     name: "Jasmine Lee",
+    role: "USER",
+    consents: [],
     profile: {
       username: "jasmine_travels",
       displayName: "Jasmine L",
@@ -167,7 +198,7 @@ const users: {
 
 (async () => {
   try {
-    for (const { email, password, name, profile } of users) {
+    for (const { email, password, name, role, consents, profile } of users) {
       await prisma.user.upsert({
         where: { email },
         update: {},
@@ -175,6 +206,15 @@ const users: {
           email,
           password: await bcrypt.hash(password, 10),
           name,
+          role,
+          consentLogs: {
+            createMany: {
+              data: consents.map(({ type, granted }) => ({
+                type: type,
+                action: granted ? "GRANT" : "REVOKE",
+              })),
+            },
+          },
           profile: {
             create: {
               username: profile.username,

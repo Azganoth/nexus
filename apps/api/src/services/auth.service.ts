@@ -14,8 +14,10 @@ import {
 import type { PrismaTx } from "$/utils/types";
 import { Prisma, prisma } from "@repo/database";
 import type { Session, UserRole } from "@repo/shared/contracts";
+import type { CONSENT_SCHEMA } from "@repo/shared/schemas";
 import bcrypt from "bcrypt";
 import { randomBytes } from "node:crypto";
+import type { z } from "zod/v4";
 
 export interface FullSession extends Session {
   refreshToken: string;
@@ -68,6 +70,7 @@ export const signupUser = async (
   email: string,
   password: string,
   name: string,
+  requiredConsents: z.infer<typeof CONSENT_SCHEMA>[],
 ): Promise<FullSession> => {
   const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -84,6 +87,13 @@ export const signupUser = async (
             displayName: name,
             avatarUrl: `https://ui-avatars.com/api/?name=${name.replace(/ +/g, "+")}`,
           },
+        },
+        consentLogs: {
+          create: requiredConsents.map(({ granted, ...consentInfo }) => ({
+            ...consentInfo,
+            action: granted ? "GRANT" : "REVOKE",
+            version: "1.0",
+          })),
         },
       },
       select: AUTHENTICATED_USER_SELECT,

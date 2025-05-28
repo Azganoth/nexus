@@ -17,8 +17,10 @@ import {
   LOGIN_SCHEMA,
   RESET_PASSWORD_SCHEMA,
   SIGNUP_SCHEMA,
+  type CONSENT_SCHEMA,
 } from "@repo/shared/schemas";
 import type { Request, Response } from "express";
+import type { z } from "zod/v4";
 
 const setRefreshToken = (
   res: Response,
@@ -46,15 +48,20 @@ export const login = async (req: Request, res: Response) => {
 };
 
 export const signup = async (req: Request, res: Response) => {
-  const { email, password, name } = await validateSchema(
-    SIGNUP_SCHEMA,
-    req.body,
-  );
+  const { email, password, name, acceptTerms, acceptPrivacy } =
+    await validateSchema(SIGNUP_SCHEMA, req.body);
+
+  const requiredConsents: z.infer<typeof CONSENT_SCHEMA>[] = [
+    // Acceptance is already checked by zod in `SIGNUP_SCHEMA`.
+    { type: "TERMS_OF_SERVICE", granted: acceptTerms },
+    { type: "PRIVACY_POLICY", granted: acceptPrivacy },
+  ];
 
   const { refreshToken, refreshTokenExpires, ...session } = await signupUser(
     email,
     password,
     name,
+    requiredConsents,
   );
   setRefreshToken(res, refreshToken, refreshTokenExpires);
 
