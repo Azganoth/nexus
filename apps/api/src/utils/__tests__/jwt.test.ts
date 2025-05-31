@@ -38,7 +38,9 @@ describe("JWT Utils", () => {
 
     it("should throw an error for invalid signature", () => {
       const token = signRefreshToken(mockUser.id);
-      const tamperedToken = token.slice(0, -1) + "Y";
+      const tokenParts = token.split(".");
+      tokenParts[2] = tokenParts[2].split("").reverse().join("");
+      const tamperedToken = tokenParts.join(".");
 
       expect(() => verifyRefreshToken(tamperedToken)).toThrow(
         /invalid signature/,
