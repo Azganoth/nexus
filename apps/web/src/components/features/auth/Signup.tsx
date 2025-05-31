@@ -120,6 +120,7 @@ export function Signup() {
           className="bg-purple w-full min-w-56 text-white"
           type="submit"
           isPending={isSubmitting}
+          aria-label="Cadastrar"
         >
           Cadastrar
         </LoadingButton>

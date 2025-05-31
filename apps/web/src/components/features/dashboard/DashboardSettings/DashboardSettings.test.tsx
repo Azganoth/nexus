@@ -2,13 +2,13 @@ import {
   createRandomAuthenticatedProfile,
   createRandomAuthenticatedUser,
 } from "$/__tests__/factories";
-import { mockedHook } from "$/__tests__/helpers";
+import { mockedHook, renderWithProviders } from "$/__tests__/helpers";
 import { DashboardSettings } from "$/components/features/dashboard/DashboardSettings";
 import { useProfile } from "$/hooks/useProfile";
 import { useUser } from "$/hooks/useUser";
 import { ApiError } from "$/lib/errors";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 jest.mock("next/navigation");
@@ -36,7 +36,7 @@ describe("DashboardSettings", () => {
       isProfileLoading: false,
     });
 
-    render(<DashboardSettings />);
+    renderWithProviders(<DashboardSettings />);
 
     const skeleton = screen.getByLabelText(/carregando/i);
     expect(skeleton).toBeInTheDocument();
@@ -53,7 +53,7 @@ describe("DashboardSettings", () => {
       profileError,
     });
 
-    render(<DashboardSettings />);
+    renderWithProviders(<DashboardSettings />);
 
     expect(
       screen.getByText("Não foi possível carregar suas configurações."),
@@ -73,7 +73,7 @@ describe("DashboardSettings", () => {
       userError,
     });
 
-    render(<DashboardSettings />);
+    renderWithProviders(<DashboardSettings />);
 
     expect(
       screen.getByText("Não foi possível carregar suas configurações."),
@@ -93,7 +93,7 @@ describe("DashboardSettings", () => {
       isUserLoading: false,
     });
 
-    render(<DashboardSettings />);
+    renderWithProviders(<DashboardSettings />);
 
     expect(screen.getByText("Perfil")).toBeInTheDocument();
     expect(screen.getByText("Conta")).toBeInTheDocument();
@@ -117,7 +117,7 @@ describe("DashboardSettings", () => {
       isUserLoading: false,
     });
 
-    render(<DashboardSettings />);
+    renderWithProviders(<DashboardSettings />);
     await user.click(screen.getByRole("button", { name: "Tentar Novamente" }));
 
     expect(revalidateProfile).toHaveBeenCalled();
@@ -141,7 +141,7 @@ describe("DashboardSettings", () => {
       revalidateUser,
     });
 
-    render(<DashboardSettings />);
+    renderWithProviders(<DashboardSettings />);
     await user.click(screen.getByRole("button", { name: "Tentar Novamente" }));
 
     expect(revalidateUser).toHaveBeenCalled();

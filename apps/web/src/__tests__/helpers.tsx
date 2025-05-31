@@ -1,3 +1,5 @@
+import { AuthProvider } from "$/contexts/AuthContext";
+import { ConsentProvider } from "$/contexts/ConsentContext";
 import { jest } from "@jest/globals";
 import {
   render,
@@ -42,6 +44,22 @@ export const renderHookWithSWR = <Props, Result>(
 ) => {
   return renderHook(hook, {
     wrapper: TestSWRWrapper,
+    ...options,
+  });
+};
+
+export const ProvidersWrapper = ({ children }: { children: ReactNode }) => (
+  <AuthProvider>
+    <ConsentProvider>{children}</ConsentProvider>
+  </AuthProvider>
+);
+
+export const renderWithProviders = (
+  ui: ReactElement,
+  options?: Omit<RenderOptions, "wrapper">,
+) => {
+  return render(ui, {
+    wrapper: ProvidersWrapper,
     ...options,
   });
 };

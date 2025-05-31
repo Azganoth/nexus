@@ -1,10 +1,10 @@
 import { createRandomAuthenticatedProfile } from "$/__tests__/factories";
-import { mockedHook } from "$/__tests__/helpers";
+import { mockedHook, renderWithProviders } from "$/__tests__/helpers";
 import { DashboardProfile } from "$/components/features/dashboard/DashboardProfile/DashboardProfile";
 import { useProfile } from "$/hooks/useProfile";
 import { ApiError } from "$/lib/errors";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 jest.mock("$/hooks/useProfile");
@@ -24,7 +24,7 @@ describe("DashboardProfile", () => {
       isProfileLoading: true,
     });
 
-    render(<DashboardProfile />);
+    renderWithProviders(<DashboardProfile />);
 
     const skeleton = screen.getByLabelText(/carregando perfil/i);
     expect(skeleton).toBeInTheDocument();
@@ -41,7 +41,7 @@ describe("DashboardProfile", () => {
       profileError,
     });
 
-    render(<DashboardProfile />);
+    renderWithProviders(<DashboardProfile />);
 
     expect(
       screen.getByText("Não foi possível carregar seu perfil."),
@@ -57,7 +57,7 @@ describe("DashboardProfile", () => {
       profile: undefined,
     });
 
-    render(<DashboardProfile />);
+    renderWithProviders(<DashboardProfile />);
 
     expect(
       screen.getByText("Não foi possível carregar seu perfil."),
@@ -73,7 +73,7 @@ describe("DashboardProfile", () => {
       isProfileLoading: false,
     });
 
-    render(<DashboardProfile />);
+    renderWithProviders(<DashboardProfile />);
 
     expect(
       screen.getByRole("heading", { name: mockProfile.displayName, level: 2 }),
@@ -92,7 +92,7 @@ describe("DashboardProfile", () => {
       revalidateProfile,
     });
 
-    render(<DashboardProfile />);
+    renderWithProviders(<DashboardProfile />);
     await user.click(screen.getByRole("button", { name: /tentar novamente/i }));
 
     expect(revalidateProfile).toHaveBeenCalled();

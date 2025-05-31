@@ -1,12 +1,13 @@
-import { mockedHook } from "$/__tests__/helpers";
+import { createRandomAuthenticatedUser } from "$/__tests__/factories";
+import { mockedHook, renderWithProviders } from "$/__tests__/helpers";
 import { Signup } from "$/components/features/auth/Signup";
 import { apiClient } from "$/lib/apiClient";
 import { ApiError, ValidationError } from "$/lib/errors";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { ERRORS } from "@repo/shared/constants";
 import { spyConsole } from "@repo/shared/testUtils";
-import { render, screen, waitFor } from "@testing-library/react";
-import { userEvent } from "@testing-library/user-event";
+import { screen, waitFor } from "@testing-library/react";
+import { userEvent, type UserEvent } from "@testing-library/user-event";
 import { useRouter } from "next/navigation";
 
 jest.mock("next/navigation");
@@ -20,6 +21,41 @@ describe("Signup", () => {
     name: "New User",
     email: "new@example.com",
     password: "Password123",
+    confirmPassword: "Password123",
+    acceptTerms: true,
+    acceptPrivacy: true,
+  };
+
+  const fillAndSubmit = async (
+    user: UserEvent,
+    {
+      name = mockNewUser.name,
+      email = mockNewUser.email,
+      password = mockNewUser.password,
+      confirmPassword = mockNewUser.confirmPassword,
+      acceptTerms = mockNewUser.acceptTerms,
+      acceptPrivacy = mockNewUser.acceptPrivacy,
+    }: {
+      name?: string;
+      email?: string;
+      password?: string;
+      confirmPassword?: string;
+      acceptTerms?: boolean;
+      acceptPrivacy?: boolean;
+    } = {},
+  ) => {
+    await user.type(screen.getByLabelText("Nome"), name);
+    await user.type(screen.getByLabelText("Email"), email);
+    await user.type(screen.getByLabelText("Senha"), password);
+    await user.type(screen.getByLabelText("Confirme a senha"), confirmPassword);
+    if (acceptTerms) {
+      await user.click(screen.getByLabelText("Termos de uso"));
+    }
+    if (acceptPrivacy) {
+      await user.click(screen.getByLabelText("Privacidade"));
+    }
+
+    await user.click(screen.getByRole("button", { name: /cadastrar/i }));
   };
 
   beforeEach(() => {
@@ -35,23 +71,15 @@ describe("Signup", () => {
 
     const successData = {
       accessToken: "this-is-an-access-token",
-      user: {
-        id: "1dc8d7c75-b500-4500-bb21-b0cc2a4ead41",
-        email: mockNewUser.email,
+      user: createRandomAuthenticatedUser({
         name: mockNewUser.name,
-      },
+        email: mockNewUser.email,
+      }),
     };
     mockApiClient.post.mockResolvedValue(successData);
-    render(<Signup />);
+    renderWithProviders(<Signup />);
 
-    await user.type(screen.getByLabelText("Nome"), mockNewUser.name);
-    await user.type(screen.getByLabelText("Email"), mockNewUser.email);
-    await user.type(screen.getByLabelText("Senha"), mockNewUser.password);
-    await user.type(
-      screen.getByLabelText("Confirme a senha"),
-      mockNewUser.password,
-    );
-    await user.click(screen.getByRole("button", { name: /cadastrar/i }));
+    await fillAndSubmit(user);
 
     await waitFor(() => {
       expect(mockApiClient.post).toHaveBeenCalledWith("/auth/signup", {
@@ -67,19 +95,11 @@ describe("Signup", () => {
       const user = userEvent.setup();
 
       mockApiClient.post.mockImplementation(() => new Promise(() => {}));
-      render(<Signup />);
+      renderWithProviders(<Signup />);
 
-      await user.type(screen.getByLabelText("Nome"), mockNewUser.name);
-      await user.type(screen.getByLabelText("Email"), "new@example.com");
-      await user.type(screen.getByLabelText("Senha"), mockNewUser.password);
-      await user.type(
-        screen.getByLabelText("Confirme a senha"),
-        mockNewUser.password,
-      );
-      const submitButton = screen.getByRole("button", { name: /cadastrar/i });
-      await user.click(submitButton);
+      await fillAndSubmit(user);
 
-      expect(submitButton).toBeDisabled();
+      expect(screen.getByRole("button", { name: /cadastrar/i })).toBeDisabled();
     });
 
     it("displays a password mismatch error and then clears it", async () => {
@@ -87,17 +107,14 @@ describe("Signup", () => {
 
       const correctPassword = "Password123";
       const wrongPassword = "Password456";
-      render(<Signup />);
-      const passwordInput = screen.getByLabelText("Senha");
-      const confirmPasswordInput = screen.getByLabelText("Confirme a senha");
+      renderWithProviders(<Signup />);
 
-      await user.type(passwordInput, correctPassword);
-      await user.type(confirmPasswordInput, wrongPassword);
-      await user.click(screen.getByRole("button", { name: /cadastrar/i }));
+      await fillAndSubmit(user, { confirmPassword: wrongPassword });
 
       const errorMessage = await screen.findByText("As senhas não coincidem.");
       expect(errorMessage).toBeInTheDocument();
 
+      const confirmPasswordInput = screen.getByLabelText("Confirme a senha");
       await user.clear(confirmPasswordInput);
       await user.type(confirmPasswordInput, correctPassword);
 
@@ -109,12 +126,10 @@ describe("Signup", () => {
     it("sets aria-invalid to true on password confirmation when passwords do not match", async () => {
       const user = userEvent.setup();
 
-      render(<Signup />);
+      renderWithProviders(<Signup />);
       const confirmPasswordInput = screen.getByLabelText("Confirme a senha");
 
-      await user.type(screen.getByLabelText("Senha"), "Password123");
-      await user.type(confirmPasswordInput, "Password456");
-      await user.click(screen.getByRole("button", { name: /cadastrar/i }));
+      await fillAndSubmit(user, { confirmPassword: "Password456" });
 
       expect(
         await screen.findByText("As senhas não coincidem."),
@@ -128,16 +143,9 @@ describe("Signup", () => {
       mockApiClient.post.mockRejectedValue(
         new ValidationError({ email: ["O email já está em uso."] }),
       );
-      render(<Signup />);
+      renderWithProviders(<Signup />);
 
-      await user.type(screen.getByLabelText("Nome"), mockNewUser.name);
-      await user.type(screen.getByLabelText("Email"), mockNewUser.email);
-      await user.type(screen.getByLabelText("Senha"), mockNewUser.password);
-      await user.type(
-        screen.getByLabelText("Confirme a senha"),
-        mockNewUser.password,
-      );
-      await user.click(screen.getByRole("button", { name: /cadastrar/i }));
+      await fillAndSubmit(user);
 
       expect(
         await screen.findByText("O email já está em uso."),
@@ -153,16 +161,9 @@ describe("Signup", () => {
       );
       mockApiClient.post.mockRejectedValue(unknownError);
       spyConsole("error", [unknownError]);
-      render(<Signup />);
+      renderWithProviders(<Signup />);
 
-      await user.type(screen.getByLabelText("Nome"), mockNewUser.name);
-      await user.type(screen.getByLabelText("Email"), mockNewUser.email);
-      await user.type(screen.getByLabelText("Senha"), mockNewUser.password);
-      await user.type(
-        screen.getByLabelText("Confirme a senha"),
-        mockNewUser.password,
-      );
-      await user.click(screen.getByRole("button", { name: /cadastrar/i }));
+      await fillAndSubmit(user);
 
       const expectedMessage = `${ERRORS.UNEXPECTED_ERROR} Tente novamente.`;
       expect(await screen.findByText(expectedMessage)).toBeInTheDocument();

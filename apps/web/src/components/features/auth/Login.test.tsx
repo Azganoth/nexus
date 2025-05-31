@@ -1,11 +1,11 @@
-import { mockedHook } from "$/__tests__/helpers";
+import { mockedHook, renderWithProviders } from "$/__tests__/helpers";
 import { Login } from "$/components/features/auth/Login";
 import { apiClient } from "$/lib/apiClient";
 import { ApiError } from "$/lib/errors";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { ERRORS } from "@repo/shared/constants";
 import { spyConsole } from "@repo/shared/testUtils";
-import { render, screen, waitFor } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { useRouter } from "next/navigation";
 
@@ -32,7 +32,7 @@ describe("LoginForm", () => {
       user: { id: "1", email: "test@example.com", name: "Test User" },
     };
     mockApiClient.post.mockResolvedValue(successData);
-    render(<Login />);
+    renderWithProviders(<Login />);
 
     await user.type(screen.getByLabelText("Email"), "test@example.com");
     await user.type(screen.getByLabelText("Senha"), "password123");
@@ -52,7 +52,7 @@ describe("LoginForm", () => {
 
       // Make the promise hang so the intermediate state can be checked
       mockApiClient.post.mockImplementation(() => new Promise(() => {}));
-      render(<Login />);
+      renderWithProviders(<Login />);
 
       await user.type(screen.getByLabelText("Email"), "test@example.com");
       await user.type(screen.getByLabelText("Senha"), "password123");
@@ -65,7 +65,7 @@ describe("LoginForm", () => {
     it("displays a validation error and then clears it when the user corrects the input", async () => {
       const user = userEvent.setup();
 
-      render(<Login />);
+      renderWithProviders(<Login />);
       const emailInput = screen.getByLabelText("Email");
       const submitButton = screen.getByRole("button", { name: /entrar/i });
 
@@ -86,7 +86,7 @@ describe("LoginForm", () => {
     it("sets aria-invalid to true on an input when a validation error occurs", async () => {
       const user = userEvent.setup();
 
-      render(<Login />);
+      renderWithProviders(<Login />);
 
       const emailInput = screen.getByLabelText("Email");
       await user.click(screen.getByRole("button", { name: /entrar/i }));
@@ -104,7 +104,7 @@ describe("LoginForm", () => {
       mockApiClient.post.mockRejectedValue(
         new ApiError("INCORRECT_CREDENTIALS", errorMessage),
       );
-      render(<Login />);
+      renderWithProviders(<Login />);
 
       await user.type(screen.getByLabelText("Email"), "test@example.com");
       await user.type(screen.getByLabelText("Senha"), "wrong-password");
@@ -123,7 +123,7 @@ describe("LoginForm", () => {
       );
       mockApiClient.post.mockRejectedValue(unknownError);
       spyConsole("error", [unknownError]);
-      render(<Login />);
+      renderWithProviders(<Login />);
 
       await user.type(screen.getByLabelText("Email"), "test@example.com");
       await user.type(screen.getByLabelText("Senha"), "password123");

@@ -1,21 +1,19 @@
 import { createRandomAuthenticatedProfile } from "$/__tests__/factories";
-import { mockedHook } from "$/__tests__/helpers";
+import { mockedHook, renderWithProviders } from "$/__tests__/helpers";
 import { DashboardHeader } from "$/components/features/dashboard/DashboardHeader";
-import { useAuth } from "$/contexts/AuthContext";
 import { useProfile } from "$/hooks/useProfile";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
-import { render, screen, waitFor } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { usePathname, useRouter } from "next/navigation";
 
 jest.mock("next/navigation");
-jest.mock("$/hooks/useAuth");
 jest.mock("$/hooks/useProfile");
+jest.mock("$/lib/apiClient");
 
 const mockUseRouter = mockedHook(useRouter);
 const mockUsePathname = mockedHook(usePathname);
 
-const mockUseAuth = mockedHook(useAuth);
 const mockUseProfile = mockedHook(useProfile);
 
 describe("DashboardHeader", () => {
@@ -23,9 +21,6 @@ describe("DashboardHeader", () => {
 
   beforeEach(() => {
     jest.resetAllMocks();
-    mockUseAuth.mockReturnValue({
-      logout: jest.fn(async () => {}),
-    });
     mockUseProfile.mockReturnValue({
       profile: mockProfile,
       isProfileLoading: false,
@@ -37,7 +32,7 @@ describe("DashboardHeader", () => {
       profile: undefined,
       isProfileLoading: true,
     });
-    render(<DashboardHeader />);
+    renderWithProviders(<DashboardHeader />);
 
     expect(
       screen.getByRole("banner", { name: /carregando/i }),
@@ -47,7 +42,7 @@ describe("DashboardHeader", () => {
 
   it("renders dashboard header with correct title and navigation", () => {
     mockUsePathname.mockReturnValue("/dashboard");
-    render(<DashboardHeader />);
+    renderWithProviders(<DashboardHeader />);
 
     expect(
       screen.getByRole("banner", { name: /cabeçalho/i }),
@@ -71,7 +66,7 @@ describe("DashboardHeader", () => {
 
   it("renders settings header with correct title and logout button", () => {
     mockUsePathname.mockReturnValue("/dashboard/settings");
-    render(<DashboardHeader />);
+    renderWithProviders(<DashboardHeader />);
 
     expect(
       screen.getByRole("heading", { name: "Configurações" }),
@@ -95,10 +90,11 @@ describe("DashboardHeader", () => {
     const mockPush = jest.fn();
     mockUseRouter.mockImplementation(() => ({ push: mockPush }));
     mockUsePathname.mockReturnValue("/dashboard/settings");
-    render(<DashboardHeader />);
 
+    renderWithProviders(<DashboardHeader />);
     const logout = screen.getByRole("button", { name: /sair/i });
     await user.click(logout);
+
     expect(mockPush).toHaveBeenCalled();
     await waitFor(() => {
       expect(mockPush).toHaveBeenCalledWith("/");
@@ -107,7 +103,7 @@ describe("DashboardHeader", () => {
 
   it("renders preview header with correct title and navigation", () => {
     mockUsePathname.mockReturnValue("/dashboard/preview");
-    render(<DashboardHeader />);
+    renderWithProviders(<DashboardHeader />);
 
     expect(screen.getByRole("heading", { name: "Prévia" })).toBeInTheDocument();
 
@@ -130,15 +126,16 @@ describe("DashboardHeader", () => {
       profile: mockProfile,
       isProfileLoading: false,
     });
-    render(<DashboardHeader />);
+    renderWithProviders(<DashboardHeader />);
+
     const visitarLink = screen.getByLabelText(/visitar/i);
     expect(visitarLink).toHaveAttribute("href", `/p/${mockProfile.username}`);
   });
 
   it("applies correct aria attributes", () => {
     mockUsePathname.mockReturnValue("/dashboard");
+    renderWithProviders(<DashboardHeader />);
 
-    render(<DashboardHeader />);
     const banner = screen.getByRole("banner");
     expect(banner).toHaveAttribute("aria-label", "Cabeçalho do dashboard");
   });
