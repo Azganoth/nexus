@@ -14,6 +14,9 @@ import morgan from "morgan";
 
 export const createServer = (): Express => {
   const server = express();
+
+  server.set("trust proxy", 1); // Trust Fly.io proxy
+
   server
     .use(
       morgan(IS_DEV ? "dev" : "combined", {
