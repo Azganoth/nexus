@@ -23,6 +23,8 @@ RUN pnpx turbo prune ${PROJECT} --docker
 # Stage 3: Build
 FROM base AS builder
 ARG PROJECT
+ARG NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
 
 WORKDIR /app
 # Copy relevant files
