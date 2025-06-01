@@ -6,6 +6,7 @@ on:
       - main
       - dev
   pull_request:
+  workflow_dispatch:
 
 jobs:
   test:
@@ -75,7 +76,8 @@ jobs:
       - name: Deploy to prod database
         run: pnpm db:migrate:deploy
         env:
-          DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DIRECT_DATABASE_URL: ${{ secrets.DIRECT_DATABASE_URL }}
 
   deploy:
     name: Deploy
