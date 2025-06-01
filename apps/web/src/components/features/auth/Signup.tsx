@@ -33,11 +33,13 @@ export function Signup() {
   } = useApiForm({
     schema,
     mutationFn: (data) => {
-      const { name, email, password } = data;
+      const { name, email, password, acceptTerms, acceptPrivacy } = data;
       return apiClient.post<Session>("/auth/signup", {
         name,
         email,
         password,
+        acceptTerms,
+        acceptPrivacy,
       });
     },
     onSuccess: async (session) => {
