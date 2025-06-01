@@ -86,6 +86,8 @@ describe("Signup", () => {
         name: mockNewUser.name,
         email: mockNewUser.email,
         password: mockNewUser.password,
+        acceptTerms: mockNewUser.acceptTerms,
+        acceptPrivacy: mockNewUser.acceptPrivacy,
       });
     });
   });
