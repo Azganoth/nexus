@@ -18,7 +18,7 @@ const nextConfig = {
               font-src 'self' data:;
               form-action 'self';
               frame-ancestors 'none';
-              img-src 'self' blob: data: ${process.env.NEXT_PUBLIC_API_URL};
+              img-src 'self' blob: data: ${process.env.NEXT_PUBLIC_API_URL} ui-avatars.com pub-f4942703ba94414ab97ca08e29bff222.r2.dev;
               object-src 'none';
               script-src 'self' 'unsafe-eval' 'unsafe-inline';
               script-src-attr 'none';
