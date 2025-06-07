@@ -30,9 +30,9 @@ describe("Avatar Controller", () => {
 
   describe("POST /avatars/upload-url", () => {
     const validBody = {
-      fileExt: "png",
+      fileExt: "png" as const,
       fileSize: 1024,
-      fileType: "image/png",
+      fileType: "image/png" as const,
       fileHash: "a".repeat(64),
     };
     const mockResult: AvatarUploadUrls = {

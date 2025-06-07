@@ -1,5 +1,5 @@
 # Stage 1: Base
-FROM node:22.13.0-alpine AS base
+FROM node:22.17.0-alpine AS base
 RUN apk update && \
   apk add --no-cache libc6-compat
 

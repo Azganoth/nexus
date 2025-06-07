@@ -47,7 +47,7 @@ describe("Consent Controller", () => {
       mockPrisma.user.findUnique.mockResolvedValue(
         mockAuthenticatedUser as User,
       );
-      const consent = { type: "ANALYTICS_COOKIES", granted: true };
+      const consent = { type: "ANALYTICS_COOKIES" as const, granted: true };
 
       const response = await supertest(app)
         .post("/consents/log")
@@ -113,9 +113,9 @@ describe("Consent Controller", () => {
       );
 
       const consentBatch = [
-        { type: "ANALYTICS_COOKIES", granted: true },
-        { type: "THIRD_PARTY_COOKIES", granted: false },
-        { type: "NECESSARY_COOKIES", granted: true },
+        { type: "ANALYTICS_COOKIES" as const, granted: true },
+        { type: "THIRD_PARTY_COOKIES" as const, granted: false },
+        { type: "NECESSARY_COOKIES" as const, granted: true },
       ];
 
       const response = await supertest(app)
