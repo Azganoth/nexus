@@ -16,7 +16,7 @@ import { z } from "zod/v4";
 
 const schema = SIGNUP_SCHEMA.extend({
   confirmPassword: z.string(),
-}).refine((data) => data.password === data.confirmPassword, {
+}).refine((data) => !!data.password && data.password === data.confirmPassword, {
   message: "As senhas não coincidem.",
   path: ["confirmPassword"],
 });
@@ -45,6 +45,14 @@ export function Signup() {
     onSuccess: async (session) => {
       await login(session);
       router.push("/dashboard");
+    },
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      acceptTerms: false,
+      acceptPrivacy: false,
     },
   });
 

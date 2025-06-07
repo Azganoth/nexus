@@ -28,6 +28,10 @@ export function Login() {
     },
     expectedErrors: ["INCORRECT_CREDENTIALS"],
     onUnexpectedError: unknownError,
+    defaultValues: {
+      email: "",
+      password: "",
+    },
   });
 
   return (

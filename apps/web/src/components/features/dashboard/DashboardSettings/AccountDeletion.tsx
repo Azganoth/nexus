@@ -29,6 +29,9 @@ export function AccountDeletion() {
       unknownError(error);
       setShowDeleteModal(false);
     },
+    defaultValues: {
+      password: "",
+    },
   });
 
   return (

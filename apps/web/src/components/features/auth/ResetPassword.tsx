@@ -40,6 +40,10 @@ export function ResetPassword({ token }: ResetPasswordProps) {
       toast.success("Senha alterada com sucesso.");
       router.push("/login");
     },
+    defaultValues: {
+      password: "",
+      confirmPassword: "",
+    },
   });
 
   return (

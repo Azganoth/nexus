@@ -20,8 +20,8 @@ const getProfileFormData = ({
   isPublic,
 }: AuthenticatedProfile) => ({
   username,
-  seoTitle: seoTitle ?? undefined,
-  seoDescription: seoDescription ?? undefined,
+  seoTitle: seoTitle ?? "",
+  seoDescription: seoDescription ?? "",
   isPublic,
 });
 

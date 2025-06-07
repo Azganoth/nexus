@@ -41,6 +41,9 @@ export function ForgotPassword() {
       setCountdown(TIMEOUT);
       toast.success("Email de redefinição enviado!");
     },
+    defaultValues: {
+      email: "",
+    },
   });
 
   const handleResend = async () => {

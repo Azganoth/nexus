@@ -35,7 +35,7 @@ export function EditProfileModal({
     },
     defaultValues: {
       displayName: profile.displayName,
-      bio: profile.bio ?? undefined,
+      bio: profile.bio ?? "",
     },
   });
 
