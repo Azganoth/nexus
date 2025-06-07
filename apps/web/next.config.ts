@@ -63,17 +63,10 @@ const nextConfig = {
     dangerouslyAllowSVG: true,
     // Disable any scripts (mitigates XSS attacks through svgs)
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+    unoptimized: true,
     remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "ui-avatars.com",
-        pathname: "/api/**",
-      },
-      {
-        protocol: "https",
-        hostname: "pub-f4942703ba94414ab97ca08e29bff222.r2.dev",
-        pathname: "/**",
-      },
+      new URL("https://ui-avatars.com/api/**"),
+      new URL("https://pub-f4942703ba94414ab97ca08e29bff222.r2.dev/**"),
     ],
   },
 } satisfies NextConfig;
