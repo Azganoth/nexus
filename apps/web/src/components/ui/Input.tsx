@@ -37,10 +37,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       <div className={className} data-testid="input-wrapper">
         <div
           className={clsx(
-            "border-light-grey hover:border-medium-grey relative grid cursor-text rounded-lg border bg-white px-4 py-2 -outline-offset-2",
+            "border-stardust hover:border-slate relative grid cursor-text rounded-lg border bg-white px-4 py-2 -outline-offset-2 transition-colors",
             error
               ? "outline-red outline-2"
-              : "outline-black focus-within:outline-2",
+              : "outline-charcoal focus-within:outline-2",
           )}
           onClick={focus}
           data-testid="input-container"
@@ -55,9 +55,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               internalRef.current = node;
             }}
             id={inputId}
-            className="text-md placeholder:text-medium-grey peer mt-[var(--text-xxs--line-height)] w-full outline-none"
+            className="text-md placeholder:text-slate peer mt-[var(--text-xxs--line-height)] w-full outline-none"
             type={inputType}
-            placeholder=" " // NOTE: :placeholder-shown only works if theres a non-empty placeholder
+            placeholder=" " // NOTE: `:placeholder-shown` only works if theres a non-empty placeholder
             aria-invalid={!!error}
             aria-describedby={errorId}
             {...props}
@@ -65,7 +65,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           {label && (
             <label
               className={clsx(
-                "text-medium-grey text-md absolute left-4 top-0 origin-top-left translate-y-4 cursor-text font-bold transition-[font-size,translate]",
+                "text-slate text-md absolute left-4 top-0 origin-top-left translate-y-4 cursor-text font-bold transition-[font-size,translate]",
                 // Smaller label when the input is focused or has value.
                 "peer-not-placeholder-shown:text-xxs peer-not-placeholder-shown:translate-y-2 peer-focus:text-xxs peer-focus:translate-y-2",
               )}
@@ -77,7 +77,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           {isPasswordField && (
             <button
               type="button"
-              className="text-medium-grey focus-ring min-w-7.5 absolute right-3 top-1/2 -translate-y-1/2 hover:text-black"
+              className="text-slate focus-ring min-w-7.5 hover:text-charcoal btn-icon absolute right-3 top-1/2 -translate-y-1/2"
               onClick={() => setShowPassword((p) => !p)}
               aria-label={showPassword ? "Esconder senha" : "Mostrar senha"}
             >

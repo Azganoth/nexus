@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "$/components/ui/Button";
 import { ErrorDisplay } from "$/components/ui/ErrorDisplay";
 import { useProfile } from "$/hooks/useProfile";
 import { useUser } from "$/hooks/useUser";
@@ -95,12 +96,9 @@ function ErrorState({ onRetry }: { onRetry: () => void }) {
       <ErrorDisplay
         title="Não foi possível carregar suas configurações."
         action={
-          <button
-            className="btn bg-purple focus-ring mt-8 text-white"
-            onClick={onRetry}
-          >
+          <Button className="mt-8" onClick={onRetry} variant="accent">
             Tentar Novamente
-          </button>
+          </Button>
         }
       />
     </section>

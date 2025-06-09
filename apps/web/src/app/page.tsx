@@ -24,15 +24,15 @@ export default function Page() {
           </h1>
           <div className="tablet:order-last flex gap-4 self-center">
             <Link
-              className="btn bg-purple text-white"
-              variant="unstyled"
+              className="btn bg-purple hover:bg-purple/90 text-white"
+              variant="none"
               href="/signup"
             >
               Cadastrar
             </Link>
             <Link
-              className="btn bg-black text-white"
-              variant="unstyled"
+              className="btn bg-charcoal hover:bg-charcoal/90 text-white"
+              variant="none"
               href="/login"
             >
               Logar
@@ -63,7 +63,7 @@ export default function Page() {
           </ul>
         </article>
         <Image
-          className="max-desktop:max-w-[311px] self-start rounded-[3rem] shadow-2xl"
+          className="max-desktop:max-w-[311px] max-tablet:mx-auto self-start rounded-[3rem] shadow-2xl"
           src={profile1}
           alt="Example of a profile page."
         />

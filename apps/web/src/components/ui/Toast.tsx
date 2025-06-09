@@ -40,7 +40,7 @@ function Toast({ id, message, variant }: ToastProps) {
   };
 
   return (
-    <div className="ring-light-grey flex items-center gap-3 rounded-lg bg-white p-4 shadow-2xl ring-1">
+    <div className="ring-stardust flex items-center gap-3 rounded-lg bg-white p-4 shadow-2xl ring-1">
       {variant && (
         <Icon
           className={clsx(
@@ -57,7 +57,7 @@ function Toast({ id, message, variant }: ToastProps) {
         {message}
       </div>
       <button
-        className="text-light-grey ml-auto text-lg"
+        className="text-stardust ml-auto text-lg"
         onClick={dismiss}
         aria-label="Fechar notificação"
       >

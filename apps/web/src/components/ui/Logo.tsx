@@ -14,11 +14,7 @@ interface LogoProps {
 
 export function Logo({ className, variant }: LogoProps) {
   return (
-    <Link
-      className={clsx("block w-fit", className)}
-      href="/"
-      variant="unstyled"
-    >
+    <Link className={clsx("block w-fit", className)} href="/" variant="none">
       {variant === "icon-only" ? (
         <Image src={logo} alt={description} />
       ) : (

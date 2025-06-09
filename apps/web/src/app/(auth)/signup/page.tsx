@@ -11,13 +11,13 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <main className="my-auto w-full max-w-[350px] py-12">
+    <main className="m-auto w-full max-w-[350px] py-12">
       <h1 className="mb-12 text-center text-xl font-semibold">
         Crie uma conta
       </h1>
       <Signup />
-      <div className="mt-8 text-center">
-        <span className="text-medium-grey text-sm font-bold">
+      <div className="mt-8 flex flex-col items-center gap-4">
+        <span className="text-slate text-sm font-bold">
           Já tem uma conta? <Link href="/login">Faça login!</Link>
         </span>
       </div>

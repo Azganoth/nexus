@@ -81,12 +81,12 @@ export default async function Page({ params }: PageProps) {
           <div
             className={clsx(
               "flex w-full max-w-64 items-center gap-4",
-              "before:bg-medium-grey before:h-px before:w-full before:content-['']",
-              "after:bg-medium-grey after:h-px after:w-full after:content-['']",
+              "before:bg-slate before:h-px before:w-full before:content-['']",
+              "after:bg-slate after:h-px after:w-full after:content-['']",
             )}
           >
-            <div className="border-medium-grey rounded-full border p-2">
-              <Icon className="icon-[fa6-solid--lock] text-md text-medium-grey" />
+            <div className="border-slate rounded-full border p-2">
+              <Icon className="icon-[fa6-solid--lock] text-md text-slate" />
             </div>
           </div>
           <h1 className="text-center font-bold">Este perfil é privado.</h1>

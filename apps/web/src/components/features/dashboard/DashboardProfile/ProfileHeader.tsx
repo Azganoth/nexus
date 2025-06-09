@@ -22,13 +22,13 @@ export function ProfileHeader({ profile, updateProfile }: ProfileHeaderProps) {
       <div className="min-w-0">
         <h2 className="truncate font-bold">{profile.displayName}</h2>
         {profile.bio && (
-          <p className="text-dark-grey line-clamp-2 text-xs font-bold">
+          <p className="text-comet line-clamp-2 text-xs font-semibold">
             {profile.bio}
           </p>
         )}
       </div>
       <button
-        className="text-dark-grey focus-ring hover:text-black"
+        className="btn-icon focus-ring text-comet hover:text-charcoal"
         type="button"
         aria-label="Editar detalhes do perfil"
         onClick={() => setIsEditModalOpen(true)}

@@ -1,6 +1,6 @@
+import { Button } from "$/components/ui/Button";
 import { ErrorHint } from "$/components/ui/ErrorHint";
 import { Input } from "$/components/ui/Input";
-import { LoadingButton } from "$/components/ui/LoadingButton";
 import { Modal } from "$/components/ui/Modal";
 import { useApiForm } from "$/hooks/useApiForm";
 import { apiClient } from "$/lib/apiClient";
@@ -66,13 +66,14 @@ export function EditLinkModal({
         />
         <div className="mt-12 space-y-4">
           <ErrorHint className="text-center" error={errors.root?.message} />
-          <LoadingButton
+          <Button
+            className="w-full"
             type="submit"
-            isPending={isSubmitting}
-            className="bg-purple w-full text-white"
+            variant="accent"
+            isLoading={isSubmitting}
           >
             Salvar
-          </LoadingButton>
+          </Button>
         </div>
       </form>
     </Modal>

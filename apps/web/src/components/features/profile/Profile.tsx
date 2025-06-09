@@ -12,7 +12,7 @@ interface ProfileProps {
 
 export function Profile({ profile }: ProfileProps) {
   return (
-    <section className="flex max-w-[400px] flex-col items-center">
+    <section className="flex min-h-[500px] min-w-[300px] max-w-[400px] flex-col items-center">
       <Image
         className="rounded-full"
         width={128}
@@ -25,17 +25,21 @@ export function Profile({ profile }: ProfileProps) {
         {profile.displayName}
       </h1>
       {profile.bio && (
-        <p className="text-dark-grey mt-2 text-center font-bold">
+        <p className="text-comet mt-2 text-center font-semibold">
           {profile.bio}
         </p>
       )}
       <ul className="mt-12 w-full space-y-4">
-        {profile.links.map((link) => (
-          <li key={link.url}>
+        {profile.links.map((link, index) => (
+          <li
+            key={link.url}
+            className="animate-fade-in-slide-up"
+            style={{ animationDelay: `${index * 200}ms` }}
+          >
             <Link
-              className="rounded-4xl focus:outline-purple block bg-black px-16 py-4 text-center font-bold tracking-wide text-white hover:bg-black/90 focus:outline-2"
+              className="rounded-4xl focus:outline-purple bg-charcoal hover:bg-charcoal/90 block px-16 py-4 text-center font-bold tracking-wide text-white transition-all hover:-translate-y-1 hover:shadow-lg focus:-translate-y-1 focus:outline-2"
               href={link.url}
-              variant="unstyled"
+              variant="none"
               newTab
             >
               {link.title}

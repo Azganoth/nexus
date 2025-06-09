@@ -45,11 +45,11 @@ export function LabeledSwitch({
           (isValidElement(description) ? (
             description
           ) : (
-            <p className="text-dark-grey text-sm" id={descriptionId}>
+            <p className="text-comet text-sm" id={descriptionId}>
               {description}
             </p>
           ))}
-        <ErrorHint id={errorId} error={error} />
+        <ErrorHint className="text-sm" id={errorId} error={error} />
       </div>
     </div>
   );

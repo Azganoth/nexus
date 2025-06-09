@@ -1,4 +1,4 @@
-import { LoadingButton } from "$/components/ui/LoadingButton";
+import { Button } from "$/components/ui/Button";
 import { Modal } from "$/components/ui/Modal";
 import { apiClient } from "$/lib/apiClient";
 import type { AuthenticatedLink } from "@repo/shared/contracts";
@@ -38,21 +38,16 @@ export function DeleteLinkModal({
           <strong>&ldquo;{link.title}&rdquo;</strong>?
         </p>
         <div className="mt-12 flex gap-4">
-          <LoadingButton
-            className="bg-red w-full max-w-48 text-white"
+          <Button
+            className="w-full max-w-48"
             type="submit"
-            isPending={isDeleting}
             onClick={handleConfirm}
+            variant="danger"
+            isLoading={isDeleting}
           >
             Excluir
-          </LoadingButton>
-          <button
-            type="button"
-            onClick={onClose}
-            className="btn focus-ring bg-black text-white"
-          >
-            Cancelar
-          </button>
+          </Button>
+          <Button onClick={onClose}>Cancelar</Button>
         </div>
       </div>
     </Modal>

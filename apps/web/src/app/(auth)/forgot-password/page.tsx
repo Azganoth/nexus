@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <main className="my-auto w-full max-w-[350px] py-12">
+    <main className="m-auto w-full max-w-[350px] py-12">
       <h1 className="mb-12 text-center text-xl font-semibold">
         Recupere sua conta
       </h1>

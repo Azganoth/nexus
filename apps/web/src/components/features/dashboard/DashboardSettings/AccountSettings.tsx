@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "$/components/ui/Button";
 import { Input } from "$/components/ui/Input";
 import { toast } from "$/components/ui/Toast";
 import { useApiForm } from "$/hooks/useApiForm";
@@ -67,13 +68,9 @@ export function AccountSettings({ user, update }: AccountSettingsProps) {
           {...register("name")}
         />
       </form>
-      <button
-        className="btn focus-ring mt-8 w-full bg-black text-white"
-        type="button"
-        onClick={exportData}
-      >
+      <Button className="mt-8 w-full" onClick={exportData}>
         Exportar dados
-      </button>
+      </Button>
     </div>
   );
 }

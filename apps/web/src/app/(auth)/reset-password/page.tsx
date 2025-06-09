@@ -26,7 +26,7 @@ export default async function Page({
         fallback={
           <div className="grid place-items-center gap-4">
             <p className="text-xl font-bold">Verificando token...</p>
-            <Icon className="text-medium-grey icon-[svg-spinners--3-dots-move] text-2xl" />
+            <Icon className="text-slate icon-[svg-spinners--3-dots-move] text-2xl" />
           </div>
         }
       >

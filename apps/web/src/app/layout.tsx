@@ -17,7 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={inter.className}>
-      <body className="text-md font-inter bg-white text-black">
+      <body className="text-md font-inter text-charcoal bg-white">
         <AuthProvider>
           <ConsentProvider>
             {children}

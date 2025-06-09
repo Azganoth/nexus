@@ -40,18 +40,13 @@ export function Switch({
     onChange?.(newValue);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
-    if (e.key === " " || e.key === "Enter") {
-      e.preventDefault();
-      handleToggle();
-    }
-  };
-
   return (
     <button
       className={clsx(
-        "focus-ring inline-flex h-[1.5em] w-[2.75em] min-w-[2.75em] items-center rounded-full disabled:cursor-not-allowed",
-        isChecked ? "bg-purple" : "bg-light-grey",
+        "focus-ring inline-flex h-[1.5em] w-[2.75em] min-w-[2.75em] items-center rounded-full transition-all disabled:cursor-not-allowed",
+        isChecked
+          ? "bg-purple hover:bg-purple/90"
+          : "bg-stardust hover:bg-slate/50",
         className,
       )}
       id={toggleId}
@@ -60,13 +55,12 @@ export function Switch({
       aria-checked={isChecked}
       aria-disabled={disabled}
       onClick={handleToggle}
-      onKeyDown={handleKeyDown}
       disabled={disabled}
       {...props}
     >
       <span
         className={clsx(
-          "inline-block h-[1em] w-[1em] rounded-full bg-white transition-transform",
+          "ease-spring inline-block h-[1em] w-[1em] rounded-full bg-white transition-transform duration-300",
           isChecked
             ? "translate-x-[calc(100%+0.45em)]"
             : "translate-x-[0.25em]",

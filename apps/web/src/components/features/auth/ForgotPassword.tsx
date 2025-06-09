@@ -1,11 +1,11 @@
 "use client";
 
+import { Button } from "$/components/ui/Button";
 import { ErrorHint } from "$/components/ui/ErrorHint";
 import { Icon } from "$/components/ui/Icon";
 import { Input } from "$/components/ui/Input";
 import { SlidingView } from "$/components/ui/layout/SlidingView";
 import { Link } from "$/components/ui/Link";
-import { LoadingButton } from "$/components/ui/LoadingButton";
 import { toast } from "$/components/ui/Toast";
 import { useApiForm } from "$/hooks/useApiForm";
 import { apiClient } from "$/lib/apiClient";
@@ -76,17 +76,18 @@ export function ForgotPassword() {
           />
           <div className="mt-12 space-y-4">
             <ErrorHint className="text-center" error={errors.root?.message} />
-            <LoadingButton
-              className="bg-purple w-full min-w-56 text-white"
+            <Button
+              className="w-full min-w-56"
               type="submit"
-              isPending={isSubmitting}
+              variant="accent"
+              isLoading={isSubmitting}
             >
               Redefinir senha
-            </LoadingButton>
+            </Button>
           </div>
         </form>
         <div className="mt-8 text-center">
-          <span className="text-dark-grey text-sm font-bold">
+          <span className="text-comet text-sm font-bold">
             Não tem uma conta? <Link href="/signup">Cadastre-se agora!</Link>
           </span>
         </div>
@@ -96,7 +97,7 @@ export function ForgotPassword() {
       <div className="flex w-full flex-col text-center">
         <button
           onClick={() => setView("sending")}
-          className="text-medium-grey hover:text-black"
+          className="btn-icon text-slate hover:text-charcoal"
           aria-label="Voltar"
         >
           <Icon className="icon-[fa6-solid--arrow-left] mx-auto text-xl" />
@@ -107,19 +108,20 @@ export function ForgotPassword() {
             <strong className="font-bold">{submittedEmail}</strong> com as
             instruções para redefinir sua senha.
           </p>
-          <p className="text-medium-grey text-sm">
+          <p className="text-slate text-sm">
             Não recebeu o email? Verifique sua caixa de spam ou tente reenviar o
             email.
           </p>
         </div>
-        <LoadingButton
+        <Button
+          className="mt-12 w-full min-w-56"
           onClick={handleResend}
-          isPending={isResending}
           disabled={countdown > 0}
-          className="bg-purple mt-12 w-full min-w-56 text-white"
+          variant="accent"
+          isLoading={isResending}
         >
           {countdown > 0 ? `Reenviar em ${countdown}s` : "Reenviar email"}
-        </LoadingButton>
+        </Button>
       </div>
     ),
   };

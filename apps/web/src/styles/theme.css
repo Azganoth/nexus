@@ -10,10 +10,12 @@
   --color-*: initial;
   --color-black: #000;
   --color-white: #fff;
-  --color-light-grey: #dbdbdb;
-  --color-medium-grey: #8b8b8b;
-  --color-dark-grey: #5b5b5b;
+  --color-charcoal: #1a1a2e;
+  --color-stardust: #e0e0e6;
+  --color-slate: #9a98a9;
+  --color-comet: #5c5a6d;
   --color-purple: #8c60f2;
+  --color-fuchsia: #d946ef;
   --color-teal: #17a2b8;
   --color-green: #28a745;
   --color-yellow: #ffc107;
@@ -38,4 +40,19 @@
   --text-3xl--line-height: 3rem;
   --text-4xl: 3rem;
   --text-4xl--line-height: 3.5rem;
+
+  --ease-spring: cubic-bezier(0.68, -0.55, 0.27, 1.55);
+
+  --animate-fade-in-slide-up: fadeInSlideUp 0.3s ease-out forwards;
+
+  @keyframes fadeInSlideUp {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 }

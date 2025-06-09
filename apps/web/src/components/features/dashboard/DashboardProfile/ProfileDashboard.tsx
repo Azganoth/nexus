@@ -1,4 +1,5 @@
 import { ProfileShare } from "$/components/features/profile/ProfileShare";
+import { Button } from "$/components/ui/Button";
 import { toast } from "$/components/ui/Toast";
 import type { UpdateProfileData } from "$/hooks/useProfile";
 import type { AuthenticatedProfile } from "@repo/shared/contracts";
@@ -54,16 +55,16 @@ export function ProfileDashboard({
         username={profile.username}
       />
       <ProfileHeader profile={profile} updateProfile={updateProfile} />
-      <button
-        className="btn bg-purple focus-ring mt-12 text-white"
-        type="button"
+      <Button
+        className="mt-12"
+        variant="accent"
         aria-label="Adicionar novo link ao perfil"
         onClick={() => {
           setIsAddLinkModalOpen(true);
         }}
       >
         Adicionar link
-      </button>
+      </Button>
       <ProfileLinkList
         links={profile.links}
         onDelete={revalidateProfile}

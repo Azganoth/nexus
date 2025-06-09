@@ -1,4 +1,4 @@
-import { LoadingButton } from "$/components/ui/LoadingButton";
+import { Button } from "$/components/ui/Button";
 import { Modal } from "$/components/ui/Modal";
 import { toast } from "$/components/ui/Toast";
 import { useRef, useState } from "react";
@@ -131,21 +131,16 @@ export function CropAvatarModal({
           </ReactCrop>
         </div>
         <div className="mt-12 flex gap-4">
-          <LoadingButton
-            className="bg-purple w-full max-w-48 text-white"
+          <Button
+            className="w-full max-w-48"
             type="submit"
-            isPending={isProcessing}
             onClick={handleCrop}
+            variant="accent"
+            isLoading={isProcessing}
           >
             Cortar
-          </LoadingButton>
-          <button
-            type="button"
-            onClick={onCancel}
-            className="btn focus-ring bg-black text-white"
-          >
-            Cancelar
-          </button>
+          </Button>
+          <Button onClick={onCancel}>Cancelar</Button>
         </div>
       </div>
     </Modal>

@@ -8,7 +8,7 @@ type AnchorProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "href"> &
 interface LinkProps extends AnchorProps {
   children: ReactNode;
   newTab?: boolean;
-  variant?: "default" | "unstyled";
+  variant?: "default" | "none";
 }
 
 export function Link({
@@ -26,7 +26,8 @@ export function Link({
       target={newTab ? "_blank" : undefined}
       className={clsx(
         "focus-ring",
-        variant === "default" && "text-dark-grey hover:text-purple underline",
+        variant === "default" &&
+          "text-comet hover:text-purple underline transition-colors",
         className,
       )}
       {...other}

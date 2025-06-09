@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "$/components/ui/Button";
 import { LabeledSwitch } from "$/components/ui/LabeledSwitch";
 import { Link } from "$/components/ui/Link";
 import { useConsentContext } from "$/contexts/ConsentContext";
@@ -82,7 +83,7 @@ function Banner({ onDecision }: BannerProps) {
     <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-black bg-white p-6 shadow-lg">
       <div className="mx-auto max-w-[800px]">
         <h3 className="font-semibold">Preferências de Cookies</h3>
-        <p className="text-dark-grey mb-4 text-xs">
+        <p className="text-comet mb-4 text-xs">
           Utilizamos cookies para melhorar sua experiência. Você pode escolher
           quais tipos de cookies aceitar. Para mais informações, consulte nossa{" "}
           <Link href="/about/cookies">Política de Cookies</Link>.
@@ -92,7 +93,7 @@ function Banner({ onDecision }: BannerProps) {
             className="w-full text-sm"
             label="Cookies Necessários"
             description={
-              <p className="text-dark-grey text-xs">
+              <p className="text-comet text-xs">
                 Essenciais para o funcionamento do site
               </p>
             }
@@ -103,18 +104,19 @@ function Banner({ onDecision }: BannerProps) {
             className="w-full text-sm"
             label="Cookies de Analytics"
             description={
-              <p className="text-dark-grey text-xs">
+              <p className="text-comet text-xs">
                 Para análise de uso e melhorias
               </p>
             }
             checked={analyticsCookies}
             onChange={setAnalyticsCookies}
+            autoFocus
           />
           <LabeledSwitch
             className="w-full text-sm"
             label="Cookies de Terceiros"
             description={
-              <p className="text-dark-grey text-xs">
+              <p className="text-comet text-xs">
                 Para funcionalidades adicionais
               </p>
             }
@@ -122,25 +124,20 @@ function Banner({ onDecision }: BannerProps) {
             onChange={setThirdPartyCookies}
           />
         </div>
-        <div className="tablet:grid-cols-3 mt-6 grid gap-2">
-          <button
-            className="btn bg-black px-5 py-3 text-sm text-white"
-            onClick={handleNecessaryOnly}
-          >
+        <div className="tablet:grid-cols-3 mt-6 grid gap-x-6 gap-y-2">
+          <Button className="px-5 py-3 text-sm" onClick={handleNecessaryOnly}>
             Apenas Necessários
-          </button>
-          <button
-            className="btn bg-black px-5 py-3 text-sm text-white"
-            onClick={handleAcceptSelected}
-          >
+          </Button>
+          <Button className="px-5 py-3 text-sm" onClick={handleAcceptSelected}>
             Aceitar Selecionados
-          </button>
-          <button
-            className="btn bg-purple px-5 py-3 text-sm text-white"
+          </Button>
+          <Button
+            className="px-5 py-3 text-sm"
+            variant="accent"
             onClick={handleAcceptAll}
           >
             Aceitar Todos
-          </button>
+          </Button>
         </div>
       </div>
     </div>

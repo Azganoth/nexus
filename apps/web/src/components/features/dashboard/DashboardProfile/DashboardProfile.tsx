@@ -5,6 +5,7 @@ import {
   Profile,
 } from "$/components/features/profile/Profile";
 import { ProfileShare } from "$/components/features/profile/ProfileShare";
+import { Button } from "$/components/ui/Button";
 import { ErrorDisplay } from "$/components/ui/ErrorDisplay";
 import { useProfile } from "$/hooks/useProfile";
 import { ProfileDashboard } from "./ProfileDashboard";
@@ -46,7 +47,7 @@ export function DashboardProfile() {
       <div className="max-desktop:hidden flex flex-col">
         <ProfileShare className="mt-8" username={profile.username} />
         <div
-          className="mt-8 min-w-[400px] rounded-[3rem] p-8 shadow-xl ring-4 ring-black"
+          className="ring-charcoal mt-8 min-w-[400px] rounded-[3rem] p-8 shadow-xl ring-4"
           inert
         >
           <Profile profile={getFromAuthenticatedProfile(profile)} />
@@ -91,12 +92,9 @@ function ErrorState({ onRetry }: { onRetry: () => void }) {
       <ErrorDisplay
         title="Não foi possível carregar seu perfil."
         action={
-          <button
-            className="btn bg-purple focus-ring mt-8 text-white"
-            onClick={onRetry}
-          >
+          <Button className="mt-8" variant="accent" onClick={onRetry}>
             Tentar Novamente
-          </button>
+          </Button>
         }
       ></ErrorDisplay>
     </section>

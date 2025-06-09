@@ -33,7 +33,7 @@ export function ProfileShare({ className, username }: ProfileShareProps) {
   return (
     <div
       className={clsx(
-        "flex min-w-[300px] max-w-[600px] rounded-full bg-white px-4 py-2 shadow-md ring-2 ring-black",
+        "ring-charcoal flex min-w-[300px] max-w-[600px] rounded-full bg-white px-4 py-2 shadow-md ring-2",
         className,
       )}
       role="group"
@@ -43,10 +43,10 @@ export function ProfileShare({ className, username }: ProfileShareProps) {
       </span>
       <button
         className={clsx(
-          "focus-ring",
+          "focus-ring btn-icon",
           isCopied
             ? "text-green cursor-not-allowed"
-            : "text-medium-grey hover:text-black",
+            : "text-slate hover:text-charcoal",
         )}
         type="button"
         onClick={copy}

@@ -1,13 +1,13 @@
-import { LoadingButton } from "$/components/ui/LoadingButton";
+import { Button } from "$/components/ui/Button";
 import { describe, expect, it, jest } from "@jest/globals";
 import { render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 
-describe("LoadingButton", () => {
+describe("Button", () => {
   const user = userEvent.setup();
 
   it("renders children and is enabled by default", () => {
-    render(<LoadingButton>Click Me</LoadingButton>);
+    render(<Button>Click Me</Button>);
 
     const button = screen.getByRole("button", { name: /click me/i });
     expect(button).toBeInTheDocument();
@@ -16,7 +16,7 @@ describe("LoadingButton", () => {
 
   it("calls the onClick handler when clicked", async () => {
     const handleClick = jest.fn();
-    render(<LoadingButton onClick={handleClick}>Submit</LoadingButton>);
+    render(<Button onClick={handleClick}>Submit</Button>);
 
     const button = screen.getByRole("button", { name: /submit/i });
     await user.click(button);
@@ -26,7 +26,7 @@ describe("LoadingButton", () => {
 
   describe("Pending State", () => {
     it("displays a spinner and not the children when isPending is true", () => {
-      render(<LoadingButton isPending>Submitting...</LoadingButton>);
+      render(<Button isLoading>Submitting...</Button>);
 
       expect(screen.queryByText("Submitting...")).not.toBeInTheDocument();
 
@@ -40,9 +40,9 @@ describe("LoadingButton", () => {
     it("is disabled when isPending is true", async () => {
       const handleClick = jest.fn();
       render(
-        <LoadingButton isPending onClick={handleClick}>
+        <Button isLoading onClick={handleClick}>
           Click
-        </LoadingButton>,
+        </Button>,
       );
 
       const button = screen.getByRole("button");
@@ -55,22 +55,22 @@ describe("LoadingButton", () => {
 
   describe("Disabled State", () => {
     it("is disabled when the disabled prop is true", () => {
-      render(<LoadingButton disabled>Disabled</LoadingButton>);
+      render(<Button disabled>Disabled</Button>);
       expect(screen.getByRole("button")).toBeDisabled();
     });
 
     it("is disabled if either isPending or disabled is true", () => {
       const { rerender } = render(
-        <LoadingButton isPending disabled={false}>
+        <Button isLoading disabled={false}>
           Test
-        </LoadingButton>,
+        </Button>,
       );
       expect(screen.getByRole("button")).toBeDisabled();
 
       rerender(
-        <LoadingButton isPending={false} disabled>
+        <Button isLoading={false} disabled>
           Test
-        </LoadingButton>,
+        </Button>,
       );
       expect(screen.getByRole("button")).toBeDisabled();
     });
@@ -78,9 +78,7 @@ describe("LoadingButton", () => {
 
   it("merges custom class names correctly", () => {
     const customClass = "my-special-button";
-    render(
-      <LoadingButton className={customClass}>Styled Button</LoadingButton>,
-    );
+    render(<Button className={customClass}>Styled Button</Button>);
 
     const button = screen.getByRole("button");
     expect(button).toHaveClass("btn", customClass);

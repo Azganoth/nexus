@@ -48,7 +48,7 @@ export function Modal({
       ref={dialogRef}
       onClose={onClose}
       onClick={handleBackdropClick}
-      className="rounded-4xl m-auto w-full max-w-[min(400px,calc(100%-4rem))] bg-white shadow-lg backdrop:bg-black/80"
+      className="rounded-4xl starting:opacity-0 starting:scale-90 m-auto w-full max-w-[min(400px,calc(100%-4rem))] bg-white shadow-lg transition-[opacity,transform] duration-300 backdrop:bg-black/80"
       aria-modal="true"
       aria-labelledby={titleId}
       aria-describedby={descId}
@@ -60,7 +60,7 @@ export function Modal({
             {title}
           </h2>
           <button
-            className="text-medium-grey focus-ring hover:text-black"
+            className="text-slate btn-icon focus-ring hover:text-charcoal"
             type="button"
             onClick={onClose}
             aria-label="Fechar diálogo"

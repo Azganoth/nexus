@@ -1,8 +1,8 @@
 "use client";
 
+import { Button } from "$/components/ui/Button";
 import { ErrorHint } from "$/components/ui/ErrorHint";
 import { Input } from "$/components/ui/Input";
-import { LoadingButton } from "$/components/ui/LoadingButton";
 import { useAuth } from "$/contexts/AuthContext";
 import { useApiForm } from "$/hooks/useApiForm";
 import { apiClient } from "$/lib/apiClient";
@@ -53,13 +53,14 @@ export function Login() {
       />
       <div className="mt-12 space-y-4">
         <ErrorHint className="text-center" error={errors.root?.message} />
-        <LoadingButton
-          className="bg-purple w-full min-w-56 text-white"
+        <Button
+          className="w-full min-w-56"
           type="submit"
-          isPending={isSubmitting}
+          variant="accent"
+          isLoading={isSubmitting}
         >
           Entrar
-        </LoadingButton>
+        </Button>
       </div>
     </form>
   );

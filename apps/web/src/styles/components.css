@@ -4,10 +4,19 @@
   }
 
   .focus-ring {
-    @apply focus-visible:ring-3 focus-visible:ring-offset-3 rounded-sm focus:outline-none focus-visible:outline-none focus-visible:ring-black focus-visible:ring-offset-white;
+    @apply focus-visible:ring-3 focus-visible:ring-offset-3 focus-visible:ring-charcoal rounded-sm transition-[box-shadow] focus:outline-none focus-visible:outline-none focus-visible:ring-offset-white;
   }
 
   .btn {
     @apply rounded-full px-6 py-4 font-bold tracking-wide;
+    @apply transition-all active:scale-95;
+  }
+
+  .btn-icon {
+    @apply transition-all hover:scale-110;
+  }
+
+  .animate-fade-in-slide-up {
+    opacity: 0;
   }
 }

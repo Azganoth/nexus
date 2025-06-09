@@ -45,12 +45,14 @@ export function ProfileLink({
       ref={setNodeRef}
       className={clsx(
         "rounded-4xl flex items-center gap-4 bg-white p-4 shadow-lg transition-all duration-200 ease-in-out",
+        "before:rounded-4xl before:border-slate before:absolute before:inset-0 before:border-2 before:border-dashed before:transition-opacity before:ease-out before:content-['']",
+        link.isPublic && "before:opacity-0",
         isDragging && "z-50",
       )}
       style={style}
     >
       <button
-        className="text-medium-grey focus-ring cursor-grab py-1 active:cursor-grabbing"
+        className="text-slate focus-ring btn-icon cursor-grab py-1 active:cursor-grabbing"
         type="button"
         aria-label="Reordenar link"
         {...attributes}
@@ -61,7 +63,7 @@ export function ProfileLink({
       <div className="min-w-0 grow">
         <h3 className="font-bold">{link.title}</h3>
         <Link
-          className="text-dark-grey hover:text-purple focus-ring truncate !no-underline"
+          className="text-comet hover:text-purple focus-ring truncate !no-underline"
           href={link.url}
           newTab
           aria-label={`Visitar ${link.title} (abre em nova aba)`}
@@ -75,7 +77,7 @@ export function ProfileLink({
         aria-label="Ações do link"
       >
         <button
-          className="text-dark-grey focus-ring hover:text-black"
+          className="text-comet btn-icon focus-ring hover:text-charcoal"
           type="button"
           aria-label={`Editar link: ${link.title}`}
           onClick={() => setIsEditModalOpen(true)}
@@ -83,7 +85,7 @@ export function ProfileLink({
           <Icon className="icon-[fa6-solid--pen] text-lg" />
         </button>
         <button
-          className="text-dark-grey focus-ring hover:text-black"
+          className="text-comet btn-icon focus-ring hover:text-charcoal"
           type="button"
           aria-label={
             link.isPublic
@@ -101,7 +103,7 @@ export function ProfileLink({
           />
         </button>
         <button
-          className="text-dark-grey focus-ring hover:text-black"
+          className="text-comet btn-icon focus-ring hover:text-charcoal"
           type="button"
           aria-label={`Excluir link: ${link.title}`}
           onClick={() => setIsDeleteModalOpen(true)}

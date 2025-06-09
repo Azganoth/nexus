@@ -22,7 +22,7 @@ export default async function Page() {
   return (
     <main className="mt-8 flex flex-col items-center gap-8">
       <ProfileShare username={profile.username} />
-      <div className="rounded-[3rem] p-8 shadow-xl ring-4 ring-black">
+      <div className="ring-charcoal rounded-[3rem] p-8 shadow-xl ring-4">
         <Profile profile={profile} />
       </div>
     </main>

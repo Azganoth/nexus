@@ -5,6 +5,7 @@ import { apiClient } from "$/lib/apiClient";
 import { hashFileSHA256 } from "$/lib/utils";
 import type { AvatarUploadUrls } from "@repo/shared/contracts";
 import { AVATAR_UPLOAD_SCHEMA } from "@repo/shared/schemas";
+import clsx from "clsx";
 import Image from "next/image";
 import { useRef, useState } from "react";
 import { CropAvatarModal } from "./modals/CropAvatarModal";
@@ -111,13 +112,13 @@ export function ProfileAvatar({
     <div className="relative inline-block">
       <button
         type="button"
-        className="focus-ring ring-purple group relative overflow-hidden rounded-full"
+        className="focus-ring ring-purple group relative block overflow-hidden rounded-full"
         onClick={handleClick}
         aria-label="Alterar avatar do perfil"
         disabled={isLoading}
       >
         <Image
-          className={isLoading ? "opacity-50" : ""}
+          className={clsx(isLoading && "opacity-50")}
           width={64}
           height={64}
           src={currentUrl}

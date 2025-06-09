@@ -1,10 +1,10 @@
 "use client";
 
+import { Button } from "$/components/ui/Button";
 import { ErrorHint } from "$/components/ui/ErrorHint";
 import { Input } from "$/components/ui/Input";
 import { LabeledSwitch } from "$/components/ui/LabeledSwitch";
 import { Link } from "$/components/ui/Link";
-import { LoadingButton } from "$/components/ui/LoadingButton";
 import { useAuth } from "$/contexts/AuthContext";
 import { useApiForm } from "$/hooks/useApiForm";
 import { apiClient } from "$/lib/apiClient";
@@ -95,8 +95,12 @@ export function Signup() {
             className="w-full"
             label="Termos de uso"
             description={
-              <p className="text-dark-grey text-sm">
-                Eu aceito os <Link href="/about/tos">termos de uso</Link>.
+              <p className="text-comet text-sm">
+                Eu aceito os{" "}
+                <Link href="/about/tos" newTab>
+                  termos de uso
+                </Link>
+                .
               </p>
             }
             checked={field.value}
@@ -113,9 +117,12 @@ export function Signup() {
             className="w-full"
             label="Privacidade"
             description={
-              <p className="text-dark-grey text-sm">
+              <p className="text-comet text-sm">
                 Eu aceito as{" "}
-                <Link href="/about/privacy">políticas de privacidade</Link>.
+                <Link href="/about/privacy" newTab>
+                  políticas de privacidade
+                </Link>
+                .
               </p>
             }
             checked={field.value}
@@ -126,14 +133,15 @@ export function Signup() {
       />
       <div className="mt-12 space-y-4">
         <ErrorHint className="text-center" error={errors.root?.message} />
-        <LoadingButton
-          className="bg-purple w-full min-w-56 text-white"
+        <Button
+          className="w-full min-w-56"
           type="submit"
-          isPending={isSubmitting}
           aria-label="Cadastrar"
+          variant="accent"
+          isLoading={isSubmitting}
         >
           Cadastrar
-        </LoadingButton>
+        </Button>
       </div>
     </form>
   );

@@ -35,17 +35,17 @@ export function DashboardHeader() {
 
   return (
     <header
-      className="flex items-center rounded-full bg-black/10"
+      className="bg-stardust flex items-center rounded-full"
       role="banner"
       aria-label="Cabeçalho do dashboard"
     >
       <Link
-        className="text-dark-grey rounded-full p-4 hover:text-black"
+        className="text-comet btn-icon hover:text-charcoal rounded-full p-4"
         href={isDashboard ? SETTINGS_URL : DASHBOARD_URL}
         aria-label={
           isDashboard ? "Ir para as configurações" : "Voltar ao dashboard"
         }
-        variant="unstyled"
+        variant="none"
       >
         <Icon
           className={`min-w-6 text-xl ${
@@ -55,10 +55,10 @@ export function DashboardHeader() {
           }`}
         />
       </Link>
-      <h1 className="font-bold">{title}</h1>
+      <h1 className="font-semibold">{title}</h1>
       {isSettings && (
         <button
-          className="btn focus-ring ml-auto flex items-center gap-2 bg-black text-white"
+          className="btn focus-ring bg-charcoal hover:bg-charcoal/90 ml-auto flex items-center gap-2 text-white"
           onClick={handleLogout}
           aria-label="Sair da conta"
         >
@@ -69,12 +69,13 @@ export function DashboardHeader() {
       {(isDashboard || isPreview) && (
         <Link
           className={clsx(
-            "btn ml-auto flex items-center gap-2 bg-black text-white",
+            "btn bg-charcoal hover:bg-charcoal/90 ml-auto flex items-center gap-2 text-white",
             isDashboard && "max-desktop:hidden",
           )}
           href={`/p/${profile?.username ?? "me"}`}
-          variant="unstyled"
+          variant="none"
           aria-label="Visitar página pública do perfil"
+          newTab
         >
           <Icon className="icon-[fa6-solid--arrow-up-right-from-square]" />
           <span>Visitar</span>
@@ -82,9 +83,9 @@ export function DashboardHeader() {
       )}
       {isDashboard && (
         <Link
-          className="btn desktop:hidden ml-auto flex items-center gap-2 bg-black text-white"
+          className="btn desktop:hidden bg-charcoal hover:bg-charcoal/90 ml-auto flex items-center gap-2 text-white"
           href={PREVIEW_URL}
-          variant="unstyled"
+          variant="none"
           aria-label="Ver prévia do perfil"
         >
           <Icon className="icon-[fa6-solid--eye]" />

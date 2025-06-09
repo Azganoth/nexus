@@ -1,5 +1,5 @@
+import { Button } from "$/components/ui/Button";
 import { Input } from "$/components/ui/Input";
-import { LoadingButton } from "$/components/ui/LoadingButton";
 import { Modal } from "$/components/ui/Modal";
 import { toast } from "$/components/ui/Toast";
 import { useApiForm } from "$/hooks/useApiForm";
@@ -37,17 +37,17 @@ export function AccountDeletion() {
   return (
     <div className="rounded-4xl bg-red/15 p-6 shadow-lg">
       <h2 className="mb-2 text-lg font-semibold">Zona de Perigo</h2>
-      <p className="text-dark-grey mb-6 text-sm">
+      <p className="text-comet mb-6 text-sm">
         Esta ação não pode ser desfeita. Isso excluirá permanentemente sua conta
         e removerá todos os seus dados.
       </p>
-      <button
-        className="btn bg-red focus-ring w-full text-white"
-        type="button"
+      <Button
+        className="w-full"
+        variant="danger"
         onClick={() => setShowDeleteModal(true)}
       >
         Excluir Conta
-      </button>
+      </Button>
       <Modal
         title="Confirmar Exclusão"
         isOpen={showDeleteModal}
@@ -69,20 +69,15 @@ export function AccountDeletion() {
             {...register("password")}
           />
           <div className="mt-12 flex gap-4">
-            <LoadingButton
-              className="bg-red w-full text-white"
+            <Button
+              className="w-full"
               type="submit"
-              isPending={isSubmitting}
+              variant="danger"
+              isLoading={isSubmitting}
             >
               Excluir
-            </LoadingButton>
-            <button
-              type="button"
-              onClick={() => setShowDeleteModal(false)}
-              className="btn focus-ring bg-black text-white"
-            >
-              Cancelar
-            </button>
+            </Button>
+            <Button onClick={() => setShowDeleteModal(false)}>Cancelar</Button>
           </div>
         </form>
       </Modal>
