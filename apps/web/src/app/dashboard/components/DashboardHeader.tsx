@@ -31,7 +31,7 @@ export function DashboardHeader() {
   const isSettings = pathname === SETTINGS_URL;
   const isPreview = pathname === PREVIEW_URL;
 
-  const title = isPreview ? "Prévia" : isSettings ? "Configurações" : "MyNexus";
+  const title = isPreview ? "Prévia" : isSettings ? "Configurações" : "Nexus";
 
   return (
     <header
@@ -99,14 +99,14 @@ export function DashboardHeader() {
 function DashboardHeaderSkeleton() {
   return (
     <header
-      className="flex items-center rounded-full bg-black/10 shadow-md"
+      className="flex items-center rounded-full bg-black/10"
       role="banner"
       aria-label="Carregando cabeçalho do dashboard"
       aria-busy="true"
     >
       <div className="mx-4 h-6 w-6 animate-pulse rounded-full bg-black/10" />
       <div className="h-6 w-32 animate-pulse rounded bg-black/10" />
-      <div className="ml-auto h-14 w-24 animate-pulse rounded-full bg-black/10" />
+      <div className="ml-auto h-14 w-28 animate-pulse rounded-full bg-black/10" />
     </header>
   );
 }

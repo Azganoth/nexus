@@ -67,7 +67,7 @@ function ProfileSkeleton() {
       {/* ProfileShare placeholder */}
       <div className="mt-8 h-10 w-60 animate-pulse rounded-full bg-black/10" />
       {/* ProfileHeader placeholder */}
-      <div className="mt-8 grid w-full max-w-[500px] grid-cols-[auto_1fr_auto] items-center gap-4">
+      <div className="mt-8 grid w-full grid-cols-[auto_1fr_auto] items-center gap-4">
         <div className="h-16 w-16 animate-pulse rounded-full bg-black/10" />
         <div className="space-y-2">
           <div className="h-5 w-32 animate-pulse rounded bg-black/10" />
@@ -78,9 +78,9 @@ function ProfileSkeleton() {
       {/* Add link button placeholder */}
       <div className="btn mt-12 h-14 w-44 animate-pulse rounded-full bg-black/10" />
       {/* Link cards placeholder */}
-      <div className="mt-8 flex w-full max-w-[500px] flex-col gap-8">
-        <div className="h-20 w-full animate-pulse rounded-[2rem] bg-black/10 shadow-xl" />
-        <div className="h-20 w-full animate-pulse rounded-[2rem] bg-black/10 shadow-xl" />
+      <div className="desktop:max-w-[600px] mt-8 w-full max-w-[500px] space-y-8">
+        <div className="h-20 w-full animate-pulse rounded-[2rem] bg-black/10" />
+        <div className="h-20 w-full animate-pulse rounded-[2rem] bg-black/10" />
       </div>
     </section>
   );

@@ -1,3 +1,5 @@
+"use client";
+
 import { Icon } from "$/components/ui/Icon";
 import clsx from "clsx";
 import type { ButtonHTMLAttributes } from "react";

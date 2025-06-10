@@ -6,7 +6,7 @@ import { useRef, type HTMLAttributes, type MouseEvent } from "react";
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface TiltProps extends HTMLAttributes<HTMLDivElement> {}
 
-export function Tilt({ children, className }: TiltProps) {
+export function Tilt({ children, className, ...otherProps }: TiltProps) {
   const ref = useRef<HTMLDivElement | null>(null);
 
   const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
@@ -54,9 +54,10 @@ export function Tilt({ children, className }: TiltProps) {
   return (
     <div
       ref={ref}
+      className={clsx("tilt", className)}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className={clsx("tilt", className)}
+      {...otherProps}
     >
       {children}
     </div>
