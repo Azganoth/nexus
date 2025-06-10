@@ -37,6 +37,7 @@ export function ProfileLinkList({
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
+        delay: 250,
         distance: 8,
       },
     }),

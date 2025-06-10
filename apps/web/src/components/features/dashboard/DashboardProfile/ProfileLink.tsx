@@ -44,7 +44,7 @@ export function ProfileLink({
     <li
       ref={setNodeRef}
       className={clsx(
-        "rounded-4xl flex items-center gap-4 bg-white p-4 shadow-lg transition-all duration-200 ease-in-out",
+        "rounded-4xl flex touch-none items-center gap-4 bg-white p-4 shadow-lg transition-all duration-200 ease-in-out",
         "before:rounded-4xl before:border-slate before:absolute before:inset-0 before:border-2 before:border-dashed before:transition-opacity before:ease-out before:content-['']",
         link.isPublic && "before:opacity-0",
         isDragging && "z-50",
@@ -63,7 +63,7 @@ export function ProfileLink({
       <div className="min-w-0 grow">
         <h3 className="font-bold">{link.title}</h3>
         <Link
-          className="text-comet hover:text-purple focus-ring truncate !no-underline"
+          className="text-comet hover:text-purple focus-ring block truncate !no-underline"
           href={link.url}
           newTab
           aria-label={`Visitar ${link.title} (abre em nova aba)`}
