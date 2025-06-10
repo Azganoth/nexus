@@ -36,9 +36,9 @@ export function Tilt({ children, className }: TiltProps) {
     const rotateX = maxRotation * normalizedY;
     const rotateY = maxRotation * normalizedX * -1; // Invert for intuitive up/down tilt
 
-    ref.current.style.setProperty("--rotate-x", `${rotateX}deg`);
-    ref.current.style.setProperty("--rotate-y", `${rotateY}deg`);
-    ref.current.style.setProperty("--scale", "1.05");
+    ref.current.style.setProperty("--tilt-rotate-x", `${rotateX}deg`);
+    ref.current.style.setProperty("--tilt-rotate-y", `${rotateY}deg`);
+    ref.current.style.setProperty("--tilt-scale", "1.05");
   };
 
   const handleMouseLeave = () => {
@@ -46,9 +46,9 @@ export function Tilt({ children, className }: TiltProps) {
       return;
     }
 
-    ref.current.style.setProperty("--rotate-x", "0deg");
-    ref.current.style.setProperty("--rotate-y", "0deg");
-    ref.current.style.setProperty("--scale", "1");
+    ref.current.style.setProperty("--tilt-rotate-x", "initial");
+    ref.current.style.setProperty("--tilt-rotate-y", "initial");
+    ref.current.style.setProperty("--tilt-scale", "initial");
   };
 
   return (

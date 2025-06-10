@@ -56,3 +56,21 @@
     }
   }
 }
+
+@property --tilt-rotate-x {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@property --tilt-rotate-y {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@property --tilt-scale {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 1;
+}
