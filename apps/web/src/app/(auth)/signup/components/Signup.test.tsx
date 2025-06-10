@@ -1,6 +1,5 @@
 import { createRandomAuthenticatedUser } from "$/__tests__/factories";
 import { mockedHook, renderWithProviders } from "$/__tests__/helpers";
-import { Signup } from "$/components/features/auth/Signup";
 import { apiClient } from "$/lib/apiClient";
 import { ApiError, ValidationError } from "$/lib/errors";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
@@ -9,6 +8,7 @@ import { spyConsole } from "@repo/shared/testUtils";
 import { screen, waitFor } from "@testing-library/react";
 import { userEvent, type UserEvent } from "@testing-library/user-event";
 import { useRouter } from "next/navigation";
+import { Signup } from "./Signup";
 
 jest.mock("next/navigation");
 jest.mock("$/lib/apiClient");

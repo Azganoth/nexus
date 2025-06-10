@@ -3,13 +3,13 @@ import {
   createRandomAuthenticatedUser,
 } from "$/__tests__/factories";
 import { mockedHook, renderWithProviders } from "$/__tests__/helpers";
-import { DashboardSettings } from "$/components/features/dashboard/DashboardSettings";
 import { useProfile } from "$/hooks/useProfile";
 import { useUser } from "$/hooks/useUser";
 import { ApiError } from "$/lib/errors";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { DashboardSettings } from "./DashboardSettings";
 
 jest.mock("next/navigation");
 jest.mock("$/hooks/useProfile");

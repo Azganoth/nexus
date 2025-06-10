@@ -1,5 +1,4 @@
 import { mockedHook, renderWithProviders } from "$/__tests__/helpers";
-import { Login } from "$/components/features/auth/Login";
 import { apiClient } from "$/lib/apiClient";
 import { ApiError } from "$/lib/errors";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
@@ -8,6 +7,7 @@ import { spyConsole } from "@repo/shared/testUtils";
 import { screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { useRouter } from "next/navigation";
+import { Login } from "./Login";
 
 jest.mock("next/navigation");
 jest.mock("$/lib/apiClient");

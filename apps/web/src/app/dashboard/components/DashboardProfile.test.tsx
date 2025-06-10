@@ -1,11 +1,11 @@
 import { createRandomAuthenticatedProfile } from "$/__tests__/factories";
 import { mockedHook, renderWithProviders } from "$/__tests__/helpers";
-import { DashboardProfile } from "$/components/features/dashboard/DashboardProfile/DashboardProfile";
 import { useProfile } from "$/hooks/useProfile";
 import { ApiError } from "$/lib/errors";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { DashboardProfile } from "./DashboardProfile";
 
 jest.mock("$/hooks/useProfile");
 

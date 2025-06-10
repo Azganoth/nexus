@@ -1,9 +1,9 @@
-import { ResetPassword } from "$/components/features/auth/ResetPassword";
-import { TokenVerification } from "$/components/features/auth/ResetPasswordToken";
 import { Icon } from "$/components/ui/Icon";
 import { composeTitle } from "$/lib/utils";
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { ResetPassword } from "./components/ResetPassword";
+import { TokenVerification } from "./components/ResetPasswordToken";
 
 export const metadata: Metadata = {
   title: composeTitle("Redefina a sua senha"),

@@ -1,6 +1,6 @@
-import { DashboardProfile } from "$/components/features/dashboard/DashboardProfile";
 import { composeTitle } from "$/lib/utils";
 import type { Metadata } from "next";
+import { DashboardProfile } from "./components/DashboardProfile";
 
 export const metadata: Metadata = {
   title: composeTitle("Dashboard"),

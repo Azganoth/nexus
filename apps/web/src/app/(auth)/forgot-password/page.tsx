@@ -1,6 +1,6 @@
-import { ForgotPassword } from "$/components/features/auth/ForgotPassword";
 import { composeTitle } from "$/lib/utils";
 import type { Metadata } from "next";
+import { ForgotPassword } from "./components/ForgotPassword";
 
 export const metadata: Metadata = {
   title: composeTitle("Recupere a sua conta"),

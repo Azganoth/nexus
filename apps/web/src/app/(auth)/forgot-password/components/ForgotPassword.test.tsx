@@ -1,4 +1,3 @@
-import { ForgotPassword } from "$/components/features/auth/ForgotPassword";
 import { toast } from "$/components/ui/Toast";
 import { apiClient } from "$/lib/apiClient";
 import {
@@ -12,6 +11,7 @@ import {
 import { act, render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import type { ReactNode } from "react";
+import { ForgotPassword } from "./ForgotPassword";
 
 jest.mock("$/lib/apiClient");
 jest.mock("$/components/ui/Toast");

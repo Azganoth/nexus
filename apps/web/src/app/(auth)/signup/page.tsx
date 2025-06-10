@@ -1,7 +1,7 @@
-import { Signup } from "$/components/features/auth/Signup";
 import { Link } from "$/components/ui/Link";
 import { composeTitle } from "$/lib/utils";
 import type { Metadata } from "next";
+import { Signup } from "./components/Signup";
 
 export const metadata: Metadata = {
   title: composeTitle("Crie uma conta"),

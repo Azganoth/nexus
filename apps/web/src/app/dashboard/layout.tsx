@@ -1,7 +1,7 @@
-import { DashboardHeader } from "$/components/features/dashboard/DashboardHeader";
 import { getAuth } from "$/lib/auth/server";
 import "$/styles/globals.css";
 import { redirect } from "next/navigation";
+import { DashboardHeader } from "./components/DashboardHeader";
 
 export default async function Layout({
   children,

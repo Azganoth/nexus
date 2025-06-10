@@ -1,6 +1,6 @@
 import { createRandomAuthenticatedProfile } from "$/__tests__/factories";
 import { mockedHook, renderWithProviders } from "$/__tests__/helpers";
-import { DashboardHeader } from "$/components/features/dashboard/DashboardHeader";
+import { DashboardHeader } from "$/app/dashboard/components/DashboardHeader";
 import { useProfile } from "$/hooks/useProfile";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { screen, waitFor } from "@testing-library/react";
