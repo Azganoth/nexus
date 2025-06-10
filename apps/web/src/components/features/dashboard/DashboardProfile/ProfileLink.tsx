@@ -44,7 +44,7 @@ export function ProfileLink({
     <li
       ref={setNodeRef}
       className={clsx(
-        "rounded-4xl flex touch-none items-center gap-4 bg-white p-4 shadow-lg transition-all duration-200 ease-in-out",
+        "rounded-4xl relative flex touch-none items-center gap-4 bg-white p-4 shadow-lg transition-all duration-200 ease-in-out",
         "before:rounded-4xl before:border-slate before:absolute before:inset-0 before:border-2 before:border-dashed before:transition-opacity before:ease-out before:content-['']",
         link.isPublic && "before:opacity-0",
         isDragging && "z-50",
