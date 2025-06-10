@@ -1,5 +1,6 @@
 import { Link } from "$/components/ui/Link";
 import { Logo } from "$/components/ui/Logo";
+import { Tilt } from "$/components/ui/Tilt";
 import profile1 from "$/images/Profile1.png";
 import type { Metadata } from "next";
 import Image from "next/image";
@@ -62,11 +63,13 @@ export default function Page() {
             </li>
           </ul>
         </article>
-        <Image
-          className="max-desktop:max-w-[311px] max-tablet:mx-auto self-start rounded-[3rem] shadow-2xl"
-          src={profile1}
-          alt="Example of a profile page."
-        />
+        <Tilt>
+          <Image
+            className="max-desktop:max-w-[311px] max-tablet:mx-auto self-start rounded-[3rem] shadow-2xl"
+            src={profile1}
+            alt="Example of a profile page."
+          />
+        </Tilt>
       </main>
     </div>
   );

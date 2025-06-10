@@ -1,2 +1,14 @@
 @layer utilities {
+  .tilt {
+    --rotate-x: 0deg;
+    --rotate-y: 0deg;
+    --scale: 1;
+
+    @apply transition-transform duration-300 ease-out will-change-transform;
+
+    /* Explict because perspective property acts different (more subtle) from calling perspective()
+       within a transform property */
+    transform: perspective(1000px) rotateX(var(--rotate-x))
+      rotateY(var(--rotate-y)) scale3d(var(--scale), var(--scale), var(--scale));
+  }
 }
