@@ -24,7 +24,7 @@ export default function Page() {
           </h1>
           <div className="tablet:order-last flex gap-4 self-center">
             <Link
-              className="btn bg-purple hover:bg-purple/90 text-white"
+              className="btn from-purple to-fuchsia hover:from-purple/90 hover:to-fuchsia/90 before:from-purple before:to-fuchsia before:-z-1 relative bg-gradient-to-br text-white before:absolute before:inset-0 before:animate-pulse before:rounded-full before:bg-gradient-to-br before:blur-md before:content-['']"
               variant="none"
               href="/signup"
             >
