@@ -1,9 +1,8 @@
 import { Link } from "$/components/ui/Link";
 import { Logo } from "$/components/ui/Logo";
-import { Tilt } from "$/components/ui/Tilt";
-import profile1 from "$/images/Profile1.png";
 import type { Metadata } from "next";
-import Image from "next/image";
+import { FeatureList } from "./components/FeatureList";
+import { ProfileShowcase } from "./components/ProfileShowcase";
 
 export const metadata: Metadata = {
   title: "Nexus | Seu universo, em um só lugar",
@@ -39,37 +38,9 @@ export default function Page() {
               Logar
             </Link>
           </div>
-          <ul className="space-y-6">
-            <li>
-              <h3 className="text-xl font-bold">Crie seu perfil</h3>
-              <p>
-                Monte um perfil com todos os seus links importantes — redes
-                sociais, portfólio, contatos e mais — em um só lugar.
-              </p>
-            </li>
-            <li>
-              <h3 className="text-xl font-bold">Organize do seu jeito</h3>
-              <p>
-                Adicione, edite e reorganize seus links, controle visibilidade e
-                personalize seu perfil com avatar, nome e bio.
-              </p>
-            </li>
-            <li>
-              <h3 className="text-xl font-bold">Compartilhe fácil</h3>
-              <p>
-                Tenha um link único e curto para facilitar o acesso a tudo o que
-                você faz, ideal para freelancers, criadores e devs.
-              </p>
-            </li>
-          </ul>
+          <FeatureList />
         </article>
-        <Tilt>
-          <Image
-            className="max-desktop:max-w-[311px] max-tablet:mx-auto self-start rounded-[3rem] shadow-2xl"
-            src={profile1}
-            alt="Example of a profile page."
-          />
-        </Tilt>
+        <ProfileShowcase />
       </main>
     </div>
   );
