@@ -47,9 +47,7 @@ describe("DashboardHeader", () => {
     expect(
       screen.getByRole("banner", { name: /cabeçalho/i }),
     ).toBeInTheDocument();
-    expect(
-      screen.getByRole("heading", { name: "MyNexus" }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Nexus" })).toBeInTheDocument();
 
     // Settings icon
     expect(screen.getByLabelText(/configurações/i)).toBeInTheDocument();
