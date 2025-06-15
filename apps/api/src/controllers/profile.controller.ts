@@ -1,6 +1,7 @@
 import {
   getProfileByUserId,
   getProfileByUsername,
+  getShowcaseProfiles,
   updateProfile,
 } from "$/services/profile.service";
 import { ApiError } from "$/utils/errors";
@@ -34,4 +35,10 @@ export const updateMyProfile = async (req: Request, res: Response) => {
   const updatedProfile = await updateProfile(req.user!.id, data);
 
   res.status(200).json(composeResponse<AuthenticatedProfile>(updatedProfile));
+};
+
+export const getShowcase = async (_: Request, res: Response) => {
+  const profiles = await getShowcaseProfiles();
+
+  res.status(200).json(composeResponse<PublicProfile[]>(profiles));
 };

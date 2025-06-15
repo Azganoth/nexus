@@ -3,6 +3,7 @@ import { Logo } from "$/components/ui/Logo";
 import type { Metadata } from "next";
 import { FeatureList } from "./components/FeatureList";
 import { ProfileShowcase } from "./components/ProfileShowcase";
+import { ShowcaseProfiles } from "./components/ShowcaseProfiles";
 
 export const metadata: Metadata = {
   title: "Nexus | Seu universo, em um só lugar",
@@ -42,6 +43,8 @@ export default function Page() {
         </article>
         <ProfileShowcase />
       </main>
+
+      <ShowcaseProfiles />
     </div>
   );
 }

@@ -3,6 +3,7 @@ import {
   AUTHENTICATED_PROFILE_SELECT,
   PUBLIC_LINK_SELECT,
   PUBLIC_PROFILE_SELECT,
+  SHOWCASE_USERNAMES,
 } from "$/constants";
 import { ApiError } from "$/utils/errors";
 import { prisma } from "@repo/database";
@@ -81,4 +82,27 @@ export const updateProfile = async (
   });
 
   return updatedProfile;
+};
+
+export const getShowcaseProfiles = async (): Promise<PublicProfile[]> => {
+  const profiles = await prisma.profile.findMany({
+    where: {
+      username: { in: SHOWCASE_USERNAMES },
+      isPublic: true,
+    },
+    select: {
+      ...PUBLIC_PROFILE_SELECT,
+      links: {
+        where: { isPublic: true },
+        orderBy: { displayOrder: "asc" },
+        select: PUBLIC_LINK_SELECT,
+      },
+    },
+  });
+
+  return profiles.sort(
+    (a, b) =>
+      SHOWCASE_USERNAMES.indexOf(a.username) -
+      SHOWCASE_USERNAMES.indexOf(b.username),
+  );
 };

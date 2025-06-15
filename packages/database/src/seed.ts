@@ -36,7 +36,7 @@ const users: {
       { type: "THIRD_PARTY_COOKIES", granted: true },
     ],
     profile: {
-      username: "alice",
+      username: "__alice",
       displayName: "Alice Ferreira",
       avatarUrl:
         "https://pub-f4942703ba94414ab97ca08e29bff222.r2.dev/20250529_0104_Cosplay%20as%20Akali_01jwd39tvhex09ep5908b2q9yt.webp",
@@ -190,6 +190,135 @@ const users: {
           url: "https://jasmine-travels.com/tips",
           displayOrder: 1,
           isPublic: false,
+        },
+      ],
+    },
+  },
+
+  // Showcase profiles
+  {
+    email: "alex.riley.dev@example.com",
+    password: "password123",
+    name: "Alex Riley",
+    role: "USER",
+    consents: [
+      { type: "TERMS_OF_SERVICE", granted: true },
+      { type: "PRIVACY_POLICY", granted: true },
+    ],
+    profile: {
+      username: "__pixel_dev",
+      displayName: "Alex Riley",
+      avatarUrl:
+        "https://pub-f4942703ba94414ab97ca08e29bff222.r2.dev/avatars/1216843b-6c01-4161-b120-0d2b8f7357cd/290582426e394d5bdb299b1cb6da7a6b843498c17a21f92328c801c28f26fd68.webp",
+      bio: "Full-stack developer crafting open-source tools. Turning coffee into clean code and building in public.",
+      links: [
+        {
+          title: "GitHub",
+          url: "https://github.com/__pixel_dev",
+          displayOrder: 1,
+        },
+        {
+          title: "Technical Blog",
+          url: "https://__pixel_dev.blog",
+          displayOrder: 2,
+        },
+        {
+          title: "LinkedIn",
+          url: "https://linkedin.com/in/__pixel_dev",
+          displayOrder: 3,
+        },
+        {
+          title: "Buy Me a Coffee",
+          url: "https://buymeacoffee.com/__pixel_dev",
+          displayOrder: 4,
+        },
+      ],
+    },
+  },
+  {
+    email: "cassie.wu.art@example.com",
+    password: "password123",
+    name: "Cassandra Wu",
+    role: "USER",
+    consents: [
+      { type: "TERMS_OF_SERVICE", granted: true },
+      { type: "PRIVACY_POLICY", granted: true },
+    ],
+    profile: {
+      username: "__artemis_art",
+      displayName: 'Cassandra "Cassie" Wu',
+      avatarUrl:
+        "https://pub-f4942703ba94414ab97ca08e29bff222.r2.dev/avatars/1216843b-6c01-4161-b120-0d2b8f7357cd/dd6369000900aa57a9b85fa9582b25bb8196e95bb5c30f2171fa2ec81cc94b01.webp",
+      bio: "Illustrator & VTuber exploring digital realms. Join my streams for live art sessions and chaos!",
+      links: [
+        {
+          title: "Twitch",
+          url: "https://twitch.tv/__artemis_art",
+          displayOrder: 1,
+        },
+        {
+          title: "ArtStation Portfolio",
+          url: "https://artstation.com/__artemis_art",
+          displayOrder: 2,
+        },
+        {
+          title: "Instagram",
+          url: "https://instagram.com/__artemis_art",
+          displayOrder: 3,
+        },
+        {
+          title: "Patreon",
+          url: "https://patreon.com/__artemis_art",
+          displayOrder: 4,
+        },
+        {
+          title: "Commissions Info",
+          url: "https://__artemis_art.art/commissions",
+          displayOrder: 5,
+        },
+      ],
+    },
+  },
+  {
+    email: "marco.diaz.pro@example.com",
+    password: "password123",
+    name: "Marco Diaz",
+    role: "USER",
+    consents: [
+      { type: "TERMS_OF_SERVICE", granted: true },
+      { type: "PRIVACY_POLICY", granted: true },
+    ],
+    profile: {
+      username: "__market_maven",
+      displayName: "Marco Diaz",
+      avatarUrl:
+        "https://pub-f4942703ba94414ab97ca08e29bff222.r2.dev/avatars/1216843b-6c01-4161-b120-0d2b8f7357cd/d31ff041cab2185dfd88244dee26a8138d988249cfffb50065d5f14cf0cf38fa.webp",
+      bio: "Freelance growth marketer helping SaaS startups scale. Let's connect and build something amazing.",
+      links: [
+        {
+          title: "Book a Consultation",
+          url: "https://cal.com/__market_maven",
+          displayOrder: 1,
+        },
+        {
+          title: "My Portfolio",
+          url: "https://__market_maven.pro/portfolio",
+          displayOrder: 2,
+        },
+        {
+          title: "Client Testimonials",
+          url: "https://__market_maven.pro/testimonials",
+          displayOrder: 3,
+        },
+        {
+          title: "LinkedIn",
+          url: "https://linkedin.com/in/__market_maven",
+          displayOrder: 4,
+        },
+        {
+          title: "Twitter / X",
+          url: "https://twitter.com/__market_maven",
+          displayOrder: 5,
         },
       ],
     },

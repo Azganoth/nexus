@@ -28,6 +28,13 @@ export const JWT_REFRESH_EXPIRES_IN = 7 * 24 * 60 * 60 * 1000;
 
 export const PASSWORD_RESET_EXPIRES_IN = 15 * 60 * 1000;
 
+export const SHOWCASE_USERNAMES = [
+  "__alice",
+  "__artemis_art",
+  "__market_maven",
+  "__pixel_dev",
+];
+
 // Query selects
 export const UNUSED_SELECT = { id: true } satisfies StrictQuerySelect<{
   id: string | number;
