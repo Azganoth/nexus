@@ -15,7 +15,7 @@ interface UseApiFormProps<Schema extends z.ZodObject, Output>
   extends Omit<UseFormProps<z.infer<Schema>>, "resolver"> {
   schema: Schema;
   mutationFn: (data: z.infer<Schema>) => Promise<Output>;
-  onSuccess?: (response: Output) => void;
+  onSuccess?: (response: Output) => void | Promise<void>;
   expectedErrors?: ErrorCode[];
   onUnexpectedError?: (error: unknown) => void;
 }
@@ -41,7 +41,7 @@ export function useApiForm<Schema extends z.ZodObject, Output>({
     clearErrors();
     try {
       const response = await mutationFn(data);
-      onSuccess?.(response);
+      await onSuccess?.(response);
     } catch (error) {
       if (error instanceof ValidationError) {
         Object.entries(error.data).forEach(([field, messages]) => {

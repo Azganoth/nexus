@@ -18,7 +18,7 @@ describe("useApiForm", () => {
   const mockResponse = { id: 123 };
 
   const mockMutationFn = jest.fn<(data: unknown) => Promise<unknown>>();
-  const mockOnSuccess = jest.fn();
+  const mockOnSuccess = jest.fn<(response: unknown) => Promise<void>>();
   const mockOnUnexpectedError = jest.fn();
 
   const renderApiFormHook = (
