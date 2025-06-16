@@ -11,7 +11,9 @@ export const useUser = () => {
   const { data, error, isLoading, mutate } = useSWR<
     AuthenticatedUser,
     ApiError
-  >("/users/me", swrFetcher);
+  >("/users/me", swrFetcher, {
+    shouldRetryOnError: (error) => error.code !== "NOT_AUTHORIZED",
+  });
 
   const revalidateUser = async () => {
     await mutate();
