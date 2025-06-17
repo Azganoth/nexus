@@ -6,7 +6,13 @@ import type {
   PublicLink,
   PublicProfile,
 } from "@repo/shared/contracts";
-import { motion, stagger, type Transition, type Variants } from "motion/react";
+import {
+  AnimatePresence,
+  motion,
+  stagger,
+  type Transition,
+  type Variants,
+} from "motion/react";
 import Image from "next/image";
 
 const avatarVariants: Variants = {
@@ -46,6 +52,10 @@ const linkVariants: Variants = {
     opacity: 1,
     y: 0,
   },
+  exit: {
+    opacity: 0,
+    y: -16,
+  },
 };
 
 interface ProfileProps {
@@ -83,21 +93,22 @@ export function Profile({ profile }: ProfileProps) {
         className="mt-12 w-full space-y-4"
         variants={linkListVariants}
         initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
+        animate="visible"
       >
-        {profile.links.map((link) => (
-          <motion.li key={link.url} variants={linkVariants}>
-            <Link
-              className="rounded-4xl focus:outline-purple bg-charcoal hover:bg-charcoal/90 block px-16 py-4 text-center font-bold tracking-wide text-white transition-all hover:-translate-y-1 hover:shadow-lg focus:-translate-y-1 focus:outline-2"
-              href={link.url}
-              variant="none"
-              newTab
-            >
-              {link.title}
-            </Link>
-          </motion.li>
-        ))}
+        <AnimatePresence>
+          {profile.links.map((link) => (
+            <motion.li key={link.url} variants={linkVariants} layout>
+              <Link
+                className="rounded-4xl focus:outline-purple bg-charcoal hover:bg-charcoal/90 block px-16 py-4 text-center font-bold tracking-wide text-white transition-all hover:-translate-y-1 hover:shadow-lg focus:-translate-y-1 focus:outline-2"
+                href={link.url}
+                variant="none"
+                newTab
+              >
+                {link.title}
+              </Link>
+            </motion.li>
+          ))}
+        </AnimatePresence>
       </motion.ul>
     </section>
   );
