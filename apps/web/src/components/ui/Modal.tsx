@@ -48,7 +48,7 @@ export function Modal({
       ref={dialogRef}
       onClose={onClose}
       onClick={handleBackdropClick}
-      className="rounded-4xl starting:opacity-0 starting:scale-90 m-auto w-full max-w-[min(400px,calc(100%-4rem))] bg-white shadow-lg transition-[opacity,transform] duration-300 backdrop:bg-black/80 backdrop:backdrop-blur"
+      className="rounded-4xl starting:opacity-0 starting:scale-90 m-auto w-full max-w-[min(400px,calc(100%-4rem))] bg-white shadow-lg transition-[opacity,scale] duration-300 backdrop:bg-black/80 backdrop:backdrop-blur"
       aria-modal="true"
       aria-labelledby={titleId}
       aria-describedby={descId}

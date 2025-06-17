@@ -32,7 +32,7 @@ export function Button({
       {...otherProps}
     >
       {isLoading ? (
-        <Icon className="icon-[svg-spinners--180-ring] mx-auto text-inherit" />
+        <Icon className="icon-[svg-spinners--180-ring] mx-auto size-[1.5em] text-inherit" />
       ) : (
         children
       )}
