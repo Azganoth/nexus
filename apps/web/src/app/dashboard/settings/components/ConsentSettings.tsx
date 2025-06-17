@@ -1,15 +1,18 @@
 "use client";
 
 import { LabeledSwitch } from "$/components/ui/LabeledSwitch";
+import { toast } from "$/components/ui/Toast";
 import { useConsentContext } from "$/contexts/ConsentContext";
 import type { CookieConsentType } from "$/lib/consent";
 
 export function ConsentSettings() {
   const { consents, updateConsents } = useConsentContext();
 
-  const handleSwitch = (type: CookieConsentType) => (checked: boolean) => {
-    updateConsents({ [type]: checked });
-  };
+  const handleSwitch =
+    (type: CookieConsentType) => async (checked: boolean) => {
+      await updateConsents({ [type]: checked });
+      toast.success("Configurações de consentimento atualizadas com sucesso!");
+    };
 
   if (!consents) {
     return null;
