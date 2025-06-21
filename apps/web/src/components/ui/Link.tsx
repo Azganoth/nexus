@@ -27,7 +27,7 @@ export function Link({
       className={clsx(
         "focus-ring",
         variant === "default" &&
-          "text-comet hover:text-purple underline transition-colors",
+          "text-comet hover:text-purple font-bold transition-colors",
         className,
       )}
       {...other}

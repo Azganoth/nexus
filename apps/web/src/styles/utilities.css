@@ -9,3 +9,7 @@
       scale3d(var(--tilt-scale), var(--tilt-scale), var(--tilt-scale));
   }
 }
+
+@utility animate-spinner-* {
+  animation: spin calc(--value(integer) * 1s) linear infinite;
+}
